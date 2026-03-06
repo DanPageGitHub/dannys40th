@@ -164,21 +164,23 @@ strong.pale{color:var(--parchment);}
 .inv-text{font-size:0.92rem;color:rgba(232,223,200,0.7);line-height:1.5;}
 
 /* SCHEDULE */
-.schedule-dates{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;}
+.schedule-dates{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px;}
 .sdate{border-radius:2px;border:1px solid rgba(184,115,51,0.25);background:rgba(14,13,11,0.35);overflow:hidden;}
 .sdate-header{padding:20px 24px 16px;border-bottom:1px solid rgba(184,115,51,0.1);}
 .sdate.fri .sdate-header{border-top:3px solid var(--teal);}
 .sdate.sat .sdate-header{border-top:3px solid var(--copper);}
+.sdate.sun .sdate-header{border-top:3px solid var(--rust);}
 .sdate-day{font-family:'IM Fell English',serif;font-size:1.9rem;line-height:1.1;color:var(--parchment);margin-bottom:2px;}
 .sdate.fri .sdate-day{color:var(--teal-glow);}
 .sdate.sat .sdate-day{color:var(--gold-l);}
+.sdate.sun .sdate-day{color:var(--copper-l);}
 .sdate-slots{padding:16px 24px;}
 .slot{padding:12px 0;border-bottom:1px solid rgba(184,115,51,0.07);}
 .slot:last-child{border-bottom:none;}
-.slot-time{font-family:'Caveat',cursive;font-size:1rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--parchment);margin-bottom:4px;}
+.slot-time{font-family:'Libre Baskerville',Georgia,serif;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--parchment);margin-bottom:4px;}
 .slot-title{font-family:'IM Fell English',serif;font-size:1.1rem;color:var(--parchment);margin-bottom:4px;}
 .slot-items{list-style:none;}
-.slot-items li{font-family:'Caveat',cursive;font-size:1.05rem;letter-spacing:0.03em;color:rgba(232,223,200,0.65);line-height:1.5;padding-left:14px;padding-top:5px;padding-bottom:5px;position:relative;}
+.slot-items li{font-family:'Libre Baskerville',Georgia,serif;font-size:1rem;color:rgba(232,223,200,0.8);line-height:1.65;padding-left:14px;padding-top:6px;padding-bottom:6px;position:relative;}
 .slot-items li::before{content:'·';position:absolute;left:0;color:rgba(184,115,51,0.5);}
 
 /* BOOKENDS */
