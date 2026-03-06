@@ -102,8 +102,8 @@ if(aHI) {
     `<svg width="90" height="90" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="18" stroke="#b87333" stroke-width="0.8"/><line x1="22" y1="4" x2="22" y2="40" stroke="#b87333" stroke-width="0.7"/><line x1="4" y1="22" x2="40" y2="22" stroke="#b87333" stroke-width="0.7"/><circle cx="22" cy="22" r="4" stroke="#b87333" stroke-width="0.8"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 42 48" fill="none"><path d="M32 10 C24 10 16 17 16 25 C16 30 19 35 24 37" stroke="#b87333" stroke-width="0.9" fill="none"/><path d="M10 38 C18 38 26 31 26 23 C26 18 23 13 18 11" stroke="#b87333" stroke-width="0.9" fill="none" stroke-dasharray="3 2"/><circle cx="21" cy="24" r="2" fill="#b87333" opacity="0.6"/></svg>`,
   ];
-  // Repeat set twice inside the single element so translateX(-50%) loops perfectly
-  const double = [...syms, ...syms];
+  // Repeat set three times so translateX(-33.33%) loops perfectly on wide screens
+  const double = [...syms, ...syms, ...syms];
   double.forEach(s => {
     const tmp = document.createElement('div');
     tmp.innerHTML = s;
