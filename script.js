@@ -38,10 +38,10 @@ function setPhoto(id, key, pos, bf) {
 }
 
 // heroBg is now a video iframe
-setPhoto('pHero','canal_narrowboat','center 45%');
+setPhoto('pHero','danny_sign','center 40%');
 setPhoto('pPub','pub_canal_side','center 60%');
-setPhoto('pTents','bell_tents','center 50%');
-setPhoto('pSign','danny_sign','center 35%');
+setPhoto('pTents','pub_exterior','center 50%');
+setPhoto('pSign','canal_narrowboat','center 45%');
 setPhoto('pHorse','white_horse','center 45%');
 setPhoto('pDJ','dj_shot','center 40%');
 setPhoto('pBnbRoom','bnb_room','center 40%');

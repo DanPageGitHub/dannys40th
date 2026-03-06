@@ -1,0 +1,25 @@
+{
+  "name": "dannys40th",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanPageGitHub/dannys40th.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DanPageGitHub/dannys40th/issues"
+  },
+  "homepage": "https://github.com/DanPageGitHub/dannys40th#readme",
+  "dependencies": {
+    "playwright": "^1.58.2",
+    "puppeteer-core": "^24.38.0"
+  }
+}
