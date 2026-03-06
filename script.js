@@ -49,19 +49,15 @@ setPhoto('pBnbBath','bnb_bath','center 40%');
 
 // Parallax backgrounds
 const px1 = document.getElementById('pxImg1');
-const px2 = document.getElementById('pxImg2');
 if(px1) px1.style.backgroundImage = `url(${I.canal_narrowboat})`;
-if(px2) px2.style.backgroundImage = `url(${I.white_horse})`;
 
 function updateParallax() {
-  [['pxStrip1','pxImg1'],['pxStrip2','pxImg2']].forEach(([sid,iid]) => {
-    const strip = document.getElementById(sid);
-    const img = document.getElementById(iid);
-    if(!strip||!img) return;
-    const rect = strip.getBoundingClientRect();
-    const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-    img.style.transform = `translateY(${(progress - 0.5) * 80}px)`;
-  });
+  const strip = document.getElementById('pxStrip1');
+  const img = document.getElementById('pxImg1');
+  if(!strip||!img) return;
+  const rect = strip.getBoundingClientRect();
+  const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+  img.style.transform = `translateY(${(progress - 0.5) * 80}px)`;
 }
 window.addEventListener('scroll', updateParallax, {passive:true});
 updateParallax();
