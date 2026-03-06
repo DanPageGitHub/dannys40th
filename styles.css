@@ -306,7 +306,7 @@ footer a:hover{color:var(--teal-l);}
   .parallax-strip{height:200px;}
   .quick-actions{grid-template-columns:1fr;}
   #heroBg video{display:none;}
-  #hero{padding:70px 20px 48px;}
+  #hero{padding:70px 20px 48px;min-height:auto;}
   .badge{margin-top:0;margin-bottom:14px;}
   .hero-venue{margin-top:12px;margin-bottom:24px;}
   .bookends{flex-direction:column;}
