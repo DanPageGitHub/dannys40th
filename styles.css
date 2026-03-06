@@ -8,7 +8,7 @@
   --gold:#c8a96e; --gold-l:#e3c98a;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html{}
 body{font-family:'Libre Baskerville',Georgia,serif;background:var(--ink);color:var(--parchment);overflow-x:hidden;}
 body::before{
   content:'';position:fixed;inset:0;z-index:500;pointer-events:none;
