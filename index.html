@@ -10,7 +10,6 @@
 <canvas id="bgCanvas"></canvas>
 <div class="vignette"></div>
 <nav>
-<a href="#backstory">Backstory</a>
 <a href="#lineup">Lineup</a>
 <a href="#involve">Get Involved</a>
 <a href="#schedule">Schedule</a>
@@ -20,7 +19,11 @@
 </nav>
 <!-- HERO -->
 <section id="hero">
-<div class="hero-photo" id="heroBg"></div>
+<div class="hero-photo" id="heroBg">
+<video autoplay muted loop playsinline style="position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);pointer-events:none;">
+<source src="Video/hero.mp4" type="video/mp4">
+</video>
+</div>
 <div class="hero-fog"></div>
 <svg class="hero-sun" fill="none" viewbox="0 0 200 200">
 <circle cx="100" cy="100" r="90" stroke="#b87333" stroke-width="1.5"></circle>
@@ -43,21 +46,30 @@
 <line stroke="#b87333" stroke-width="2" x1="180" x2="172" y1="20" y2="28"></line>
 <line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="180" y2="172"></line>
 </svg>
-<div class="badge">☽   Fri 25 &amp; Sat 26 July 2026   ☀</div>
+<div class="badge">☀   Fri 24th to Mon 27th July 2026   ☽</div>
 <h1>
 <span class="title-main">Danny's 40th</span>
-<span class="title-hand">A weird weekend in the Vale</span>
+<span class="title-hand" style="margin-top:12px;">A weird weekend in the Vale</span>
 </h1>
-<p class="hero-sub">In the actual sunshine.</p>
-<div class="hero-venue">The Barge Inn · Honey Street · Pewsey · SN9 5PS</div>
-<a class="hero-cta" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">Tell me you're coming</a>
+<div class="hero-venue">The Barge Inn, Honey Street, Pewsey, Wiltshire</div>
+<a class="hero-cta" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">Count me in</a>
 <div class="scroll-hint"><span>Descend</span><div class="scroll-line"></div></div>
 </section>
-<!-- RUNE BAND -->
-<div class="rune-band">
-<div class="rune-track">
-<div class="rune-scroll" id="runeScroll"></div>
+<!-- BACKSTORY -->
+<div class="sw">
+<section class="sec" id="backstory">
+<div class="sec-aura sec-aura--backstory"></div>
+<h2>Yes, I know. I already had a 40th.</h2>
+<div class="manuscript reveal">
+<p class="drop-cap">That one was a <span class="hl">lovely surprise</span> — genuinely, not a word of complaint. But I've been insisting for years that I want a birthday party where it isn't absolutely hammering it down or bloody freezing.</p>
+<p>If you've got a deep winter birthday, you know exactly what I mean. Summer birthday lot — you don't know when you were born.</p>
+<p>So here we are. A weekend at The Barge Inn on the Kennet &amp; Avon canal, in the height of summer. The plan is deliberately loose in places, but the spirit is firmly: something a bit magical. Something that'll feel worth the wait.</p>
+<p>I'd love to see as many of you there as possible. <a class="inline" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">Fill in the form</a> to let me know you're coming.</p>
 </div>
+</section>
+</div>
+<div class="sun-div">
+<svg fill="none" height="22" viewbox="0 0 22 22" width="22"><path d="M11 2 L12.2 8.5 L18 5.5 L13.5 10.5 L19 14 L12.5 12.8 L11 19 L9.5 12.8 L3 14 L8.5 10.5 L4 5.5 L9.8 8.5 Z" fill="none" opacity="0.7" stroke="#b87333" stroke-width="0.8"></path></svg>
 </div>
 <!-- QUICK ACTIONS -->
 <div class="quick-actions" style="padding-top:52px;padding-bottom:44px;">
@@ -77,49 +89,29 @@
 <div class="qa-desc">Fill in the form — takes two minutes</div>
 </a>
 </div>
+<!-- RUNE BAND -->
+<div class="rune-band">
+<div class="rune-track">
+<div class="rune-scroll" id="runeScroll"></div>
+</div>
+</div>
 <div class="sun-div" style="padding-top:30px;">
 <svg fill="none" height="28" viewbox="0 0 28 28" width="28"><circle cx="14" cy="14" r="6" stroke="#b87333" stroke-width="1.2"></circle><circle cx="14" cy="14" r="11" stroke="#b87333" stroke-width="0.7"></circle><line stroke="#b87333" stroke-width="1.2" x1="14" x2="14" y1="1" y2="5"></line><line stroke="#b87333" stroke-width="1.2" x1="14" x2="14" y1="23" y2="27"></line><line stroke="#b87333" stroke-width="1.2" x1="1" x2="5" y1="14" y2="14"></line><line stroke="#b87333" stroke-width="1.2" x1="23" x2="27" y1="14" y2="14"></line><line stroke="#b87333" stroke-width="1" x1="4.5" x2="7.3" y1="4.5" y2="7.3"></line><line stroke="#b87333" stroke-width="1" x1="20.7" x2="23.5" y1="20.7" y2="23.5"></line><line stroke="#b87333" stroke-width="1" x1="23.5" x2="20.7" y1="4.5" y2="7.3"></line><line stroke="#b87333" stroke-width="1" x1="4.5" x2="7.3" y1="23.5" y2="20.7"></line></svg>
-</div>
-<!-- BACKSTORY -->
-<div class="sw">
-<section class="sec" id="backstory">
-<div class="sec-label">How we got here</div>
-<h2>Yes, I know. I already had a 40th.</h2>
-<div class="manuscript reveal">
-<p class="drop-cap">That one was a <span class="hl">lovely surprise</span> — genuinely, not a word of complaint. But I've been insisting for years that I want a birthday party where it isn't absolutely hammering it down or bloody freezing.</p>
-<p>If you've got a December birthday, you know exactly what I mean. Summer birthday lot — you don't know when you were born.</p>
-<p>So here we are. A weekend at The Barge Inn on the Kennet &amp; Avon canal, in the height of summer, with good people and no excuses. The plan is deliberately loose in places, but the spirit is firmly: something a bit magical. Something that'll feel worth the wait.</p>
-<p>I'd love to see as many of you there as possible. Please fill in the form so I can get the date locked in.</p>
-</div>
-</section>
-</div>
-<div class="sun-div">
-<svg fill="none" height="22" viewbox="0 0 22 22" width="22"><path d="M11 2 L12.2 8.5 L18 5.5 L13.5 10.5 L19 14 L12.5 12.8 L11 19 L9.5 12.8 L3 14 L8.5 10.5 L4 5.5 L9.8 8.5 Z" fill="none" opacity="0.7" stroke="#b87333" stroke-width="0.8"></path></svg>
 </div>
 <!-- VENUE -->
 <div class="sw">
 <section class="sec" id="lineup">
-<div class="sec-label">Who's Playing</div>
+<div class="sec-aura sec-aura--lineup"></div>
 <h2>Lineup</h2>
-<p>This is forming. If you want to play, DJ, or do something unexpected on a stage, flag it in the form or get in touch directly.</p>
-<div class="lineup-hero grain-overlay reveal" id="pDJ"></div>
+<p>This is forming. If you want to play, DJ, or do something unexpected on a stage, <a class="inline" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">get in touch via the form</a> or reach out directly.</p>
+<div class="lineup-hero grain-overlay reveal photo-dj" id="pDJ"></div>
 <div class="tbc-band reveal">
-<p>DJs: <span>Breakwhore &amp; Gizmode confirmed.</span>  ·  Bands: <span>TBC — talk to me.</span>  ·  Everything else: <span>wide open.</span></p>
+<p>DJs: <span>Breakwhore &amp; Gizmode confirmed.</span> Bands: <span>TBC, talk to me.</span> Everything else: <span>wide open.</span></p>
+<p style="margin-top:14px;">Expect live music, heavy DJ sets, danceable bangers — and probably some things we haven't thought of yet.</p>
 </div>
 <div class="milestone-box reveal">
 <h3>Also celebrating something?</h3>
 <p>If you've got a milestone coming up — especially another 40th — give me a shout. This doesn't have to be entirely about me, and if there's enough crossover in your crew a link-up could absolutely work.</p>
-</div>
-<h3 style="margin-top:52px;margin-bottom:14px;">Nearby, while you're at it</h3>
-<p>The Vale of Pewsey is absurdly stacked. Come a day early or stay on and make a proper trip of it.</p>
-<div class="attract-row">
-<div class="aitem reveal"><span class="aitem-icon">◎</span><p>Avebury Stone Circle</p></div>
-<div class="aitem reveal"><span class="aitem-icon">◎</span><p>Stonehenge</p></div>
-<div class="aitem reveal"><span class="aitem-icon">✾</span><p>Crop Circle Centre</p></div>
-<div class="aitem reveal"><span class="aitem-icon" id="aHorseIcon"></span><p>Alton Barnes White Horse</p></div>
-<div class="aitem reveal"><span class="aitem-icon">〰</span><p>Canal walks</p></div>
-<div class="aitem reveal"><span class="aitem-icon">⌂</span><p>Devizes &amp; Pewsey</p></div>
-<div class="aitem reveal"><span class="aitem-icon">△</span><p>Marlborough Downs</p></div>
 </div>
 </section>
 </div>
@@ -129,9 +121,9 @@
 <!-- GET INVOLVED -->
 <div class="sw">
 <section class="sec" id="involve">
-<div class="sec-label">Make it happen</div>
+<div class="sec-aura sec-aura--involve"></div>
 <h2>Want to get involved?</h2>
-<p>The form covers all of this too, but if any of the following applies to you I'd love to hear from you sooner rather than later. The more people who put something in, the better this gets.</p>
+<p>If any of the following applies to you, I'd love to hear from you sooner rather than later — <a class="inline" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">fill in the form</a> or get in touch directly. The more people who put something in, the better this gets.</p>
 <div class="involve-grid">
 <div class="inv-item reveal"><div class="inv-mark">✦</div><div class="inv-text">Event planning</div></div>
 <div class="inv-item reveal"><div class="inv-mark">✦</div><div class="inv-text">DJing / live sets</div></div>
@@ -149,12 +141,7 @@
 <!-- PARALLAX: WHITE HORSE -->
 <div class="parallax-strip" id="pxStrip2">
 <div class="p-img" id="pxImg2"></div>
-<div class="p-overlay">
-<div class="p-text">
-<h3>Alton Barnes White Horse</h3>
-<p>Carved 1812 · Visible from the campsite</p>
-</div>
-</div>
+<div class="p-overlay"></div>
 </div>
 <div class="sun-div">
 <svg fill="none" height="22" viewbox="0 0 22 22" width="22"><path d="M11 2 L12.2 8.5 L18 5.5 L13.5 10.5 L19 14 L12.5 12.8 L11 19 L9.5 12.8 L3 14 L8.5 10.5 L4 5.5 L9.8 8.5 Z" fill="none" opacity="0.7" stroke="#b87333" stroke-width="0.8"></path></svg>
@@ -162,14 +149,13 @@
 <!-- SCHEDULE -->
 <div class="sw">
 <section class="sec" id="schedule">
-<div class="sec-label">The Shape of the Weekend</div>
+<div class="sec-aura sec-aura--schedule"></div>
 <h2>What's happening when</h2>
 <p>Two big nights, a proper day in between. Saturday is the bigger party — Friday kicks it all off. Both nights will go late.</p>
 <div class="schedule-dates">
 <div class="sdate fri reveal">
 <div class="sdate-header">
-<div class="sdate-day">Friday 25 July</div>
-<div class="sdate-name">Night One</div>
+<div class="sdate-day">Friday 24 July</div>
 </div>
 <div class="sdate-slots">
 <div class="slot">
@@ -185,8 +171,7 @@
 </div>
 <div class="sdate sat reveal">
 <div class="sdate-header">
-<div class="sdate-day">Saturday 26 July</div>
-<div class="sdate-name">The Main Event</div>
+<div class="sdate-day">Saturday 25 July</div>
 </div>
 <div class="sdate-slots">
 <div class="slot">
@@ -212,13 +197,13 @@
 <div class="bookends reveal">
 <div class="bookend">
 <div class="bookend-lbl">Optional</div>
-<div class="bookend-day">Thursday 24 July</div>
+<div class="bookend-day">Thursday 23 July</div>
 <p>Come a night early if you want to settle in quietly before things kick off. Camping available.</p>
 </div>
 <div class="bookend">
 <div class="bookend-lbl">Optional</div>
-<div class="bookend-day">Sunday 27 July</div>
-<p>Stay on, decompress, canal walk, pub lunch. Outdoor cinema in the evening. Camping available Sunday night too.</p>
+<div class="bookend-day">Sunday 26 July</div>
+<p>Totally fine to head home Sunday — but if you can swing a Monday off, stay. Canal walk, pub lunch, and in the evening: classic stupid movies, good company, no rush. Camping available Sunday night and you can slope off Monday at your own pace.</p>
 </div>
 </div>
 </section>
@@ -228,31 +213,25 @@
 </div>
 <!-- COSTS -->
 <div class="sw">
-<section class="sec sec-mini-rsvp">
-<div class="mini-rsvp-inner">
-<p>Know you're coming?</p>
-<a class="btn-rsvp-mini" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">RSVP now</a>
-</div>
-</section>
 <section class="sec" id="costs">
-<div class="sec-label">The Practical Bit</div>
+<div class="sec-aura sec-aura--costs"></div>
 <h2>What it'll cost you</h2>
 <div class="payment-note reveal">
 <h3>Donations to Danny · Accommodation to The Barge Inn</h3>
 <p><strong class="pale">Accommodation</strong> — camping tickets, glamping and B&amp;B are all booked and paid directly to The Barge Inn. Nothing goes through me.</p>
 <p><strong class="pale">Party contribution</strong> — a suggested £20 towards shared costs like decor and equipment, paid separately to me. Details on how to send this to follow. I don't want this to stop anyone coming, so please just speak to me if it's a problem.</p>
 </div>
-<h3 style="margin-bottom:18px;">Camping</h3>
+<h3 style="margin-bottom:18px;">Camp or van stay</h3>
 <div class="costs-grid" style="margin-bottom:36px;">
 <div class="ctier tent reveal">
-<span class="ctier-icon">⛺</span>
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:10px;opacity:0.85"><line x1="2" y1="30" x2="34" y2="30" stroke="#b87333" stroke-width="1.3"/><polyline points="18,4 2,30 34,30" stroke="#b87333" stroke-width="1.3" fill="none"/><line x1="18" y1="4" x2="18" y2="16" stroke="#b87333" stroke-width="0.9"/><rect x="14.5" y="21" width="7" height="9" stroke="#b87333" stroke-width="1" fill="none"/></svg>
 <div class="ctier-badge">Main option — book direct with the venue</div>
-<div class="ctier-lbl">Standard Camping</div>
-<div class="ctier-price">£12.50<span style="font-size:0.95rem;font-weight:400;font-family:'Libre Baskerville',serif">/night</span></div>
-<div class="ctier-detail">Per adult, paid to the venue.<br/>£5 for under-16s · Free for under-5s.<br/>Tents, caravans and motorhomes welcome.<br/><br/><strong style="color:var(--parchment);">Hardstanding pitch</strong> (caravan, motorhome or campervan) — £15/night. Electric hookup available for an extra £6/night.</div>
+<div class="ctier-lbl">Camp or van stay</div>
+<div class="ctier-price">£15<span style="font-size:0.95rem;font-weight:400;font-family:'Libre Baskerville',serif">/night</span></div>
+<div class="ctier-detail">Per adult, paid to the venue.<br/>£5 for under-16s · Free for under-5s.<br/>Tents welcome, or bring your van.<br/>£5 for under-16s · Free for under-5s.<br/><br/><strong style="color:var(--parchment);">Hardstanding pitch</strong> (caravan or motorhome) — £20/night. Electric hookup available for an extra £6/night.</div>
 </div>
 <div class="ctier glamp reveal">
-<span class="ctier-icon">🌿</span>
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:10px;opacity:0.85"><line x1="2" y1="30" x2="34" y2="30" stroke="#b87333" stroke-width="1.3"/><path d="M18 4 Q7 20 6 30 Q18 25 30 30 Q29 20 18 4Z" stroke="#b87333" stroke-width="1.3" fill="none"/><line x1="18" y1="4" x2="18" y2="8" stroke="#b87333" stroke-width="2"/></svg>
 <div class="ctier-lbl">Glamping Bell Tents</div>
 <div class="ctier-price">£90<span style="font-size:0.95rem;font-weight:400;font-family:'Libre Baskerville',serif">/night</span></div>
 <div class="ctier-detail">Or £160 for the full weekend.<br/>Set in the Willow World area.<br/>Double bed, duvet, fairy lights.<br/>Contact the venue directly to book.</div>
@@ -265,19 +244,14 @@
 <div class="photo-sm h260 grain-overlay reveal" id="pBnbBath"></div>
 </div>
 <div class="ctier bnb reveal">
-<span class="ctier-icon">🛏️</span>
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:10px;opacity:0.85"><rect x="3" y="18" width="30" height="12" rx="1" stroke="#b87333" stroke-width="1.3"/><rect x="4" y="14" width="11" height="5" rx="1" stroke="#b87333" stroke-width="1"/><rect x="21" y="14" width="11" height="5" rx="1" stroke="#b87333" stroke-width="1"/><line x1="3" y1="18" x2="3" y2="30" stroke="#b87333" stroke-width="1.8"/><line x1="33" y1="18" x2="33" y2="30" stroke="#b87333" stroke-width="1.8"/><line x1="3" y1="30" x2="3" y2="33" stroke="#b87333" stroke-width="1.3"/><line x1="33" y1="30" x2="33" y2="33" stroke="#b87333" stroke-width="1.3"/></svg>
 <div class="ctier-urgent">Only 3 rooms — book early</div>
 <div class="ctier-lbl">Bed &amp; Breakfast</div>
-<div class="ctier-detail">Each room has an en-suite bathroom, TV, free WiFi, central heating, fresh bathrobes and tea and coffee. There's a communal lounge too. Dogs welcome. Check-in from 1pm, check-out by 11am. Breakfast served 9 to 10am.</div>
-<div class="room-list">
-<div class="room-item"><div class="room-name">Master Double</div><div class="room-price">£130/night including breakfast</div></div>
-<div class="room-item"><div class="room-name">Orange Double</div><div class="room-price">£110/night including breakfast</div></div>
-<div class="room-item"><div class="room-name">Green Double</div><div class="room-price">£90/night including breakfast</div></div>
-</div>
-<p style="margin-top:16px;font-size:0.9rem;">Book via <a class="inline" href="https://www.booking.com" target="_blank">Booking.com</a>. Please don't phone or email the venue to book.</p>
+<div class="ctier-detail">Three en-suite doubles in the pub itself. From £90/night including breakfast. Book directly via Booking.com — don't phone or email the venue.</div>
+<a class="map-btn" href="https://www.booking.com/searchresults.html?ss=The+Barge+Inn+Honey+Street+Pewsey&checkin=2026-07-24&checkout=2026-07-27" target="_blank" style="margin-top:18px;display:inline-flex;">Find out more ↗</a>
 </div>
 <div class="note-box reveal">
-<p><strong>Don't write yourself off on cost.</strong> Drop me a message before you decide you can't make it. We'll figure something out.</p>
+<p style="font-family:'Caveat',cursive;font-size:1.35rem;letter-spacing:0.03em;line-height:1.6;"><strong style="font-family:'Caveat',cursive;">Don't write yourself off on cost.</strong> Drop me a message before you decide you can't make it. We'll figure something out.</p>
 </div>
 </section>
 </div>
@@ -287,6 +261,7 @@
 <!-- RSVP -->
 <div class="sw">
 <section class="sec sec-wide" id="venue">
+<div class="sec-aura sec-aura--venue"></div>
 <div class="sec-label">Where We're Going</div>
 <h2>The Barge Inn, Honey Street</h2>
 <p>A canal-side pub built in 1810, deep in the Vale of Pewsey. It sits on the Duke's Ley Line running between Avebury and Stonehenge, with the Alton Barnes White Horse cut into the hill directly opposite and Adam's Grave long barrow on the ridge above. The crop circle room inside has a painted ceiling described as the Sistine Chapel of Wiltshire. There is nowhere quite like it.</p>
@@ -296,13 +271,13 @@
 <div class="photo-sm h220 grain-overlay reveal" id="pTents"></div>
 </div>
 <div class="photo-grid-2">
-<div class="photo-sm h200 grain-overlay reveal" id="pSign"></div>
-<div class="photo-sm h200 grain-overlay reveal" id="pHorse"></div>
+<div class="photo-sm h260 grain-overlay reveal" id="pSign"></div>
+<div class="photo-sm h260 grain-overlay reveal" id="pHorse"></div>
 </div>
 <div class="facts">
-<div class="fact reveal"><div class="fact-icon">⛺</div><div class="fact-lbl">Camping</div><div class="fact-val">Tents, caravans and motorhomes all welcome on site</div></div>
-<div class="fact reveal"><div class="fact-icon">🌿</div><div class="fact-lbl">Glamping</div><div class="fact-val">Bell tents in the Willow World area</div></div>
-<div class="fact reveal"><div class="fact-icon">🛏️</div><div class="fact-lbl">B&amp;B</div><div class="fact-val">3 en-suite doubles in the pub — book fast</div></div>
+<div class="fact reveal"><div class="fact-icon"><svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="30" x2="34" y2="30" stroke="#b87333" stroke-width="1.3"/><polyline points="18,4 2,30 34,30" stroke="#b87333" stroke-width="1.3" fill="none"/><rect x="14.5" y="21" width="7" height="9" stroke="#b87333" stroke-width="1" fill="none"/></svg></div><div class="fact-lbl">Camp or van stay</div><div class="fact-val">Tents, caravans and motorhomes all welcome on site</div></div>
+<div class="fact reveal"><div class="fact-icon"><svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="30" x2="34" y2="30" stroke="#b87333" stroke-width="1.3"/><path d="M18 4 Q7 20 6 30 Q18 25 30 30 Q29 20 18 4Z" stroke="#b87333" stroke-width="1.3" fill="none"/></svg></div><div class="fact-lbl">Glamping</div><div class="fact-val">Bell tents in the Willow World area</div></div>
+<div class="fact reveal"><div class="fact-icon"><svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="18" width="30" height="12" rx="1" stroke="#b87333" stroke-width="1.3"/><rect x="4" y="14" width="11" height="5" rx="1" stroke="#b87333" stroke-width="1"/><rect x="21" y="14" width="11" height="5" rx="1" stroke="#b87333" stroke-width="1"/><line x1="3" y1="18" x2="3" y2="30" stroke="#b87333" stroke-width="1.8"/><line x1="33" y1="18" x2="33" y2="30" stroke="#b87333" stroke-width="1.8"/></svg></div><div class="fact-lbl">B&amp;B</div><div class="fact-val">3 en-suite doubles in the pub — book fast</div></div>
 <div class="fact reveal"><div class="fact-lbl" style="font-size:1.2rem;margin-bottom:4px;">♪</div><div class="fact-lbl">Live Music</div><div class="fact-val">Proper gig room on site, bands most Saturdays</div></div>
 <div class="fact reveal"><div class="fact-lbl" style="font-size:1.2rem;margin-bottom:4px;">⚓</div><div class="fact-lbl">Canalside</div><div class="fact-val">Right on the Kennet &amp; Avon — walks, boats, herons</div></div>
 <div class="fact reveal"><div class="fact-lbl" style="font-size:1.2rem;margin-bottom:4px;">☽</div><div class="fact-lbl">Crop Circle Central</div><div class="fact-val">The Visitor Centre is a short walk away</div></div>
@@ -369,9 +344,28 @@
 <div class="rsvp-rule"><span>✦</span></div>
 <a class="rsvp-btn" href="https://forms.gle/CCXiDtko7XwrjEmz7" target="_blank">Fill in the form</a>
 </section>
+</div></div>
+<div class="sun-div">
+<svg fill="none" height="22" viewbox="0 0 22 22" width="22"><path d="M11 2 L12.2 8.5 L18 5.5 L13.5 10.5 L19 14 L12.5 12.8 L11 19 L9.5 12.8 L3 14 L8.5 10.5 L4 5.5 L9.8 8.5 Z" fill="none" opacity="0.7" stroke="#b87333" stroke-width="0.8"></path></svg>
+</div>
+<!-- NEARBY -->
+<div class="sw">
+<section class="sec">
+<h2>Nearby, while you're at it</h2>
+<p>Come a day early or stay on Monday and make a proper trip of it. The Vale of Pewsey has more ancient strangeness per square mile than almost anywhere in England.</p>
+<div class="attract-row">
+<div class="aitem reveal"><span class="aitem-icon">◎</span><p>Avebury Stone Circle</p></div>
+<div class="aitem reveal"><span class="aitem-icon">◎</span><p>Stonehenge</p></div>
+<div class="aitem reveal"><span class="aitem-icon">✾</span><p>Crop Circle Centre</p></div>
+<div class="aitem reveal"><span class="aitem-icon" id="aHorseIcon"></span><p>Alton Barnes White Horse</p></div>
+<div class="aitem reveal"><span class="aitem-icon">〰</span><p>Canal walks</p></div>
+<div class="aitem reveal"><span class="aitem-icon">⌂</span><p>Devizes &amp; Pewsey</p></div>
+<div class="aitem reveal"><span class="aitem-icon">△</span><p>Marlborough Downs</p></div>
+</div>
+</section>
 </div>
 <footer>
-<span class="orn">☽</span>Danny's 40th · The Barge Inn, Honey Street, Pewsey SN9 5PS · 25–26 July 2026<span class="orn">☀</span>
+<span class="orn">☀</span>Danny's 40th · The Barge Inn, Honey Street, Pewsey SN9 5PS · 24–27 July 2026<span class="orn">☽</span>
 <br/><br/><a href="https://thebargeinnhoneystreet.uk" target="_blank">thebargeinnhoneystreet.uk</a>
 </footer>
 </body>
