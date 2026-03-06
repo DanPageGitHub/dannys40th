@@ -21,7 +21,7 @@ body::before{
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;justify-content:center;flex-wrap:wrap;background:rgba(10,9,7,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(184,115,51,0.2);}
 nav::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--teal),var(--copper),transparent);opacity:0.4;}
-nav a{font-family:'Caveat',cursive;font-size:1.2rem;letter-spacing:0.06em;color:var(--parch-dim);text-decoration:none;padding:14px 20px;transition:color 0.25s;position:relative;}
+nav a{font-family:'Libre Baskerville',Georgia,serif;font-size:0.85rem;letter-spacing:0.08em;color:var(--parch-dim);text-decoration:none;padding:16px 22px;transition:color 0.25s;position:relative;}
 nav a::after{content:'';position:absolute;bottom:8px;left:50%;right:50%;height:1px;background:var(--teal-l);transition:left 0.25s,right 0.25s;}
 nav a:hover{color:var(--gold-l);}
 nav a:hover::after{left:15px;right:15px;}
