@@ -11,6 +11,7 @@ let geoOn        = true;
 // Visualiser parameters — line thickness and opacity always full
 let lineDensity  = 12;     // overridden per mode on switch
 let geoSpeed     = 0.55;
+let geoScale     = 1.0;    // global size multiplier; vertical swipe (0.3–2.5)
 const geoOpacity = 1.0;    // fixed: always full
 const geoLineWidth = 2.5;  // fixed: always full
 let lateralAmp   = 0.008;
@@ -65,6 +66,134 @@ const RUST   = [160, 70, 42];
 const GOLD   = [200, 169, 110];
 function rgb(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
 
+// ── PALETTE SYSTEM ────────────────────────────────────────────────────────────
+// Each palette has 4 analogous colours: a=primary, b=cool, c=highlight, d=deep
+const PALETTES = [
+  { name: 'Earthen',  a: [184,115, 51], b: [ 46,123,122], c: [200,169,110], d: [160, 70, 42] },
+  { name: 'Amethyst', a: [130, 58,200], b: [ 78, 36,158], c: [172, 98,222], d: [100, 48,168] },
+  { name: 'Ocean',    a: [ 28,108,178], b: [ 18,152,158], c: [ 52,138,208], d: [ 14, 78,138] },
+  { name: 'Verdant',  a: [ 38,142, 78], b: [ 72,158, 52], c: [ 98,172, 98], d: [ 28,112, 68] },
+  { name: 'Ember',    a: [202, 82, 28], b: [168, 38, 38], c: [228,142, 32], d: [188, 52, 48] },
+  { name: 'Dusk',     a: [182, 58,142], b: [138, 38,118], c: [208, 98,162], d: [158, 48,128] },
+];
+// Which palette slot each geomDef uses (matches original COPPER/TEAL/GOLD/RUST/GOLD order)
+const GEO_SLOTS = ['a', 'b', 'c', 'd', 'c'];
+
+let paletteIdx      = 0;
+let paletteProgress = 1.0; // 0→1 during cross-fade, 1 = fully at target
+let paletteFrom     = null; // colour snapshot at transition start
+let paletteTo       = PALETTES[0];
+
+function cyclePalette() {
+  // Snapshot current geomDef colours as the "from" state
+  paletteFrom = {
+    a: [...geomDefs[0].col],
+    b: [...geomDefs[1].col],
+    c: [...geomDefs[2].col],
+    d: [...geomDefs[3].col],
+  };
+  paletteIdx  = (paletteIdx + 1) % PALETTES.length;
+  paletteTo   = PALETTES[paletteIdx];
+  paletteProgress = 0.0;
+  const btn = document.getElementById('btnPalette');
+  if (btn) btn.textContent = paletteTo.name;
+  debouncedSave();
+}
+
+// ── STATE PERSISTENCE ─────────────────────────────────────────────────────────
+let saveTimer = null;
+function debouncedSave() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem('vis_auto', JSON.stringify({ paletteIdx, lineDensity, geoSpeed, geoScale }));
+    } catch(e) {}
+  }, 800);
+}
+
+function applyState(s, animate) {
+  if (!s) return;
+  if (s.paletteIdx != null && s.paletteIdx !== paletteIdx) {
+    if (animate) {
+      paletteFrom = { a:[...geomDefs[0].col], b:[...geomDefs[1].col], c:[...geomDefs[2].col], d:[...geomDefs[3].col] };
+      paletteProgress = 0.0;
+    } else {
+      paletteProgress = 1.0;
+    }
+    paletteIdx = s.paletteIdx;
+    paletteTo  = PALETTES[paletteIdx] || PALETTES[0];
+    if (!animate) geomDefs.forEach((g, i) => { g.col = [...paletteTo[GEO_SLOTS[i]]]; });
+    const btn = document.getElementById('btnPalette');
+    if (btn) btn.textContent = paletteTo.name;
+  }
+  if (s.lineDensity != null) lineDensity = Math.max(1,  Math.min(36,  s.lineDensity));
+  if (s.geoSpeed    != null) geoSpeed    = Math.max(0.1, Math.min(4.0, s.geoSpeed));
+  if (s.geoScale    != null) geoScale    = Math.max(0.3, Math.min(2.5, s.geoScale));
+}
+
+function loadAutoState() {
+  try {
+    const raw = localStorage.getItem('vis_auto');
+    if (raw) applyState(JSON.parse(raw), false);
+  } catch(e) {}
+}
+
+// Preset slots ─ tap to load, hold 500ms to save
+function savePreset(slot) {
+  try {
+    localStorage.setItem(`vis_preset_${slot}`, JSON.stringify({
+      paletteIdx, lineDensity, geoSpeed, geoScale, paletteName: paletteTo.name,
+    }));
+    updatePresetButtons();
+  } catch(e) {}
+}
+
+function loadPreset(slot) {
+  try {
+    const raw = localStorage.getItem(`vis_preset_${slot}`);
+    if (!raw) return false;
+    applyState(JSON.parse(raw), true);
+    debouncedSave();
+    return true;
+  } catch(e) { return false; }
+}
+
+function updatePresetButtons() {
+  document.querySelectorAll('.btnSlot').forEach((btn, i) => {
+    try {
+      const raw = localStorage.getItem(`vis_preset_${i}`);
+      if (raw) {
+        const s = JSON.parse(raw);
+        btn.textContent = s.paletteName || `Slot ${i + 1}`;
+        btn.classList.add('filled');
+      } else {
+        btn.textContent = `Slot ${i + 1}`;
+        btn.classList.remove('filled');
+      }
+    } catch(e) {}
+  });
+}
+
+function updatePaletteTransition(dt) {
+  if (paletteProgress >= 1.0 || !paletteFrom) return;
+  paletteProgress = Math.min(1.0, paletteProgress + dt / 1500); // 1.5 s cross-fade
+  const t = paletteProgress;
+  const ease = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; // smooth ease-in-out
+  geomDefs.forEach((g, i) => {
+    const slot = GEO_SLOTS[i];
+    const fr   = paletteFrom[slot];
+    const to   = paletteTo[slot];
+    g.col = [
+      Math.round(fr[0] + (to[0] - fr[0]) * ease),
+      Math.round(fr[1] + (to[1] - fr[1]) * ease),
+      Math.round(fr[2] + (to[2] - fr[2]) * ease),
+    ];
+  });
+  if (paletteProgress >= 1.0) {
+    geomDefs.forEach((g, i) => { g.col = [...paletteTo[GEO_SLOTS[i]]]; });
+  }
+}
+
 // ── GEOMETRY DEFINITIONS ──────────────────────────────────────────────────────
 const geomDefs = [
   { sym:6,  phase:0,   speed:0.000065, phase2:0,   speed2:-0.000042, maxAlpha:0.85, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000 },
@@ -95,7 +224,7 @@ function drawGeom(g, now) {
   const lateralSway = Math.sin(now * 0.00008 + g.phase * 1.7) * (lateralAmp + beatSwayAdd) * W;
   const cx = W * 0.5 + (g.x - 0.5) * W + lateralSway;
   const cy = H * 0.5 + (g.y - 0.5) * H;
-  const R  = Math.min(W, H) * g.size;
+  const R  = Math.min(W, H) * g.size * geoScale;
   const rot1 = g.phase  + now * g.speed  * geoSpeed * beatSpeedScroll;
   const rot2 = g.phase2 + now * g.speed2 * geoSpeed * beatSpeedScroll;
   const sym  = g.sym;
@@ -246,10 +375,14 @@ function disableMic() {
 
 // ── ANIMATION LOOP ────────────────────────────────────────────────────────────
 let t = 0;
+let lastFrameTime = performance.now();
 function draw() {
   ctx.clearRect(0, 0, W, H);
   const now = performance.now();
+  const dt  = Math.min(now - lastFrameTime, 100); // cap at 100ms to avoid jumps on tab resume
+  lastFrameTime = now;
   updateBeat(now);
+  updatePaletteTransition(dt);
   if (geoOn) geomDefs.forEach(g => drawGeom(g, now));
   t += 0.016;
   requestAnimationFrame(draw);
@@ -302,8 +435,10 @@ function resetDefaults() {
   const d = soundMode ? SOUND_DEFAULTS : AMBIENT_DEFAULTS;
   geoSpeed    = d.geoSpeed;
   lineDensity = d.lineDensity;
+  geoScale    = 1.0;
   geoOn       = true;
   updateHUDState();
+  debouncedSave();
 }
 
 function updateHUDState() {
@@ -358,6 +493,49 @@ document.getElementById('btnReset')?.addEventListener('click', () => {
   resetDefaults();
   resetHUDTimer();
 });
+document.getElementById('btnPalette')?.addEventListener('click', () => {
+  cyclePalette();
+  resetHUDTimer();
+});
+
+// Preset slots — tap to load, hold 500ms to save
+document.querySelectorAll('.btnSlot').forEach((btn) => {
+  const slot = parseInt(btn.dataset.slot, 10);
+  let holdTimer = null;
+  let didHold   = false;
+
+  btn.addEventListener('pointerdown', () => {
+    didHold   = false;
+    holdTimer = setTimeout(() => {
+      didHold = true;
+      savePreset(slot);
+      btn.textContent = 'Saved!';
+      setTimeout(() => updatePresetButtons(), 700);
+      resetHUDTimer();
+    }, 500);
+  });
+
+  btn.addEventListener('pointerup', () => {
+    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+    if (!didHold) {
+      const loaded = loadPreset(slot);
+      if (!loaded) {
+        const prev = btn.textContent;
+        btn.textContent = '(empty)';
+        setTimeout(() => { btn.textContent = prev; }, 700);
+      }
+      resetHUDTimer();
+    }
+  });
+
+  btn.addEventListener('pointercancel', () => {
+    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  });
+});
+
+// Restore last session state and initialise preset button labels
+loadAutoState();
+updatePresetButtons();
 document.getElementById('btnFullscreen')?.addEventListener('click', () => {
   toggleFullscreen();
   resetHUDTimer();
@@ -381,6 +559,7 @@ document.addEventListener('fullscreenchange', () => {
 
 // ── TOUCH GESTURES ────────────────────────────────────────────────────────────
 // Single-finger swipe L/R → lineDensity (1–36)
+// Single-finger swipe U/D → geoScale (0.3–2.5)   [axis-locked per gesture]
 // Pinch in/out → geoSpeed (0.1–4.0)
 // Double-tap → toggle HUD
 // Long-press (500ms) → fullscreen
@@ -391,7 +570,10 @@ let longPressTimer = null;
 let gestureStartDist = null;
 let gestureStartSpeed = null;
 let swipeStartX = null;
+let swipeStartY = null;
 let swipeStartDensity = null;
+let swipeStartScale = null;
+let swipeAxis = null;    // null | 'h' | 'v' — locked once first move detected
 let gestureConsumed = false;
 
 canvas.addEventListener('touchstart', onTouchStart, { passive: false });
@@ -409,7 +591,10 @@ function onTouchStart(e) {
   if (count === 1) {
     const touch = e.changedTouches[0];
     swipeStartX       = touch.clientX;
+    swipeStartY       = touch.clientY;
     swipeStartDensity = lineDensity;
+    swipeStartScale   = geoScale;
+    swipeAxis         = null;
 
     // Double-tap detection
     const now = Date.now();
@@ -434,6 +619,7 @@ function onTouchStart(e) {
     gestureStartDist  = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
     gestureStartSpeed = geoSpeed;
     swipeStartX = null; // disable swipe while pinching
+    swipeAxis   = null;
   }
 }
 
@@ -450,15 +636,29 @@ function onTouchMove(e) {
     if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
 
     const dx = e.changedTouches[0].clientX - swipeStartX;
-    // ~300px swipe = full density range (1 to 36)
-    const delta = (dx / 300) * 35;
-    lineDensity = Math.max(1, Math.min(36, Math.round(swipeStartDensity + delta)));
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+
+    // Lock to one axis on first significant movement
+    if (!swipeAxis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+      swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+    }
+
+    if (swipeAxis === 'h') {
+      // Horizontal → line density (1–36); ~300px = full range
+      lineDensity = Math.max(1, Math.min(36, Math.round(swipeStartDensity + (dx / 300) * 35)));
+      debouncedSave();
+    } else if (swipeAxis === 'v') {
+      // Vertical → geo scale (0.3–2.5); swipe up = grow; full screen height ≈ 2× change
+      geoScale = Math.max(0.3, Math.min(2.5, swipeStartScale + (-dy / H) * 1.8));
+      debouncedSave();
+    }
 
   } else if (count === 2 && gestureStartDist !== null) {
     const pts = Object.values(touches);
     const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
     const ratio = dist / gestureStartDist;
     geoSpeed = Math.max(0.1, Math.min(4.0, gestureStartSpeed * ratio));
+    debouncedSave();
   }
 }
 
@@ -475,7 +675,10 @@ function onTouchEnd(e) {
   }
   if (count === 0) {
     swipeStartX       = null;
+    swipeStartY       = null;
     swipeStartDensity = null;
+    swipeStartScale   = null;
+    swipeAxis         = null;
     gestureConsumed   = false;
   }
 }
