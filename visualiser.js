@@ -67,14 +67,23 @@ const GOLD   = [200, 169, 110];
 function rgb(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
 
 // ── PALETTE SYSTEM ────────────────────────────────────────────────────────────
-// Each palette has 4 analogous colours: a=primary, b=cool, c=highlight, d=deep
+// Each palette has 4 colours with strong hue contrast between slots:
+// a=primary, b=complement/contrast, c=highlight, d=deep accent
 const PALETTES = [
-  { name: 'Earthen',  a: [184,115, 51], b: [ 46,123,122], c: [200,169,110], d: [160, 70, 42] },
-  { name: 'Amethyst', a: [130, 58,200], b: [ 78, 36,158], c: [172, 98,222], d: [100, 48,168] },
-  { name: 'Ocean',    a: [ 28,108,178], b: [ 18,152,158], c: [ 52,138,208], d: [ 14, 78,138] },
-  { name: 'Verdant',  a: [ 38,142, 78], b: [ 72,158, 52], c: [ 98,172, 98], d: [ 28,112, 68] },
-  { name: 'Ember',    a: [202, 82, 28], b: [168, 38, 38], c: [228,142, 32], d: [188, 52, 48] },
-  { name: 'Dusk',     a: [182, 58,142], b: [138, 38,118], c: [208, 98,162], d: [158, 48,128] },
+  // Earthen: warm copper against cool teal, gold vs deep crimson
+  { name: 'Earthen',  a: [184,115, 51], b: [ 46,123,122], c: [220,180, 70], d: [130, 35, 35] },
+  // Amethyst: violet + golden split-complement + teal + deep plum
+  { name: 'Amethyst', a: [120, 45,195], b: [200,160, 20], c: [ 50,165,135], d: [ 70, 12,140] },
+  // Ocean: deep blue + warm amber complement + aqua + raspberry
+  { name: 'Ocean',    a: [ 18, 92,210], b: [220,115, 25], c: [ 22,178,165], d: [160, 28, 95] },
+  // Verdant: vivid green + crimson complement + lime + indigo
+  { name: 'Verdant',  a: [ 22,158, 72], b: [188, 45, 45], c: [140,210, 35], d: [ 65, 30,168] },
+  // Ember: vermillion + cobalt complement + amber + deep rose
+  { name: 'Ember',    a: [225, 55, 18], b: [ 18, 90,190], c: [248,158, 18], d: [158, 18, 65] },
+  // Dusk: hot magenta + teal complement + violet + lime
+  { name: 'Dusk',     a: [208, 32,145], b: [ 32,162,128], c: [ 95, 18,182], d: [158,215, 30] },
+  // Aurora: electric green + vivid violet + cyan + deep magenta
+  { name: 'Aurora',   a: [ 42,222, 88], b: [145, 22,208], c: [ 12,208,228], d: [208, 40,155] },
 ];
 // Which palette slot each geomDef uses (matches original COPPER/TEAL/GOLD/RUST/GOLD order)
 const GEO_SLOTS = ['a', 'b', 'c', 'd', 'c'];
@@ -474,6 +483,19 @@ function toggleHUD() {
   if (hudVisible) hideHUD();
   else showHUD();
 }
+
+// ── INFO OVERLAY ──────────────────────────────────────────────────────────────
+const infoOverlay = document.getElementById('infoOverlay');
+
+function showInfo() {
+  if (infoOverlay) infoOverlay.classList.add('visible');
+}
+function hideInfo() {
+  if (infoOverlay) infoOverlay.classList.remove('visible');
+}
+
+document.getElementById('btnInfoClose')?.addEventListener('click', hideInfo);
+document.getElementById('btnInfo')?.addEventListener('click', showInfo);
 
 // Wire up HUD buttons
 document.getElementById('btnMode')?.addEventListener('click', () => {

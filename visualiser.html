@@ -59,6 +59,7 @@
       white-space: nowrap;
     }
     #hint.gone { opacity: 0; }
+    #hint { color: rgba(255, 255, 255, 0.88); }
 
     /* HUD panel — slides up from bottom */
     #hud {
@@ -125,6 +126,106 @@
       border-color: rgba(184, 115, 51, 0.55);
     }
 
+    /* Info button — fixed top-right corner */
+    #btnInfo {
+      position: fixed;
+      top: 16px; right: 16px;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(184, 115, 51, 0.14);
+      border: 1px solid rgba(184, 115, 51, 0.32);
+      color: rgba(232, 223, 200, 0.72);
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 60;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #btnInfo:active {
+      background: rgba(184, 115, 51, 0.28);
+      border-color: rgba(184, 115, 51, 0.6);
+    }
+
+    /* Info overlay — full-screen, scrollable */
+    #infoOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 6, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 200;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 56px 24px 48px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    #infoOverlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #btnInfoClose {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(184, 115, 51, 0.14);
+      border: 1px solid rgba(184, 115, 51, 0.32);
+      border-radius: 8px;
+      color: rgba(232, 223, 200, 0.8);
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      padding: 8px 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #infoOverlay h2 {
+      color: rgba(184, 115, 51, 0.9);
+      font-family: Georgia, serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin: 32px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(184, 115, 51, 0.18);
+    }
+    #infoOverlay h2:first-of-type { margin-top: 8px; }
+    #infoOverlay dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 16px;
+      margin: 0 0 8px;
+    }
+    #infoOverlay dt {
+      color: rgba(232, 223, 200, 0.85);
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      font-style: italic;
+      white-space: nowrap;
+    }
+    #infoOverlay dd {
+      color: rgba(232, 223, 200, 0.6);
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+    #infoOverlay p {
+      color: rgba(232, 223, 200, 0.62);
+      font-family: Georgia, serif;
+      font-size: 0.8rem;
+      line-height: 1.75;
+      margin: 0 0 14px;
+    }
+    #infoOverlay p strong {
+      color: rgba(232, 223, 200, 0.88);
+      font-style: italic;
+    }
+
     /* Gesture guide labels */
     #gestureGuide {
       width: 100%;
@@ -145,6 +246,47 @@
 
   <!-- Mic activity indicator -->
   <div id="micDot"></div>
+
+  <!-- Info button — always visible top-right -->
+  <button id="btnInfo">?</button>
+
+  <!-- Info overlay -->
+  <div id="infoOverlay">
+    <button id="btnInfoClose">✕ Close</button>
+
+    <h2>Controls</h2>
+    <dl>
+      <dt>Double-tap</dt>
+      <dd>Open / close the button panel</dd>
+      <dt>Swipe left / right</dt>
+      <dd>Line density — how many rings and arms fill each shape</dd>
+      <dt>Swipe up / down</dt>
+      <dd>Scale — zoom the geodes in or out</dd>
+      <dt>Pinch</dt>
+      <dd>Rotation speed — how fast the forms turn</dd>
+      <dt>Long-press (0.5 s)</dt>
+      <dd>Toggle fullscreen</dd>
+    </dl>
+    <dl>
+      <dt>Sound</dt>
+      <dd>Tap to let the microphone in — bass drives speed and sway, treble drives density, beats fire a pulse</dd>
+      <dt>Palette</dt>
+      <dd>Cycle through seven colour sets, each cross-fading over 1.5 seconds</dd>
+      <dt>Fullscreen / Reset</dt>
+      <dd>Reset returns density, speed and scale to defaults</dd>
+      <dt>Slot 1 / 2 / 3</dt>
+      <dd>Tap to recall · hold 0.5 s to save the current palette, density, speed and scale</dd>
+    </dl>
+
+    <h2>Sacred Geometry</h2>
+    <p>Five mandalas are always present, each built on a different sacred symmetry: <strong>5-fold</strong> (the pentagram), <strong>6-fold</strong> (the hexagram), <strong>7-fold</strong> (rare — found in Sufi art and quasicrystal geometry), <strong>8-fold</strong> (the octagram of ancient cosmology), and <strong>12-fold</strong> (the zodiac, the hours, the chromatic scale). Each form independently cycles through phases of emergence, full presence and dissolution — never quite in sync, so the composition is never the same twice.</p>
+
+    <p>The concentric rings within each mandala follow the <strong>golden ratio φ ≈ 1.618</strong>, spacing at 1, 0.786, 0.618, 0.5, 0.382, 0.236 and 0.146 of the full radius — the same sequence found in nautilus shells, pine cones, the spiral of galaxies, and the proportions of the human body.</p>
+
+    <p>Each frame, two counter-rotating layers are drawn per mandala — one at full opacity, one at 45% — creating depth without a 3D engine. Arms spiral outward using parametric arc placement; the apparent complexity comes from a single formula iterated across each symmetry axis.</p>
+
+    <p>In Sound mode the microphone feeds the <strong>Web Audio FFT</strong>. Bass frequencies drive lateral sway and speed; treble drives line density. A beat fires when any band crosses 1.65× its rolling average, sending a visual spike with a 180 ms cooldown — the equivalent of a kick-drum hit rendered in light.</p>
+  </div>
 
   <!-- First-load hint -->
   <div id="hint">double-tap for controls &nbsp;·&nbsp; swipe ↔ density &nbsp;·&nbsp; swipe ↕ scale &nbsp;·&nbsp; pinch speed</div>
