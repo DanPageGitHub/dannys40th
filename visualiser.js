@@ -16,6 +16,17 @@ const geoOpacity = 1.0;    // fixed: always full
 const geoLineWidth = 2.5;  // fixed: always full
 let lateralAmp   = 0.008;
 
+// Gyro parallax
+let gyroOn      = false;
+let gyroX       = 0;        // smoothed -1…1, maps to GYRO_MAX_PX per depth unit
+let gyroY       = 0;
+let gyroTargetX = 0;
+let gyroTargetY = 0;
+let gyroBaseGamma = null;   // calibration capture on first reading
+let gyroBaseBeta  = null;
+const GYRO_RANGE  = 28;     // degrees of tilt = full effect
+const GYRO_MAX_PX = 65;     // pixel shift for depth=1 geode at full tilt
+
 // Mic / beat detection state
 let micOn        = false;
 let micAnalyser  = null;
@@ -60,6 +71,9 @@ function resize() { W = canvas.width = window.innerWidth; H = canvas.height = wi
 resize();
 window.addEventListener('resize', resize);
 
+// Detect pointer type: coarse = touch/mobile, fine = mouse/desktop
+const isMobile = window.matchMedia('(pointer: coarse)').matches;
+
 const TEAL   = [46, 123, 122];
 const COPPER = [184, 115, 51];
 const RUST   = [160, 70, 42];
@@ -67,14 +81,23 @@ const GOLD   = [200, 169, 110];
 function rgb(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
 
 // ── PALETTE SYSTEM ────────────────────────────────────────────────────────────
-// Each palette has 4 analogous colours: a=primary, b=cool, c=highlight, d=deep
+// Each palette has 4 colours with strong hue contrast between slots:
+// a=primary, b=complement/contrast, c=highlight, d=deep accent
 const PALETTES = [
-  { name: 'Earthen',  a: [184,115, 51], b: [ 46,123,122], c: [200,169,110], d: [160, 70, 42] },
-  { name: 'Amethyst', a: [130, 58,200], b: [ 78, 36,158], c: [172, 98,222], d: [100, 48,168] },
-  { name: 'Ocean',    a: [ 28,108,178], b: [ 18,152,158], c: [ 52,138,208], d: [ 14, 78,138] },
-  { name: 'Verdant',  a: [ 38,142, 78], b: [ 72,158, 52], c: [ 98,172, 98], d: [ 28,112, 68] },
-  { name: 'Ember',    a: [202, 82, 28], b: [168, 38, 38], c: [228,142, 32], d: [188, 52, 48] },
-  { name: 'Dusk',     a: [182, 58,142], b: [138, 38,118], c: [208, 98,162], d: [158, 48,128] },
+  // Earthen: warm copper against cool teal, gold vs deep crimson
+  { name: 'Earthen',  a: [184,115, 51], b: [ 46,123,122], c: [220,180, 70], d: [130, 35, 35] },
+  // Amethyst: violet + golden split-complement + teal + deep plum
+  { name: 'Amethyst', a: [120, 45,195], b: [200,160, 20], c: [ 50,165,135], d: [ 70, 12,140] },
+  // Ocean: deep blue + warm amber complement + aqua + raspberry
+  { name: 'Ocean',    a: [ 18, 92,210], b: [220,115, 25], c: [ 22,178,165], d: [160, 28, 95] },
+  // Verdant: vivid green + crimson complement + lime + indigo
+  { name: 'Verdant',  a: [ 22,158, 72], b: [188, 45, 45], c: [140,210, 35], d: [ 65, 30,168] },
+  // Ember: vermillion + cobalt complement + amber + deep rose
+  { name: 'Ember',    a: [225, 55, 18], b: [ 18, 90,190], c: [248,158, 18], d: [158, 18, 65] },
+  // Dusk: hot magenta + teal complement + violet + lime
+  { name: 'Dusk',     a: [208, 32,145], b: [ 32,162,128], c: [ 95, 18,182], d: [158,215, 30] },
+  // Aurora: electric green + vivid violet + cyan + deep magenta
+  { name: 'Aurora',   a: [ 42,222, 88], b: [145, 22,208], c: [ 12,208,228], d: [208, 40,155] },
 ];
 // Which palette slot each geomDef uses (matches original COPPER/TEAL/GOLD/RUST/GOLD order)
 const GEO_SLOTS = ['a', 'b', 'c', 'd', 'c'];
@@ -106,7 +129,10 @@ function debouncedSave() {
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try {
-      localStorage.setItem('vis_auto', JSON.stringify({ paletteIdx, lineDensity, geoSpeed, geoScale }));
+      localStorage.setItem('vis_auto', JSON.stringify({
+        paletteIdx, lineDensity, geoSpeed, geoScale,
+        positions: geomDefs.map(g => ({ x: g.x, y: g.y })),
+      }));
     } catch(e) {}
   }, 800);
 }
@@ -129,6 +155,12 @@ function applyState(s, animate) {
   if (s.lineDensity != null) lineDensity = Math.max(1,  Math.min(36,  s.lineDensity));
   if (s.geoSpeed    != null) geoSpeed    = Math.max(0.1, Math.min(4.0, s.geoSpeed));
   if (s.geoScale    != null) geoScale    = Math.max(0.3, Math.min(2.5, s.geoScale));
+  if (s.positions)  s.positions.forEach((p, i) => {
+    if (geomDefs[i]) {
+      geomDefs[i].x = Math.max(0.02, Math.min(0.98, p.x));
+      geomDefs[i].y = Math.max(0.02, Math.min(0.98, p.y));
+    }
+  });
 }
 
 function loadAutoState() {
@@ -143,6 +175,7 @@ function savePreset(slot) {
   try {
     localStorage.setItem(`vis_preset_${slot}`, JSON.stringify({
       paletteIdx, lineDensity, geoSpeed, geoScale, paletteName: paletteTo.name,
+      positions: geomDefs.map(g => ({ x: g.x, y: g.y })),
     }));
     updatePresetButtons();
   } catch(e) {}
@@ -195,13 +228,17 @@ function updatePaletteTransition(dt) {
 }
 
 // ── GEOMETRY DEFINITIONS ──────────────────────────────────────────────────────
+// depth: 0=background (barely moves with gyro), 1=foreground (moves most)
 const geomDefs = [
-  { sym:6,  phase:0,   speed:0.000065, phase2:0,   speed2:-0.000042, maxAlpha:0.85, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000 },
-  { sym:8,  phase:1.1, speed:0.000048, phase2:0.5, speed2: 0.000035, maxAlpha:0.80, col:TEAL,   x:0.62, y:0.55, size:4.2, period:85000 },
-  { sym:5,  phase:3.3, speed:0.000078, phase2:1.2, speed2:-0.000055, maxAlpha:0.75, col:GOLD,   x:0.45, y:0.62, size:3.2, period:60000 },
-  { sym:7,  phase:2.2, speed:0.000055, phase2:0.8, speed2: 0.000044, maxAlpha:0.75, col:RUST,   x:0.58, y:0.38, size:4.6, period:90000 },
-  { sym:12, phase:5.1, speed:0.000038, phase2:2.1, speed2:-0.000028, maxAlpha:0.70, col:GOLD,   x:0.35, y:0.35, size:5.0, period:100000 },
+  { sym:6,  phase:0,   speed:0.000065, phase2:0,   speed2:-0.000042, maxAlpha:0.85, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000,  depth:0.40 },
+  { sym:8,  phase:1.1, speed:0.000048, phase2:0.5, speed2: 0.000035, maxAlpha:0.80, col:TEAL,   x:0.62, y:0.55, size:4.2, period:85000,  depth:0.60 },
+  { sym:5,  phase:3.3, speed:0.000078, phase2:1.2, speed2:-0.000055, maxAlpha:0.75, col:GOLD,   x:0.45, y:0.62, size:3.2, period:60000,  depth:0.85 },
+  { sym:7,  phase:2.2, speed:0.000055, phase2:0.8, speed2: 0.000044, maxAlpha:0.75, col:RUST,   x:0.58, y:0.38, size:4.6, period:90000,  depth:0.28 },
+  { sym:12, phase:5.1, speed:0.000038, phase2:2.1, speed2:-0.000028, maxAlpha:0.70, col:GOLD,   x:0.35, y:0.35, size:5.0, period:100000, depth:0.06 },
 ];
+
+// Capture default positions so Reset can restore them
+const defaultPositions = geomDefs.map(g => ({ x: g.x, y: g.y }));
 
 // ── DRAW GEOMETRY ─────────────────────────────────────────────────────────────
 function drawGeom(g, now) {
@@ -222,8 +259,8 @@ function drawGeom(g, now) {
   alpha *= geoOpacity;
 
   const lateralSway = Math.sin(now * 0.00008 + g.phase * 1.7) * (lateralAmp + beatSwayAdd) * W;
-  const cx = W * 0.5 + (g.x - 0.5) * W + lateralSway;
-  const cy = H * 0.5 + (g.y - 0.5) * H;
+  const cx = W * 0.5 + (g.x - 0.5) * W + lateralSway + gyroX * g.depth * GYRO_MAX_PX;
+  const cy = H * 0.5 + (g.y - 0.5) * H                + gyroY * g.depth * GYRO_MAX_PX;
   const R  = Math.min(W, H) * g.size * geoScale;
   const rot1 = g.phase  + now * g.speed  * geoSpeed * beatSpeedScroll;
   const rot2 = g.phase2 + now * g.speed2 * geoSpeed * beatSpeedScroll;
@@ -379,11 +416,35 @@ let lastFrameTime = performance.now();
 function draw() {
   ctx.clearRect(0, 0, W, H);
   const now = performance.now();
-  const dt  = Math.min(now - lastFrameTime, 100); // cap at 100ms to avoid jumps on tab resume
+  const dt  = Math.min(now - lastFrameTime, 100);
   lastFrameTime = now;
+
+  // Smooth gyro toward target (returns to 0 when gyro is off)
+  gyroX += (gyroTargetX - gyroX) * 0.08;
+  gyroY += (gyroTargetY - gyroY) * 0.08;
+
   updateBeat(now);
   updatePaletteTransition(dt);
   if (geoOn) geomDefs.forEach(g => drawGeom(g, now));
+
+  // Drag indicator: dashed ring at whichever geode is being dragged
+  const activeDragIdx = (dragLockActive && draggedGeomIdx >= 0)   ? draggedGeomIdx
+                      : (mouseDragActive && mouseDragGeomIdx >= 0) ? mouseDragGeomIdx : -1;
+  if (activeDragIdx >= 0) {
+    const g  = geomDefs[activeDragIdx];
+    const cx = W * 0.5 + (g.x - 0.5) * W + gyroX * g.depth * GYRO_MAX_PX;
+    const cy = H * 0.5 + (g.y - 0.5) * H + gyroY * g.depth * GYRO_MAX_PX;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.min(W, H) * 0.045, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
   t += 0.016;
   requestAnimationFrame(draw);
 }
@@ -437,6 +498,7 @@ function resetDefaults() {
   lineDensity = d.lineDensity;
   geoScale    = 1.0;
   geoOn       = true;
+  geomDefs.forEach((g, i) => { g.x = defaultPositions[i].x; g.y = defaultPositions[i].y; });
   updateHUDState();
   debouncedSave();
 }
@@ -475,6 +537,89 @@ function toggleHUD() {
   else showHUD();
 }
 
+// ── GYRO PARALLAX ─────────────────────────────────────────────────────────────
+function onDeviceOrientation(e) {
+  const gamma = e.gamma ?? 0;
+  const beta  = e.beta  ?? 0;
+  // Capture first reading as neutral (calibrates to whatever angle the phone is held)
+  if (gyroBaseGamma === null) { gyroBaseGamma = gamma; gyroBaseBeta = beta; return; }
+  gyroTargetX = Math.max(-1, Math.min(1, (gamma - gyroBaseGamma) / GYRO_RANGE));
+  gyroTargetY = Math.max(-1, Math.min(1, (beta  - gyroBaseBeta)  / GYRO_RANGE));
+}
+
+async function enableGyro() {
+  // iOS 13+ requires explicit permission from a user gesture
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      if (await DeviceOrientationEvent.requestPermission() !== 'granted') return false;
+    } catch(e) { return false; }
+  }
+  gyroBaseGamma = null; // reset calibration
+  gyroBaseBeta  = null;
+  window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true });
+  gyroOn = true;
+  return true;
+}
+
+function disableGyro() {
+  window.removeEventListener('deviceorientation', onDeviceOrientation);
+  gyroOn      = false;
+  gyroTargetX = 0;
+  gyroTargetY = 0;
+}
+
+async function toggleGyro() {
+  if (gyroOn) {
+    disableGyro();
+  } else {
+    const ok = await enableGyro();
+    if (!ok) {
+      const btn = document.getElementById('btnGyro');
+      if (btn) {
+        btn.textContent = 'No sensor';
+        setTimeout(() => { btn.textContent = 'Gyro: OFF'; }, 1800);
+      }
+      return;
+    }
+  }
+  const btn = document.getElementById('btnGyro');
+  if (btn) btn.textContent = gyroOn ? 'Gyro: ON' : 'Gyro: OFF';
+}
+
+// ── DRAG TO REPOSITION ────────────────────────────────────────────────────────
+let dragLockActive  = false;
+let draggedGeomIdx  = -1;
+let mouseDragActive  = false;   // desktop mouse drag
+let mouseDragGeomIdx = -1;
+const DRAG_HIT_FRAC = 0.22; // fraction of min(W,H) — hit radius for lock detection
+
+function findNearestGeode(tx, ty) {
+  const hitR = Math.min(W, H) * DRAG_HIT_FRAC;
+  let nearest = -1, minDist = Infinity;
+  geomDefs.forEach((g, i) => {
+    // Match the cx/cy in drawGeom (skip lateralSway — it's tiny)
+    const cx = W * 0.5 + (g.x - 0.5) * W + gyroX * g.depth * GYRO_MAX_PX;
+    const cy = H * 0.5 + (g.y - 0.5) * H + gyroY * g.depth * GYRO_MAX_PX;
+    const d  = Math.hypot(tx - cx, ty - cy);
+    if (d < minDist && d < hitR) { minDist = d; nearest = i; }
+  });
+  return nearest;
+}
+
+// ── INFO OVERLAY ──────────────────────────────────────────────────────────────
+const infoOverlay = document.getElementById('infoOverlay');
+
+function showInfo() {
+  if (infoOverlay) infoOverlay.classList.add('visible');
+}
+function hideInfo() {
+  if (infoOverlay) infoOverlay.classList.remove('visible');
+}
+
+document.getElementById('btnInfoClose')?.addEventListener('click', hideInfo);
+document.getElementById('btnInfo')?.addEventListener('click', showInfo);
+
 // Wire up HUD buttons
 document.getElementById('btnMode')?.addEventListener('click', () => {
   setMode(!soundMode);
@@ -490,6 +635,10 @@ document.getElementById('btnReset')?.addEventListener('click', () => {
 });
 document.getElementById('btnPalette')?.addEventListener('click', () => {
   cyclePalette();
+  resetHUDTimer();
+});
+document.getElementById('btnGyro')?.addEventListener('click', () => {
+  toggleGyro();
   resetHUDTimer();
 });
 
@@ -528,9 +677,6 @@ document.querySelectorAll('.btnSlot').forEach((btn) => {
   });
 });
 
-// Restore last session state and initialise preset button labels
-loadAutoState();
-updatePresetButtons();
 document.getElementById('btnFullscreen')?.addEventListener('click', () => {
   toggleFullscreen();
   resetHUDTimer();
@@ -553,22 +699,24 @@ document.addEventListener('fullscreenchange', () => {
 });
 
 // ── TOUCH GESTURES ────────────────────────────────────────────────────────────
-// Single-finger swipe L/R → lineDensity (1–36)
-// Single-finger swipe U/D → geoScale (0.3–2.5)   [axis-locked per gesture]
-// Pinch in/out → geoSpeed (0.1–4.0)
-// Double-tap → toggle HUD
-// Long-press (500ms) → fullscreen
+// Single-finger swipe L/R   → lineDensity (1–36)           [axis-locked]
+// Single-finger swipe U/D   → geoScale (0.3–2.5)           [axis-locked]
+// Single-finger hold 2s near geode centre → drag to reposition
+// Single-finger hold 0.5s elsewhere      → fullscreen
+// Pinch in/out              → geoSpeed (0.1–4.0)
+// Double-tap                → toggle HUD
 
-let touches = {};        // active touches by id
+let touches = {};
 let lastTapTime = 0;
-let longPressTimer = null;
-let gestureStartDist = null;
+let longPressTimer = null;   // 0.5s fullscreen (when not near a geode)
+let dragLockTimer  = null;   // 2s drag lock (when near a geode)
+let gestureStartDist  = null;
 let gestureStartSpeed = null;
 let swipeStartX = null;
 let swipeStartY = null;
 let swipeStartDensity = null;
-let swipeStartScale = null;
-let swipeAxis = null;    // null | 'h' | 'v' — locked once first move detected
+let swipeStartScale   = null;
+let swipeAxis = null;        // null | 'h' | 'v'
 let gestureConsumed = false;
 
 canvas.addEventListener('touchstart', onTouchStart, { passive: false });
@@ -601,19 +749,31 @@ function onTouchStart(e) {
       lastTapTime = now;
     }
 
-    // Long-press for fullscreen
-    longPressTimer = setTimeout(() => {
-      toggleFullscreen();
-      gestureConsumed = true;
-    }, 500);
+    if (!gestureConsumed) {
+      const nearIdx = findNearestGeode(touch.clientX, touch.clientY);
+      if (nearIdx >= 0) {
+        // Near a geode: 2s hold locks it for dragging
+        dragLockTimer = setTimeout(() => {
+          draggedGeomIdx = nearIdx;
+          dragLockActive = true;
+          gestureConsumed = true;
+        }, 2000);
+      } else {
+        // Open space: 0.5s hold → fullscreen
+        longPressTimer = setTimeout(() => {
+          toggleFullscreen();
+          gestureConsumed = true;
+        }, 500);
+      }
+    }
 
   } else if (count === 2) {
-    // Cancel long-press on two-finger gesture
     if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    if (dragLockTimer)  { clearTimeout(dragLockTimer);  dragLockTimer  = null; }
     const pts = Object.values(touches);
     gestureStartDist  = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
     gestureStartSpeed = geoSpeed;
-    swipeStartX = null; // disable swipe while pinching
+    swipeStartX = null;
     swipeAxis   = null;
   }
 }
@@ -626,33 +786,41 @@ function onTouchMove(e) {
 
   const count = Object.keys(touches).length;
 
-  if (count === 1 && swipeStartX !== null && !gestureConsumed) {
-    // Cancel long-press if moved
-    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  if (count === 1 && swipeStartX !== null) {
+    const touch = e.changedTouches[0];
+    const dx    = touch.clientX - swipeStartX;
+    const dy    = touch.clientY - swipeStartY;
 
-    const dx = e.changedTouches[0].clientX - swipeStartX;
-    const dy = e.changedTouches[0].clientY - swipeStartY;
-
-    // Lock to one axis on first significant movement
-    if (!swipeAxis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-      swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+    if (dragLockActive && draggedGeomIdx >= 0) {
+      // Drag the locked geode's normalised position
+      geomDefs[draggedGeomIdx].x = Math.max(0.02, Math.min(0.98, touch.clientX / W));
+      geomDefs[draggedGeomIdx].y = Math.max(0.02, Math.min(0.98, touch.clientY / H));
+      return; // skip swipe handling
     }
 
-    if (swipeAxis === 'h') {
-      // Horizontal → line density (1–36); ~300px = full range
-      lineDensity = Math.max(1, Math.min(36, Math.round(swipeStartDensity + (dx / 300) * 35)));
-      debouncedSave();
-    } else if (swipeAxis === 'v') {
-      // Vertical → geo scale (0.3–2.5); swipe up = grow; full screen height ≈ 2× change
-      geoScale = Math.max(0.3, Math.min(2.5, swipeStartScale + (-dy / H) * 1.8));
-      debouncedSave();
+    // Any movement cancels the pending hold timers
+    if (Math.hypot(dx, dy) > 8) {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+      if (dragLockTimer)  { clearTimeout(dragLockTimer);  dragLockTimer  = null; }
+    }
+
+    if (!gestureConsumed) {
+      if (!swipeAxis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+      }
+      if (swipeAxis === 'h') {
+        lineDensity = Math.max(1, Math.min(36, Math.round(swipeStartDensity + (dx / 300) * 35)));
+        debouncedSave();
+      } else if (swipeAxis === 'v') {
+        geoScale = Math.max(0.3, Math.min(2.5, swipeStartScale + (-dy / H) * 1.8));
+        debouncedSave();
+      }
     }
 
   } else if (count === 2 && gestureStartDist !== null) {
     const pts = Object.values(touches);
     const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-    const ratio = dist / gestureStartDist;
-    geoSpeed = Math.max(0.1, Math.min(4.0, gestureStartSpeed * ratio));
+    geoSpeed = Math.max(0.1, Math.min(4.0, gestureStartSpeed * (dist / gestureStartDist)));
     debouncedSave();
   }
 }
@@ -660,20 +828,126 @@ function onTouchMove(e) {
 function onTouchEnd(e) {
   e.preventDefault();
   if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  if (dragLockTimer)  { clearTimeout(dragLockTimer);  dragLockTimer  = null; }
 
   for (const t of e.changedTouches) delete touches[t.identifier];
 
   const count = Object.keys(touches).length;
-  if (count < 2) {
-    gestureStartDist  = null;
-    gestureStartSpeed = null;
-  }
+  if (count < 2) { gestureStartDist = null; gestureStartSpeed = null; }
   if (count === 0) {
-    swipeStartX       = null;
-    swipeStartY       = null;
-    swipeStartDensity = null;
-    swipeStartScale   = null;
-    swipeAxis         = null;
-    gestureConsumed   = false;
+    if (dragLockActive) {
+      dragLockActive = false;
+      draggedGeomIdx = -1;
+      debouncedSave();
+    }
+    swipeStartX = swipeStartY = swipeStartDensity = swipeStartScale = swipeAxis = null;
+    gestureConsumed = false;
   }
+}
+
+// ── MOUSE DRAG (desktop) ──────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => {
+  const nearIdx = findNearestGeode(e.clientX, e.clientY);
+  if (nearIdx >= 0) {
+    mouseDragGeomIdx = nearIdx;
+    mouseDragActive  = true;
+    canvas.style.cursor = 'grabbing';
+    e.preventDefault();
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (mouseDragActive && mouseDragGeomIdx >= 0) {
+    geomDefs[mouseDragGeomIdx].x = Math.max(0.02, Math.min(0.98, e.clientX / W));
+    geomDefs[mouseDragGeomIdx].y = Math.max(0.02, Math.min(0.98, e.clientY / H));
+  } else {
+    canvas.style.cursor = findNearestGeode(e.clientX, e.clientY) >= 0 ? 'grab' : 'default';
+  }
+});
+
+function endMouseDrag() {
+  if (mouseDragActive) { mouseDragActive = false; mouseDragGeomIdx = -1; debouncedSave(); }
+  canvas.style.cursor = 'default';
+}
+canvas.addEventListener('mouseup',    endMouseDrag);
+canvas.addEventListener('mouseleave', endMouseDrag);
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+// h       → toggle HUD          f       → fullscreen
+// p       → cycle palette       s       → toggle sound mode
+// r       → reset               g       → toggle gyro
+// ← →     → density ±1          ↑ ↓     → scale ±0.05
+// + =     → speed +0.1          - _     → speed −0.1
+// 1/2/3   → load preset         Shift+1/2/3 → save preset
+// ? or i  → toggle info         Escape  → close info
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  switch (e.key) {
+    case '?': case 'i': case 'I':
+      infoOverlay.classList.contains('visible') ? hideInfo() : showInfo(); break;
+    case 'Escape': hideInfo(); break;
+
+    case 'h': case 'H':
+      toggleHUD(); if (hudVisible) resetHUDTimer(); break;
+    case 'f': case 'F':
+      toggleFullscreen(); break;
+    case 'p': case 'P':
+      cyclePalette(); showHUD(); resetHUDTimer(); break;
+    case 's': case 'S':
+      setMode(!soundMode); showHUD(); resetHUDTimer(); break;
+    case 'r': case 'R':
+      resetDefaults(); showHUD(); resetHUDTimer(); break;
+    case 'g': case 'G':
+      toggleGyro(); showHUD(); resetHUDTimer(); break;
+
+    case 'ArrowLeft':
+      e.preventDefault();
+      lineDensity = Math.max(1, lineDensity - 1); debouncedSave(); break;
+    case 'ArrowRight':
+      e.preventDefault();
+      lineDensity = Math.min(36, lineDensity + 1); debouncedSave(); break;
+    case 'ArrowUp':
+      e.preventDefault();
+      geoScale = Math.max(0.3, Math.min(2.5, +(geoScale + 0.05).toFixed(2))); debouncedSave(); break;
+    case 'ArrowDown':
+      e.preventDefault();
+      geoScale = Math.max(0.3, Math.min(2.5, +(geoScale - 0.05).toFixed(2))); debouncedSave(); break;
+
+    case '+': case '=':
+      geoSpeed = Math.max(0.1, Math.min(4.0, +(geoSpeed + 0.1).toFixed(2))); debouncedSave(); break;
+    case '-': case '_':
+      geoSpeed = Math.max(0.1, Math.min(4.0, +(geoSpeed - 0.1).toFixed(2))); debouncedSave(); break;
+
+    case '1': e.shiftKey ? savePreset(0) : loadPreset(0); showHUD(); resetHUDTimer(); break;
+    case '2': e.shiftKey ? savePreset(1) : loadPreset(1); showHUD(); resetHUDTimer(); break;
+    case '3': e.shiftKey ? savePreset(2) : loadPreset(2); showHUD(); resetHUDTimer(); break;
+    case '!': savePreset(0); showHUD(); resetHUDTimer(); break;
+    case '@': savePreset(1); showHUD(); resetHUDTimer(); break;
+    case '#': savePreset(2); showHUD(); resetHUDTimer(); break;
+  }
+});
+
+// ── MOBILE / DESKTOP INIT ────────────────────────────────────────────────────
+loadAutoState();
+updatePresetButtons();
+
+if (!isMobile) {
+  document.body.classList.add('is-desktop');
+  // Gyro button: no sensor on desktop, hide it
+  const gyroBtn = document.getElementById('btnGyro');
+  if (gyroBtn) gyroBtn.style.display = 'none';
+  // Gesture guide: swap for keyboard equivalents
+  const guide = document.getElementById('gestureGuide');
+  if (guide) guide.innerHTML =
+    '<span>← → density</span><span>↑ ↓ scale</span><span>+ − speed</span>';
+  // Hint text
+  const hint = document.getElementById('hint');
+  if (hint) hint.textContent = 'click & drag shapes  ·  press ? for controls';
+  // Auto-dismiss hint on first mouse move
+  document.addEventListener('mousemove', () => {
+    const h = document.getElementById('hint'); if (h) h.classList.add('gone');
+  }, { once: true });
+} else {
+  document.body.classList.add('is-mobile');
 }
