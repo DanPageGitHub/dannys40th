@@ -95,6 +95,7 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:cla
 /* SECTIONS */
 .sw{position:relative;z-index:15;padding:0 32px;}
 .sec{max-width:1400px;margin:0 auto;padding:72px 64px;
+  scroll-margin-top:72px;
   background:rgba(14,13,11,0.82);
   border:1px solid rgba(184,115,51,0.14);
   border-radius:3px;

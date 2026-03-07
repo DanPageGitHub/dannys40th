@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function cleanUrl() { history.replaceState(null, '', window.location.pathname + window.location.search); }
   function scrollToId(id) {
     var el = document.getElementById(id);
-    if (el) { el.scrollIntoView({ behavior: 'smooth' }); cleanUrl(); }
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); cleanUrl(); }
   }
   document.addEventListener('click', function(e) {
     var a = e.target.closest('a[href^="#"]');
