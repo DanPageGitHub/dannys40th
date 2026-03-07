@@ -1,5 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+// Badge sun: use custom image if present, else fallback to inline SVG
+(function() {
+  var img = document.querySelector('.badge-sun');
+  if (!img) return;
+  var fallbackSvg = '<svg style="display:inline;vertical-align:middle;margin-right:0.6em;width:0.9em;height:0.9em;" fill="none" viewBox="0 0 22 22" stroke="#b87333" stroke-width="1" opacity="0.85"><circle cx="11" cy="11" r="3" fill="none"/><line x1="11" y1="2" x2="11" y2="5"/><line x1="11" y1="17" x2="11" y2="20"/><line x1="2" y1="11" x2="5" y2="11"/><line x1="17" y1="11" x2="20" y2="11"/><line x1="4.2" y1="4.2" x2="6.2" y2="6.2"/><line x1="15.8" y1="15.8" x2="17.8" y2="17.8"/><line x1="15.8" y1="4.2" x2="17.8" y2="6.2"/><line x1="4.2" y1="15.8" x2="6.2" y2="17.8"/></svg>';
+  img.onerror = function() {
+    var span = document.createElement('span');
+    span.innerHTML = fallbackSvg;
+    img.parentNode.replaceChild(span, img);
+  };
+})();
+
 const I = {
   crop_circle:     'images/crop_circle.jpg',
   dj_shot:         'images/dj_shot.jpg',
@@ -19,32 +31,37 @@ const I = {
   bnb_bath:        'images/bnb_bath.jpg',
 };
 
+// Photo filter tuning (must be before setPhoto calls)
+let photoSat = 0.72, photoSep = 0.18, photoBrt = 0.92;
+let djSat = 0.72, djSep = 0.18, djBrt = 0.92;
 
 // IMAGES
-function setPhoto(id, key, pos, bf) {
+function setPhoto(id, key, pos, bf, fit, sepiaOverride) {
   const wrap = document.getElementById(id);
   if (!wrap || !I[key]) return;
   const img = document.createElement('img');
   img.src = I[key]; img.alt = '';
   const b = bf || '0.92';
-  img.style.cssText = `width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.72) sepia(0.18) brightness(${b});transition:filter 0.6s,transform 0.7s;`;
+  const objectFit = fit || 'cover';
+  const sep = sepiaOverride !== undefined ? sepiaOverride : photoSep;
+  img.style.cssText = `width:100%;height:100%;object-fit:${objectFit};display:block;filter:saturate(0.72) sepia(${sep}) brightness(${b});transition:filter 0.6s,transform 0.7s;`;
   if (pos) img.style.objectPosition = pos;
   const isDJ = wrap.classList.contains('photo-dj');
   wrap.insertBefore(img, wrap.firstChild);
   wrap.addEventListener('mouseenter', () => img.style.filter = 'saturate(0.88) sepia(0.08) brightness(1.04)');
   wrap.addEventListener('mouseleave', () => {
     if(isDJ) img.style.filter = `saturate(${djSat}) sepia(${djSep}) brightness(${djBrt})`;
-    else img.style.filter = `saturate(${photoSat}) sepia(${photoSep}) brightness(${b})`;
+    else img.style.filter = `saturate(${photoSat}) sepia(${sep}) brightness(${b})`;
   });
 }
 
 // heroBg is now a video iframe
 setPhoto('pHero','danny_sign','center 40%');
-setPhoto('pPub','pub_canal_side','center center');
-setPhoto('pTents','pub_exterior','center 50%');
-setPhoto('pSign','canal_narrowboat','center 45%');
-setPhoto('pHorse','rusty_crop_circle','center 50%');
-setPhoto('pDJ','dj_shot','center 40%');
+setPhoto('pPub','pub_canal_side','center center', undefined, 'cover', 0.18);
+setPhoto('pTents','pub_exterior','center center', undefined, 'cover', 0.18);
+setPhoto('pSign','canal_narrowboat','center 45%', undefined, undefined, 0.18);
+setPhoto('pHorse','rusty_crop_circle','center 50%', undefined, undefined, 0.18);
+setPhoto('pDJ','dj_shot','center 50%');
 setPhoto('pBnbRoom','bnb_room','center 40%');
 setPhoto('pBnbBath','bnb_bath','center 40%');
 
@@ -60,7 +77,16 @@ function updateParallax() {
   const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
   img.style.transform = `translateY(${(progress - 0.5) * 80}px)`;
 }
-window.addEventListener('scroll', updateParallax, {passive:true});
+let parallaxScheduled = false;
+function scheduleParallax() {
+  if (parallaxScheduled) return;
+  parallaxScheduled = true;
+  requestAnimationFrame(function() {
+    parallaxScheduled = false;
+    updateParallax();
+  });
+}
+window.addEventListener('scroll', scheduleParallax, {passive:true});
 updateParallax();
 
 // White horse icon
@@ -86,10 +112,10 @@ if(aHI) {
   sched.parentElement.addEventListener('mouseleave', () => lurk.style.opacity = '0');
 })();
 
-// RUNE BAND — single scrolling row, no clone
+// RUNE BAND — scrolling rows (populate all .rune-scroll)
 (function(){
-  const scroll = document.getElementById('runeScroll');
-  if(!scroll) return;
+  const scrollContainers = document.querySelectorAll('.rune-scroll');
+  if(!scrollContainers.length) return;
   const syms = [
     `<svg width="90" height="90" viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="22" stroke="#b87333" stroke-width="1"/><circle cx="26" cy="26" r="13" stroke="#b87333" stroke-width="1"/><circle cx="26" cy="26" r="5" stroke="#b87333" stroke-width="1"/><line x1="26" y1="4" x2="26" y2="48" stroke="#b87333" stroke-width="0.8"/><line x1="4" y1="26" x2="48" y2="26" stroke="#b87333" stroke-width="0.8"/><line x1="10" y1="10" x2="42" y2="42" stroke="#b87333" stroke-width="0.6"/><line x1="42" y1="10" x2="10" y2="42" stroke="#b87333" stroke-width="0.6"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 44 44" fill="none"><path d="M22 4 L24.5 17 L37 11 L28 22 L37 33 L24.5 27 L22 40 L19.5 27 L7 33 L16 22 L7 11 L19.5 17 Z" stroke="#b87333" stroke-width="0.9" fill="none"/></svg>`,
@@ -101,11 +127,13 @@ if(aHI) {
   ];
   // Repeat set three times so translateX(-33.33%) loops perfectly on wide screens
   const double = [...syms, ...syms, ...syms];
-  double.forEach(s => {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = s;
-    const svg = tmp.querySelector('svg');
-    if(svg) { svg.style.marginRight = '80px'; scroll.appendChild(svg); }
+  scrollContainers.forEach(scroll => {
+    double.forEach(s => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = s;
+      const svg = tmp.querySelector('svg');
+      if(svg) { svg.style.marginRight = '80px'; scroll.appendChild(svg); }
+    });
   });
 })();
 
@@ -147,7 +175,7 @@ let minAvgGate = 2;   // minimum rolling avg before ratio fires
 
 // DEBUG PANEL
 const SITE_DEFAULTS = {
-  lineDensity: 1, geoSpeed: 0.55, geoOpacity: 0.6, geoLineWidth: 0.65,
+  lineDensity: 1, geoSpeed: 0.55, geoOpacity: 0.85, geoLineWidth: 0.65,
   lateralAmp: 0.008, tunnelStrength: 1.0, moteCount: 20, floatCount: 12,
   wispsOn: false, motesOn: true, scrollGeoOn: true,
 };
@@ -173,9 +201,6 @@ let sparkFlashFreq  = 0.002;
 let sparkMaxHeight  = 0.25;   // y fraction — sparks reset when they reach above this
 // Floater tuning
 let floatOpacity    = 0.5;
-// Photo filter tuning
-let photoSat = 0.72, photoSep = 0.18, photoBrt = 0.92;
-let djSat = 0.72, djSep = 0.18, djBrt = 0.92;
 
 let inFullscreen = false;
 
@@ -858,6 +883,19 @@ const wisps = Array.from({length:4},()=>({x:Math.random(),y:0.3+Math.random()*0.
 let t=0;
 let smoothScroll = 0; // lerped scroll fraction for tunnel drift
 
+// Mouse-follow for tunnel — normalized 0..1, two-stage lerp for more delay + smoother motion
+let mouseX = 0.5, mouseY = 0.5;
+let midMouseX = 0.5, midMouseY = 0.5;   // first stage: catches mouse
+let smoothMouseX = 0.5, smoothMouseY = 0.5;  // second stage: slower, smoother
+const MOUSE_LERP_MID = 0.032;   // how fast mid follows raw (first stage)
+const MOUSE_LERP_SMOOTH = 0.006;  // how fast smooth follows mid (more delay, smoother)
+const MOUSE_LATERAL_SCALE = 0.025;
+const MOUSE_VERTICAL_SCALE = 0.02;
+window.addEventListener('mousemove', function(e) {
+  mouseX = e.clientX / window.innerWidth;
+  mouseY = e.clientY / window.innerHeight;
+});
+
 function draw(){
   ctx.clearRect(0,0,W,H);
   const now = performance.now();
@@ -923,6 +961,18 @@ function updateDJFilter() {
 // SCROLL REVEAL
 const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.07});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Amplify scroll only when multiplier is not 1.0; otherwise native scroll avoids flicker at top/bottom
+const SCROLL_MULTIPLIER = 1.0;
+if (SCROLL_MULTIPLIER !== 1.0) {
+  window.addEventListener('wheel', function(e) {
+    const dy = e.deltaY * SCROLL_MULTIPLIER;
+    if (Math.abs(dy) > 0.5) {
+      e.preventDefault();
+      window.scrollBy(0, dy);
+    }
+  }, { passive: false });
+}
 
 // VIDEO — autoplay on scroll into view
 const videoWrap = document.getElementById('videoWrap');
