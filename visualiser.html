@@ -264,7 +264,9 @@
       <dd>Scale — zoom the geodes in or out</dd>
       <dt>Pinch</dt>
       <dd>Rotation speed — how fast the forms turn</dd>
-      <dt>Long-press (0.5 s)</dt>
+      <dt>Hold 2 s near a shape</dt>
+      <dd>Locks onto it — then drag it anywhere on screen. A dashed ring shows the active shape. Reset restores all positions.</dd>
+      <dt>Hold 0.5 s (open space)</dt>
       <dd>Toggle fullscreen</dd>
     </dl>
     <dl>
@@ -272,10 +274,12 @@
       <dd>Tap to let the microphone in — bass drives speed and sway, treble drives density, beats fire a pulse</dd>
       <dt>Palette</dt>
       <dd>Cycle through seven colour sets, each cross-fading over 1.5 seconds</dd>
-      <dt>Fullscreen / Reset</dt>
-      <dd>Reset returns density, speed and scale to defaults</dd>
+      <dt>Gyro</dt>
+      <dd>Tilt your phone to move through a layered 3D space — each shape sits at a different depth and shifts by a different amount. Hold the phone as you normally would when you turn it on; that angle becomes straight ahead.</dd>
+      <dt>Reset</dt>
+      <dd>Returns density, speed, scale and geode positions to defaults (palette is kept)</dd>
       <dt>Slot 1 / 2 / 3</dt>
-      <dd>Tap to recall · hold 0.5 s to save the current palette, density, speed and scale</dd>
+      <dd>Tap to recall · hold 0.5 s to save palette, density, speed, scale and positions together</dd>
     </dl>
 
     <h2>Sacred Geometry</h2>
@@ -283,7 +287,7 @@
 
     <p>The concentric rings within each mandala follow the <strong>golden ratio φ ≈ 1.618</strong>, spacing at 1, 0.786, 0.618, 0.5, 0.382, 0.236 and 0.146 of the full radius — the same sequence found in nautilus shells, pine cones, the spiral of galaxies, and the proportions of the human body.</p>
 
-    <p>Each frame, two counter-rotating layers are drawn per mandala — one at full opacity, one at 45% — creating depth without a 3D engine. Arms spiral outward using parametric arc placement; the apparent complexity comes from a single formula iterated across each symmetry axis.</p>
+    <p>Each frame, two counter-rotating layers are drawn per mandala — one at full opacity, one at 45% — creating depth without a 3D engine. Arms spiral outward using parametric arc placement; the apparent complexity comes from a single formula iterated across each symmetry axis. When Gyro is active, each form sits at a different z-depth (0.06 to 0.85) and shifts by a proportional amount as the phone tilts, giving the illusion of looking through a window into layered space.</p>
 
     <p>In Sound mode the microphone feeds the <strong>Web Audio FFT</strong>. Bass frequencies drive lateral sway and speed; treble drives line density. A beat fires when any band crosses 1.65× its rolling average, sending a visual spike with a 180 ms cooldown — the equivalent of a kick-drum hit rendered in light.</p>
   </div>
@@ -295,6 +299,7 @@
   <div id="hud">
     <button id="btnMode">Sound</button>
     <button id="btnPalette">Earthen</button>
+    <button id="btnGyro">Gyro: OFF</button>
     <button id="btnFullscreen">Fullscreen</button>
     <button id="btnReset">Reset</button>
 
