@@ -126,6 +126,8 @@ strong.pale{color:var(--parchment);}
 .photo-hero-wrap{width:100%;border-radius:2px;overflow:hidden;height:420px;position:relative;margin-bottom:14px;cursor:default;}
 .photo-hero-wrap img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.75) sepia(0.18) brightness(0.94);transition:filter 0.6s,transform 0.7s;}
 .photo-hero-wrap:hover img{filter:saturate(0.9) sepia(0.08) brightness(1.02);transform:scale(1.02);}
+#pHero{height:480px;background:rgba(8,7,5,0.78);}
+#pHero img{object-fit:contain;}
 .photo-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .photo-sm{border-radius:2px;overflow:hidden;position:relative;cursor:default;}
 .photo-sm img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.72) sepia(0.2) brightness(0.92);transition:filter 0.5s,transform 0.6s;}
@@ -134,7 +136,7 @@ strong.pale{color:var(--parchment);}
 .grain-overlay::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25\' height='100%25\' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");background-size:150px 150px;box-shadow:inset 0 0 50px rgba(0,0,0,0.5);pointer-events:none;mix-blend-mode:overlay;}
 
 /* DISTANCES */
-.dist-band{background:rgba(232,223,200,0.035);border:1px solid rgba(184,115,51,0.12);border-radius:2px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:24px;}
+.dist-band{background:rgba(232,223,200,0.035);border:1px solid rgba(184,115,51,0.12);border-radius:2px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:24px;}
 .dist-item{text-align:center;padding:22px 20px;border-right:1px solid rgba(184,115,51,0.1);}
 .dist-item:last-child{border-right:none;}
 .dist-city{font-family:'IM Fell English',serif;font-size:1.7rem;color:var(--parchment);margin-bottom:6px;}
@@ -146,7 +148,7 @@ strong.pale{color:var(--parchment);}
 .tcard{background:rgba(14,13,11,0.35);border:1px solid rgba(184,115,51,0.22);border-radius:2px;padding:22px;}
 .tcard-lbl{font-family:'Libre Baskerville',Georgia,serif;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;color:var(--copper-l);}
 .tcard p{font-size:1rem;line-height:1.7;}
-.map-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Libre Baskerville',Georgia,serif;font-size:1rem;color:var(--teal-l);text-decoration:none;border:1px solid rgba(74,173,171,0.25);padding:12px 28px;border-radius:2px;margin-top:22px;transition:background 0.25s,border-color 0.25s;}
+.map-btn{display:table;margin:32px auto 0;font-family:'IM Fell English',serif;font-size:1.1rem;color:var(--teal-l);text-decoration:none;border:1px solid rgba(74,173,171,0.25);padding:12px 32px;border-radius:2px;transition:background 0.25s,border-color 0.25s;}
 .map-btn:hover{background:rgba(46,123,122,0.1);border-color:rgba(74,173,171,0.5);}
 
 /* VIDEO */
@@ -289,13 +291,14 @@ footer a:hover{color:var(--teal-l);}
 
 /* RESPONSIVE */
 @media(max-width:700px){
-  nav{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding:0 4px;}
-  nav a{padding:11px 9px;font-size:0.88rem;white-space:nowrap;}
+  nav{justify-content:center;flex-wrap:wrap;padding:4px 0;}
+  nav a{padding:9px 12px;font-size:0.8rem;}
   nav a::after{display:none;}
   .manuscript{padding:20px 14px;}
   .manuscript::before{display:none;}
   .photo-grid-2{grid-template-columns:1fr;}
   .photo-hero-wrap{height:220px;}
+  #pHero{height:auto;aspect-ratio:4/3;}
   .photo-sm.h220,.photo-sm.h200,.photo-sm.h260{height:170px;}
   .travel-grid,.bnb-photos{grid-template-columns:1fr;}
   .costs-grid{grid-template-columns:1fr;}
@@ -304,9 +307,10 @@ footer a:hover{color:var(--teal-l);}
   #backstory{padding-top:70px;}
   .hero-sun{width:300px;height:300px;}
   .lineup-hero{height:220px;}
-  .dist-band{grid-template-columns:1fr;}
+  .dist-band{grid-template-columns:repeat(2,1fr);}
   .dist-item{border-right:none;border-bottom:1px solid rgba(184,115,51,0.1);padding:14px;}
-  .dist-item:last-child{border-bottom:none;}
+  .dist-item:nth-child(odd){border-right:1px solid rgba(184,115,51,0.1);}
+  .dist-item:nth-last-child(-n+2){border-bottom:none;}
   .parallax-strip{height:140px;}
   .quick-actions{grid-template-columns:1fr;padding:28px 16px 36px;}
   #heroBg video{display:none;}
