@@ -12,7 +12,7 @@ let geoOn        = true;
 let lineDensity  = 12;     // overridden per mode on switch
 let geoSpeed     = 0.55;
 const geoOpacity = 1.0;    // fixed: always full
-const geoLineWidth = 1.0;  // fixed: always full
+const geoLineWidth = 2.5;  // fixed: always full
 let lateralAmp   = 0.008;
 
 // Mic / beat detection state
@@ -67,11 +67,11 @@ function rgb(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
 
 // ── GEOMETRY DEFINITIONS ──────────────────────────────────────────────────────
 const geomDefs = [
-  { sym:6,  phase:0,   speed:0.000065, phase2:0,   speed2:-0.000042, maxAlpha:0.22, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000 },
-  { sym:8,  phase:1.1, speed:0.000048, phase2:0.5, speed2: 0.000035, maxAlpha:0.18, col:TEAL,   x:0.62, y:0.55, size:4.2, period:85000 },
-  { sym:5,  phase:3.3, speed:0.000078, phase2:1.2, speed2:-0.000055, maxAlpha:0.16, col:GOLD,   x:0.45, y:0.62, size:3.2, period:60000 },
-  { sym:7,  phase:2.2, speed:0.000055, phase2:0.8, speed2: 0.000044, maxAlpha:0.14, col:RUST,   x:0.58, y:0.38, size:4.6, period:90000 },
-  { sym:12, phase:5.1, speed:0.000038, phase2:2.1, speed2:-0.000028, maxAlpha:0.12, col:GOLD,   x:0.35, y:0.35, size:5.0, period:100000 },
+  { sym:6,  phase:0,   speed:0.000065, phase2:0,   speed2:-0.000042, maxAlpha:0.85, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000 },
+  { sym:8,  phase:1.1, speed:0.000048, phase2:0.5, speed2: 0.000035, maxAlpha:0.80, col:TEAL,   x:0.62, y:0.55, size:4.2, period:85000 },
+  { sym:5,  phase:3.3, speed:0.000078, phase2:1.2, speed2:-0.000055, maxAlpha:0.75, col:GOLD,   x:0.45, y:0.62, size:3.2, period:60000 },
+  { sym:7,  phase:2.2, speed:0.000055, phase2:0.8, speed2: 0.000044, maxAlpha:0.75, col:RUST,   x:0.58, y:0.38, size:4.6, period:90000 },
+  { sym:12, phase:5.1, speed:0.000038, phase2:2.1, speed2:-0.000028, maxAlpha:0.70, col:GOLD,   x:0.35, y:0.35, size:5.0, period:100000 },
 ];
 
 // ── DRAW GEOMETRY ─────────────────────────────────────────────────────────────
