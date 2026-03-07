@@ -71,6 +71,9 @@ function resize() { W = canvas.width = window.innerWidth; H = canvas.height = wi
 resize();
 window.addEventListener('resize', resize);
 
+// Detect pointer type: coarse = touch/mobile, fine = mouse/desktop
+const isMobile = window.matchMedia('(pointer: coarse)').matches;
+
 const TEAL   = [46, 123, 122];
 const COPPER = [184, 115, 51];
 const RUST   = [160, 70, 42];
@@ -424,9 +427,11 @@ function draw() {
   updatePaletteTransition(dt);
   if (geoOn) geomDefs.forEach(g => drawGeom(g, now));
 
-  // Drag indicator: dashed ring at locked geode's centre
-  if (dragLockActive && draggedGeomIdx >= 0) {
-    const g  = geomDefs[draggedGeomIdx];
+  // Drag indicator: dashed ring at whichever geode is being dragged
+  const activeDragIdx = (dragLockActive && draggedGeomIdx >= 0)   ? draggedGeomIdx
+                      : (mouseDragActive && mouseDragGeomIdx >= 0) ? mouseDragGeomIdx : -1;
+  if (activeDragIdx >= 0) {
+    const g  = geomDefs[activeDragIdx];
     const cx = W * 0.5 + (g.x - 0.5) * W + gyroX * g.depth * GYRO_MAX_PX;
     const cy = H * 0.5 + (g.y - 0.5) * H + gyroY * g.depth * GYRO_MAX_PX;
     ctx.save();
@@ -585,6 +590,8 @@ async function toggleGyro() {
 // ── DRAG TO REPOSITION ────────────────────────────────────────────────────────
 let dragLockActive  = false;
 let draggedGeomIdx  = -1;
+let mouseDragActive  = false;   // desktop mouse drag
+let mouseDragGeomIdx = -1;
 const DRAG_HIT_FRAC = 0.22; // fraction of min(W,H) — hit radius for lock detection
 
 function findNearestGeode(tx, ty) {
@@ -670,9 +677,6 @@ document.querySelectorAll('.btnSlot').forEach((btn) => {
   });
 });
 
-// Restore last session state and initialise preset button labels
-loadAutoState();
-updatePresetButtons();
 document.getElementById('btnFullscreen')?.addEventListener('click', () => {
   toggleFullscreen();
   resetHUDTimer();
@@ -839,4 +843,111 @@ function onTouchEnd(e) {
     swipeStartX = swipeStartY = swipeStartDensity = swipeStartScale = swipeAxis = null;
     gestureConsumed = false;
   }
+}
+
+// ── MOUSE DRAG (desktop) ──────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => {
+  const nearIdx = findNearestGeode(e.clientX, e.clientY);
+  if (nearIdx >= 0) {
+    mouseDragGeomIdx = nearIdx;
+    mouseDragActive  = true;
+    canvas.style.cursor = 'grabbing';
+    e.preventDefault();
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (mouseDragActive && mouseDragGeomIdx >= 0) {
+    geomDefs[mouseDragGeomIdx].x = Math.max(0.02, Math.min(0.98, e.clientX / W));
+    geomDefs[mouseDragGeomIdx].y = Math.max(0.02, Math.min(0.98, e.clientY / H));
+  } else {
+    canvas.style.cursor = findNearestGeode(e.clientX, e.clientY) >= 0 ? 'grab' : 'default';
+  }
+});
+
+function endMouseDrag() {
+  if (mouseDragActive) { mouseDragActive = false; mouseDragGeomIdx = -1; debouncedSave(); }
+  canvas.style.cursor = 'default';
+}
+canvas.addEventListener('mouseup',    endMouseDrag);
+canvas.addEventListener('mouseleave', endMouseDrag);
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+// h       → toggle HUD          f       → fullscreen
+// p       → cycle palette       s       → toggle sound mode
+// r       → reset               g       → toggle gyro
+// ← →     → density ±1          ↑ ↓     → scale ±0.05
+// + =     → speed +0.1          - _     → speed −0.1
+// 1/2/3   → load preset         Shift+1/2/3 → save preset
+// ? or i  → toggle info         Escape  → close info
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  switch (e.key) {
+    case '?': case 'i': case 'I':
+      infoOverlay.classList.contains('visible') ? hideInfo() : showInfo(); break;
+    case 'Escape': hideInfo(); break;
+
+    case 'h': case 'H':
+      toggleHUD(); if (hudVisible) resetHUDTimer(); break;
+    case 'f': case 'F':
+      toggleFullscreen(); break;
+    case 'p': case 'P':
+      cyclePalette(); showHUD(); resetHUDTimer(); break;
+    case 's': case 'S':
+      setMode(!soundMode); showHUD(); resetHUDTimer(); break;
+    case 'r': case 'R':
+      resetDefaults(); showHUD(); resetHUDTimer(); break;
+    case 'g': case 'G':
+      toggleGyro(); showHUD(); resetHUDTimer(); break;
+
+    case 'ArrowLeft':
+      e.preventDefault();
+      lineDensity = Math.max(1, lineDensity - 1); debouncedSave(); break;
+    case 'ArrowRight':
+      e.preventDefault();
+      lineDensity = Math.min(36, lineDensity + 1); debouncedSave(); break;
+    case 'ArrowUp':
+      e.preventDefault();
+      geoScale = Math.max(0.3, Math.min(2.5, +(geoScale + 0.05).toFixed(2))); debouncedSave(); break;
+    case 'ArrowDown':
+      e.preventDefault();
+      geoScale = Math.max(0.3, Math.min(2.5, +(geoScale - 0.05).toFixed(2))); debouncedSave(); break;
+
+    case '+': case '=':
+      geoSpeed = Math.max(0.1, Math.min(4.0, +(geoSpeed + 0.1).toFixed(2))); debouncedSave(); break;
+    case '-': case '_':
+      geoSpeed = Math.max(0.1, Math.min(4.0, +(geoSpeed - 0.1).toFixed(2))); debouncedSave(); break;
+
+    case '1': e.shiftKey ? savePreset(0) : loadPreset(0); showHUD(); resetHUDTimer(); break;
+    case '2': e.shiftKey ? savePreset(1) : loadPreset(1); showHUD(); resetHUDTimer(); break;
+    case '3': e.shiftKey ? savePreset(2) : loadPreset(2); showHUD(); resetHUDTimer(); break;
+    case '!': savePreset(0); showHUD(); resetHUDTimer(); break;
+    case '@': savePreset(1); showHUD(); resetHUDTimer(); break;
+    case '#': savePreset(2); showHUD(); resetHUDTimer(); break;
+  }
+});
+
+// ── MOBILE / DESKTOP INIT ────────────────────────────────────────────────────
+loadAutoState();
+updatePresetButtons();
+
+if (!isMobile) {
+  document.body.classList.add('is-desktop');
+  // Gyro button: no sensor on desktop, hide it
+  const gyroBtn = document.getElementById('btnGyro');
+  if (gyroBtn) gyroBtn.style.display = 'none';
+  // Gesture guide: swap for keyboard equivalents
+  const guide = document.getElementById('gestureGuide');
+  if (guide) guide.innerHTML =
+    '<span>← → density</span><span>↑ ↓ scale</span><span>+ − speed</span>';
+  // Hint text
+  const hint = document.getElementById('hint');
+  if (hint) hint.textContent = 'click & drag shapes  ·  press ? for controls';
+  // Auto-dismiss hint on first mouse move
+  document.addEventListener('mousemove', () => {
+    const h = document.getElementById('hint'); if (h) h.classList.add('gone');
+  }, { once: true });
+} else {
+  document.body.classList.add('is-mobile');
 }
