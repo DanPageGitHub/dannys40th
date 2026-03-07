@@ -110,6 +110,21 @@
       width: 100%;
     }
 
+    /* Preset slot row */
+    #presetRow {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+    }
+    #presetRow .btnSlot {
+      flex: 1;
+      font-size: 0.75rem;
+    }
+    #presetRow .btnSlot.filled {
+      background: rgba(184, 115, 51, 0.22);
+      border-color: rgba(184, 115, 51, 0.55);
+    }
+
     /* Gesture guide labels */
     #gestureGuide {
       width: 100%;
@@ -132,7 +147,7 @@
   <div id="micDot"></div>
 
   <!-- First-load hint -->
-  <div id="hint">double-tap for controls &nbsp;·&nbsp; swipe to adjust density &nbsp;·&nbsp; pinch to change speed</div>
+  <div id="hint">double-tap for controls &nbsp;·&nbsp; swipe ↔ density &nbsp;·&nbsp; swipe ↕ scale &nbsp;·&nbsp; pinch speed</div>
 
   <!-- HUD panel -->
   <div id="hud">
@@ -147,9 +162,17 @@
       <button id="btnSens">Sens: Med</button>
     </div>
 
+    <!-- Preset slots — tap to load, hold to save -->
+    <div id="presetRow">
+      <button class="btnSlot" data-slot="0">Slot 1</button>
+      <button class="btnSlot" data-slot="1">Slot 2</button>
+      <button class="btnSlot" data-slot="2">Slot 3</button>
+    </div>
+
     <!-- Gesture reminder inside HUD -->
     <div id="gestureGuide">
-      <span>swipe ← → density</span>
+      <span>swipe ↔ density</span>
+      <span>swipe ↕ scale</span>
       <span>pinch speed</span>
     </div>
   </div>
