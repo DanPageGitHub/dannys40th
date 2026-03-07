@@ -65,6 +65,59 @@ const RUST   = [160, 70, 42];
 const GOLD   = [200, 169, 110];
 function rgb(c, a) { return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
 
+// ── PALETTE SYSTEM ────────────────────────────────────────────────────────────
+// Each palette has 4 analogous colours: a=primary, b=cool, c=highlight, d=deep
+const PALETTES = [
+  { name: 'Earthen',  a: [184,115, 51], b: [ 46,123,122], c: [200,169,110], d: [160, 70, 42] },
+  { name: 'Amethyst', a: [130, 58,200], b: [ 78, 36,158], c: [172, 98,222], d: [100, 48,168] },
+  { name: 'Ocean',    a: [ 28,108,178], b: [ 18,152,158], c: [ 52,138,208], d: [ 14, 78,138] },
+  { name: 'Verdant',  a: [ 38,142, 78], b: [ 72,158, 52], c: [ 98,172, 98], d: [ 28,112, 68] },
+  { name: 'Ember',    a: [202, 82, 28], b: [168, 38, 38], c: [228,142, 32], d: [188, 52, 48] },
+  { name: 'Dusk',     a: [182, 58,142], b: [138, 38,118], c: [208, 98,162], d: [158, 48,128] },
+];
+// Which palette slot each geomDef uses (matches original COPPER/TEAL/GOLD/RUST/GOLD order)
+const GEO_SLOTS = ['a', 'b', 'c', 'd', 'c'];
+
+let paletteIdx      = 0;
+let paletteProgress = 1.0; // 0→1 during cross-fade, 1 = fully at target
+let paletteFrom     = null; // colour snapshot at transition start
+let paletteTo       = PALETTES[0];
+
+function cyclePalette() {
+  // Snapshot current geomDef colours as the "from" state
+  paletteFrom = {
+    a: [...geomDefs[0].col],
+    b: [...geomDefs[1].col],
+    c: [...geomDefs[2].col],
+    d: [...geomDefs[3].col],
+  };
+  paletteIdx  = (paletteIdx + 1) % PALETTES.length;
+  paletteTo   = PALETTES[paletteIdx];
+  paletteProgress = 0.0;
+  const btn = document.getElementById('btnPalette');
+  if (btn) btn.textContent = paletteTo.name;
+}
+
+function updatePaletteTransition(dt) {
+  if (paletteProgress >= 1.0 || !paletteFrom) return;
+  paletteProgress = Math.min(1.0, paletteProgress + dt / 1500); // 1.5 s cross-fade
+  const t = paletteProgress;
+  const ease = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; // smooth ease-in-out
+  geomDefs.forEach((g, i) => {
+    const slot = GEO_SLOTS[i];
+    const fr   = paletteFrom[slot];
+    const to   = paletteTo[slot];
+    g.col = [
+      Math.round(fr[0] + (to[0] - fr[0]) * ease),
+      Math.round(fr[1] + (to[1] - fr[1]) * ease),
+      Math.round(fr[2] + (to[2] - fr[2]) * ease),
+    ];
+  });
+  if (paletteProgress >= 1.0) {
+    geomDefs.forEach((g, i) => { g.col = [...paletteTo[GEO_SLOTS[i]]]; });
+  }
+}
+
 // ── GEOMETRY DEFINITIONS ──────────────────────────────────────────────────────
 const geomDefs = [
   { sym:6,  phase:0,   speed:0.000065, phase2:0,   speed2:-0.000042, maxAlpha:0.85, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000 },
@@ -246,10 +299,14 @@ function disableMic() {
 
 // ── ANIMATION LOOP ────────────────────────────────────────────────────────────
 let t = 0;
+let lastFrameTime = performance.now();
 function draw() {
   ctx.clearRect(0, 0, W, H);
   const now = performance.now();
+  const dt  = Math.min(now - lastFrameTime, 100); // cap at 100ms to avoid jumps on tab resume
+  lastFrameTime = now;
   updateBeat(now);
+  updatePaletteTransition(dt);
   if (geoOn) geomDefs.forEach(g => drawGeom(g, now));
   t += 0.016;
   requestAnimationFrame(draw);
@@ -356,6 +413,10 @@ document.getElementById('btnSens')?.addEventListener('click', () => {
 });
 document.getElementById('btnReset')?.addEventListener('click', () => {
   resetDefaults();
+  resetHUDTimer();
+});
+document.getElementById('btnPalette')?.addEventListener('click', () => {
+  cyclePalette();
   resetHUDTimer();
 });
 document.getElementById('btnFullscreen')?.addEventListener('click', () => {
