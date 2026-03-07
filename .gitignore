@@ -1,6 +1,29 @@
+# Dependencies
 node_modules/
 package-lock.json
 package.json
+
+# Env / secrets
 .env
 .env.*
 !.env.example
+
+# Cursor / AI / editor (not needed for site)
+.cursor/
+CLAUDE.md
+*.plan.md
+agent-transcripts/
+
+# Archives and dev utilities (not needed for site)
+_archive/
+fix_page.py
+*.pyc
+__pycache__/
+
+# Windows
+*Zone.Identifier
+Thumbs.db
+Desktop.ini
+
+# Tally instructions (paste into Tally dashboard; not served)
+TALLY-CUSTOM-CSS.txt
