@@ -27,6 +27,12 @@ let gyroBaseBeta  = null;
 const GYRO_RANGE  = 28;     // degrees of tilt = full effect
 const GYRO_MAX_PX = 65;     // pixel shift for depth=1 geode at full tilt
 
+// Drag / mouse state (declared here — draw loop reads these before their definition site)
+let dragLockActive  = false;
+let draggedGeomIdx  = -1;
+let mouseDragActive  = false;
+let mouseDragGeomIdx = -1;
+
 // Mic / beat detection state
 let micOn        = false;
 let micAnalyser  = null;
@@ -588,10 +594,6 @@ async function toggleGyro() {
 }
 
 // ── DRAG TO REPOSITION ────────────────────────────────────────────────────────
-let dragLockActive  = false;
-let draggedGeomIdx  = -1;
-let mouseDragActive  = false;   // desktop mouse drag
-let mouseDragGeomIdx = -1;
 const DRAG_HIT_FRAC = 0.22; // fraction of min(W,H) — hit radius for lock detection
 
 function findNearestGeode(tx, ty) {
