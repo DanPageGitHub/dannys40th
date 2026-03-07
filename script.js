@@ -20,27 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (window.location.hash) scrollToId(window.location.hash.slice(1));
 })();
 
-// Mobile nav: hamburger toggle and close on link click
-(function() {
-  var nav = document.getElementById('mainNav');
-  if (!nav) return;
-  var btn = nav.querySelector('.nav-toggle');
-  var links = nav.querySelectorAll('.nav-links a');
-  if (!btn || !links.length) return;
-  btn.addEventListener('click', function() {
-    var open = nav.classList.toggle('nav-open');
-    btn.setAttribute('aria-expanded', open);
-    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  });
-  for (var i = 0; i < links.length; i++) {
-    links[i].addEventListener('click', function() {
-      nav.classList.remove('nav-open');
-      btn.setAttribute('aria-expanded', 'false');
-      btn.setAttribute('aria-label', 'Open menu');
-    });
-  }
-})();
-
 // Badge sun: use custom image if present, else fallback to inline SVG
 (function() {
   var img = document.querySelector('.badge-sun');
