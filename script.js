@@ -10,9 +10,10 @@ const I = {
   bus_selfie:      'images/bus_selfie.jpg',
   bell_tents:      'images/bell_tents.jpg',
   pub_exterior:    'images/pub_exterior.jpg',
-  pub_canal_side:  'images/pub_canal_side.jpg',
+  pub_canal_side:  'images/BargeInnAerial.webp',
   canal_narrowboat:'images/canal_narrowboat.jpg',
   white_horse:     'images/white_horse.jpg',
+  rusty_crop_circle:'images/rustycropcircle.jpg',
   sunset_hero:     'images/Barge-Danny-Hero.jpg',
   bnb_room:        'images/bnb_room.jpg',
   bnb_bath:        'images/bnb_bath.jpg',
@@ -39,10 +40,10 @@ function setPhoto(id, key, pos, bf) {
 
 // heroBg is now a video iframe
 setPhoto('pHero','danny_sign','center 40%');
-setPhoto('pPub','pub_canal_side','center 60%');
+setPhoto('pPub','pub_canal_side','center center');
 setPhoto('pTents','pub_exterior','center 50%');
 setPhoto('pSign','canal_narrowboat','center 45%');
-setPhoto('pHorse','white_horse','center 45%');
+setPhoto('pHorse','rusty_crop_circle','center 50%');
 setPhoto('pDJ','dj_shot','center 40%');
 setPhoto('pBnbRoom','bnb_room','center 40%');
 setPhoto('pBnbBath','bnb_bath','center 40%');
