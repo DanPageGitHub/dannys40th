@@ -1,5 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+// In-page links: scroll without showing hash in URL
+(function() {
+  function cleanUrl() { history.replaceState(null, '', window.location.pathname + window.location.search); }
+  function scrollToId(id) {
+    var el = document.getElementById(id);
+    if (el) { el.scrollIntoView({ behavior: 'smooth' }); cleanUrl(); }
+  }
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    var id = (a.getAttribute('href') || '').slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    scrollToId(id);
+  });
+  if (window.location.hash) scrollToId(window.location.hash.slice(1));
+})();
+
 // Badge sun: use custom image if present, else fallback to inline SVG
 (function() {
   var img = document.querySelector('.badge-sun');
