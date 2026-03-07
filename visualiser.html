@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Visualiser</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: #0a0806;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Mic activity dot — top-left */
+    #micDot {
+      display: none;
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #a04630;
+      transition: opacity 0.1s, transform 0.1s;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    /* Hint text — fades out after first interaction */
+    #hint {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(184, 115, 51, 0.5);
+      font-family: Georgia, serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-align: center;
+      pointer-events: none;
+      z-index: 50;
+      transition: opacity 1.5s;
+      white-space: nowrap;
+    }
+    #hint.gone { opacity: 0; }
+
+    /* HUD panel — slides up from bottom */
+    #hud {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+      background: rgba(10, 8, 6, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(184, 115, 51, 0.2);
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      z-index: 100;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #hud.visible { transform: translateY(0); }
+
+    #hud button {
+      flex: 1 1 auto;
+      min-height: 48px;
+      min-width: 80px;
+      padding: 0 12px;
+      background: rgba(184, 115, 51, 0.12);
+      border: 1px solid rgba(184, 115, 51, 0.3);
+      border-radius: 8px;
+      color: rgba(232, 223, 200, 0.85);
+      font-family: Georgia, serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #hud button:active {
+      background: rgba(184, 115, 51, 0.28);
+      border-color: rgba(184, 115, 51, 0.6);
+    }
+
+    /* Sensitivity row — only shown in sound mode */
+    #sensSetting {
+      display: none;
+      width: 100%;
+    }
+    #sensSetting button {
+      width: 100%;
+    }
+
+    /* Gesture guide labels */
+    #gestureGuide {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(184, 115, 51, 0.35);
+      font-family: Georgia, serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      padding: 2px 4px 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Mic activity indicator -->
+  <div id="micDot"></div>
+
+  <!-- First-load hint -->
+  <div id="hint">double-tap for controls &nbsp;·&nbsp; swipe to adjust density &nbsp;·&nbsp; pinch to change speed</div>
+
+  <!-- HUD panel -->
+  <div id="hud">
+    <button id="btnMode">Sound</button>
+    <button id="btnGeo">Geo: ON</button>
+    <button id="btnFullscreen">Fullscreen</button>
+    <button id="btnReset">Reset</button>
+
+    <!-- Mic sensitivity — only visible in sound mode -->
+    <div id="sensSetting">
+      <button id="btnSens">Sens: Med</button>
+    </div>
+
+    <!-- Gesture reminder inside HUD -->
+    <div id="gestureGuide">
+      <span>swipe ← → density</span>
+      <span>pinch speed</span>
+    </div>
+  </div>
+
+  <script src="visualiser.js"></script>
+  <script>
+    // Dismiss hint on first touch
+    document.addEventListener('touchstart', function dismissHint() {
+      const hint = document.getElementById('hint');
+      if (hint) hint.classList.add('gone');
+      document.removeEventListener('touchstart', dismissHint);
+    }, { passive: true });
+  </script>
+</body>
+</html>
