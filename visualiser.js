@@ -480,11 +480,6 @@ document.getElementById('btnMode')?.addEventListener('click', () => {
   setMode(!soundMode);
   resetHUDTimer();
 });
-document.getElementById('btnGeo')?.addEventListener('click', () => {
-  geoOn = !geoOn;
-  updateHUDState();
-  resetHUDTimer();
-});
 document.getElementById('btnSens')?.addEventListener('click', () => {
   cycleSensitivity();
   resetHUDTimer();
