@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Viz2</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: #0a0806;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      z-index: 1;
+    }
+
+    #micDot {
+      display: none;
+      position: fixed;
+      top: 18px; left: 18px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #a04630;
+      transition: opacity 0.1s, transform 0.1s;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    #hint {
+      position: fixed;
+      bottom: 80px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.88);
+      font-family: Georgia, serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-align: center;
+      pointer-events: none;
+      z-index: 50;
+      transition: opacity 1.5s;
+      white-space: nowrap;
+    }
+    #hint.gone { opacity: 0; }
+
+    /* HUD — top-right panel, no full-width bar */
+    #hud {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 280px;
+      max-width: calc(100vw - 24px);
+      padding: 8px 10px calc(8px + env(safe-area-inset-top));
+      background: rgba(14, 13, 11, 0.95);
+      border-left: 1px solid rgba(184, 115, 51, 0.25);
+      border-bottom: 1px solid rgba(184, 115, 51, 0.15);
+      border-radius: 0 0 0 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #fff;
+      font-family: Georgia, serif;
+      font-size: 0.8rem;
+    }
+    #hud.visible { transform: translateX(0); }
+
+    #paneContainer {
+      width: 100%;
+      min-height: 0;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    #paneContainer > * { min-height: 0; display: block; }
+
+    #hud button {
+      flex: 1 1 auto;
+      min-height: 44px;
+      min-width: 72px;
+      padding: 0 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(184, 115, 51, 0.3);
+      border-radius: 6px;
+      color: #fff;
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #hud button:active {
+      background: rgba(184, 115, 51, 0.2);
+      border-color: rgba(184, 115, 51, 0.5);
+    }
+
+    .hud-row { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .hud-slider-wrap { display: flex; align-items: center; gap: 6px; flex: 1 1 120px; min-width: 100px; }
+    .hud-slider-wrap label { white-space: nowrap; min-width: 3.2em; color: #fff; font-size: 0.72rem; }
+    .hud-slider-wrap input[type="range"] { flex: 1; min-width: 0; accent-color: #b87333; }
+    .hud-slider-wrap .btn-reset { min-width: 28px; padding: 2px 6px; font-size: 0.7rem; }
+    .hud-section-title { display: none; }
+    .hud-value { display: none; }
+
+    #sensSetting { display: none; width: 100%; }
+    #sensSetting button { width: 100%; }
+
+    #presetRow { width: 100%; display: flex; gap: 8px; flex-wrap: wrap; }
+    #presetRow .btnSlot { flex: 1; font-size: 0.72rem; min-width: 60px; }
+    #presetRow .btnSlot.filled { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+
+    .audio-source-panel {
+      display: inline-flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(0,0,0,0.2);
+    }
+    .audio-source-panel .audio-source-btn {
+      min-width: 44px;
+      padding: 0 12px;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      border-right: 1px solid rgba(255,255,255,0.2);
+    }
+    .audio-source-panel .audio-source-btn:last-child { border-right: none; }
+    .audio-source-panel .audio-source-btn.active {
+      background: rgba(184, 115, 51, 0.35);
+      color: #fff;
+      border-color: rgba(184, 115, 51, 0.6);
+    }
+    .audio-source-panel .audio-source-btn.active:last-child { border-right: none; }
+
+    #btnInfo {
+      position: fixed;
+      top: 16px; right: 16px;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(14, 13, 11, 0.9);
+      border: 1px solid rgba(184, 115, 51, 0.35);
+      color: #fff;
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 60;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #btnInfo:active { background: rgba(255,255,255,0.2); }
+
+    #infoOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 13, 11, 0.96);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(184, 115, 51, 0.2);
+      z-index: 200;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 56px 24px 48px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      color: #fff;
+      font-family: Georgia, serif;
+    }
+    #infoOverlay.visible { opacity: 1; pointer-events: auto; }
+
+    #infoOverlay .help-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    #infoOverlay .help-tabs button {
+      padding: 8px 16px;
+      background: rgba(184, 115, 51, 0.2);
+      border: 1px solid rgba(184, 115, 51, 0.4);
+      border-radius: 6px;
+      color: #fff;
+      font-family: Georgia, serif;
+      cursor: pointer;
+    }
+    #infoOverlay .help-tabs button.active { background: rgba(184, 115, 51, 0.4); }
+    #infoOverlay .help-panel { display: none; }
+    #infoOverlay .help-panel.active { display: block; }
+
+    #btnInfoClose {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(184, 115, 51, 0.2);
+      border: 1px solid rgba(184, 115, 51, 0.4);
+      border-radius: 8px;
+      color: #fff;
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    #infoOverlay h2 {
+      color: #b87333;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin: 32px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(184, 115, 51, 0.25);
+    }
+    #infoOverlay h2:first-of-type { margin-top: 8px; }
+    #infoOverlay dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0 0 8px; }
+    #infoOverlay dt { color: #fff; font-size: 0.78rem; font-style: italic; white-space: nowrap; }
+    #infoOverlay dd { color: rgba(255, 255, 255, 0.85); font-size: 0.78rem; line-height: 1.55; margin: 0; }
+    #infoOverlay p { color: rgba(255, 255, 255, 0.9); font-size: 0.8rem; line-height: 1.75; margin: 0 0 14px; }
+    #infoOverlay p strong { color: #fff; font-style: italic; }
+    #infoOverlay a { color: #d4954a; }
+
+    .ctrl-desktop-only { display: none; }
+    body.is-desktop .ctrl-mobile-only  { display: none; }
+    body.is-desktop .ctrl-desktop-only { display: block; }
+    body.is-desktop dl.ctrl-desktop-only { display: grid; }
+
+    /* Desktop: same top-right */
+    body.is-desktop #hud {
+      padding: 6px 10px 8px;
+      background: rgba(14, 13, 11, 0.97);
+    }
+    body.is-desktop #hud .hud-row { gap: 10px; margin-bottom: 6px; }
+    body.is-desktop #hud .hud-row:last-of-type { margin-bottom: 0; }
+    body.is-desktop #hud .hud-section {
+      width: 100%;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px solid #2a2a2a;
+    }
+    body.is-desktop #hud .hud-section:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+    body.is-desktop #hud .hud-section-title { display: block; }
+    body.is-desktop #hud .hud-value { display: inline; }
+    body.is-desktop #hud .hud-section-title {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 6px;
+      padding-left: 1px;
+    }
+    body.is-desktop #hud .hud-param {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1 1 140px;
+      min-width: 0;
+    }
+    body.is-desktop #hud .hud-param label {
+      min-width: 4.2em;
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.04em;
+    }
+    body.is-desktop #hud .hud-param input[type="range"] {
+      flex: 1;
+      min-width: 0;
+      height: 4px;
+      accent-color: rgba(184, 115, 51, 0.85);
+      cursor: pointer;
+    }
+    body.is-desktop #hud .hud-param .hud-value {
+      font-variant-numeric: tabular-nums;
+      min-width: 2.8em;
+      text-align: right;
+      color: rgba(255,255,255,0.5);
+      font-size: 10px;
+    }
+    body.is-desktop #hud .btn-reset { display: none; }
+    body.is-desktop #hud button:not(.btn-reset) {
+      min-height: 28px;
+      padding: 4px 10px;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(184,115,51,0.3);
+      border-radius: 3px;
+      color: #fff;
+    }
+    body.is-desktop #hud button:hover { background: rgba(184,115,51,0.15); border-color: rgba(184,115,51,0.45); }
+    body.is-desktop #hud button:active { background: rgba(184,115,51,0.25); }
+    body.is-desktop #hud .audio-source-panel .audio-source-btn { border: none; border-right: 1px solid rgba(184,115,51,0.25); }
+    body.is-desktop #hud .audio-source-panel .audio-source-btn.active { background: rgba(184,115,51,0.35); color: #fff; }
+    body.is-desktop #hud .hud-row--head button { min-width: 0; }
+    body.is-desktop #hud #defaultBankRow .btnSlot,
+    body.is-desktop #hud #presetRow .btnSlot {
+      min-width: 0;
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+    body.is-desktop #hud #gestureGuide { display: none; }
+    body.is-desktop #hud #defaultBankRow {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px solid #2a2a2a;
+    }
+    body.is-desktop #hud #defaultBankRow .hud-row--genre-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+    body.is-desktop #hud #defaultBankRow .hud-row--genre-btns .btnSlot {
+      min-width: 0;
+      padding: 4px 10px;
+      font-size: 10px;
+    }
+
+    #gestureGuide {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      padding: 2px 4px 0;
+    }
+
+    .hud-section--routing .hud-section-title { display: block; margin-bottom: 6px; }
+    .hud-routing-grid {
+      display: grid;
+      grid-template-columns: 4.5em 1fr 1fr 1fr;
+      gap: 4px 8px;
+      align-items: center;
+      font-size: 0.7rem;
+    }
+    .hud-routing-header { color: rgba(255,255,255,0.5); text-align: center; text-transform: uppercase; letter-spacing: 0.06em; }
+    .hud-routing-label { color: #fff; }
+    .rtog {
+      min-width: 32px;
+      padding: 4px 6px;
+      font-size: 0.85rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(184,115,51,0.25);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .rtog.on { background: rgba(184,115,51,0.25); border-color: rgba(184,115,51,0.5); color: #fff; }
+    .hud-row--quality { align-items: center; gap: 10px; }
+    .hud-quality-label { color: #fff; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .quality-mode-panel { display: inline-flex; border-radius: 4px; overflow: hidden; border: 1px solid rgba(184,115,51,0.3); }
+    .quality-btn {
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      background: rgba(255,255,255,0.06);
+      border: none;
+      border-right: 1px solid rgba(184,115,51,0.2);
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-family: Georgia, serif;
+    }
+    .quality-btn:last-child { border-right: none; }
+    .quality-btn.active { background: rgba(184,115,51,0.3); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+  <div id="micDot"></div>
+  <button id="btnInfo">?</button>
+
+  <div id="infoOverlay">
+    <button id="btnInfoClose">&#215; Close</button>
+
+    <div class="help-tabs">
+      <button type="button" id="tabMobileHelp" class="active">Mobile help</button>
+      <button type="button" id="tabDesktopHelp">Desktop help</button>
+    </div>
+
+    <div id="helpMobile" class="help-panel active">
+      <h2>Touch Controls</h2>
+      <dl>
+        <dt>Double-tap</dt>
+        <dd>Open / close the control panel</dd>
+        <dt>Swipe left / right</dt>
+        <dd>Line density</dd>
+        <dt>Swipe up / down</dt>
+        <dd>Scale</dd>
+        <dt>Pinch</dt>
+        <dd>Rotation speed</dd>
+        <dt>Hold 2 s near a shape</dt>
+        <dd>Lock and drag to reposition. Reset restores positions.</dd>
+        <dt>Hold 0.5 s (open space)</dt>
+        <dd>Toggle fullscreen</dd>
+      </dl>
+      <h2>Panel</h2>
+      <p>Sliders: Density, Speed, Lateral, Tunnel, Scale. Each has a reset button (set back to default). Randomise sets all to random values. Mic routing: choose which band (Bass, Mid, Treble) drives Speed, Sway, or Density. Quality: Full (60fps), Half, or Low to reduce CPU/GPU. Slot 1&ndash;6: tap to load, hold 500 ms to save.</p>
+    </div>
+
+    <div id="helpDesktop" class="help-panel">
+      <h2>Keyboard &amp; Mouse</h2>
+      <dl class="ctrl-desktop-only">
+        <dt>?</dt>
+        <dd>Open / close this panel</dd>
+        <dt>H</dt>
+        <dd>Show / hide control panel</dd>
+        <dt>F</dt>
+        <dd>Fullscreen</dd>
+        <dt>← →</dt>
+        <dd>Line density</dd>
+        <dt>↑ ↓</dt>
+        <dd>Scale</dd>
+        <dt>+ −</dt>
+        <dd>Rotation speed</dd>
+        <dt>P</dt>
+        <dd>Cycle palette</dd>
+        <dt>S</dt>
+        <dd>Toggle sound / mic</dd>
+        <dt>R</dt>
+        <dd>Reset to defaults</dd>
+        <dt>2</dt>
+        <dd>Show / hide Freq Bands panel (drag handles, norm ceiling, min gate)</dd>
+        <dt>1&ndash;6</dt>
+        <dd>Load preset slot</dd>
+        <dt>Shift + 1&ndash;6</dt>
+        <dd>Save to preset slot</dd>
+        <dt>Click &amp; drag</dt>
+        <dd>Reposition shape. Reset restores all.</dd>
+      </dl>
+      <h2>Panel</h2>
+      <p>Motion: Speed, Lateral. Shape: Density, Tunnel, Scale. Double-click a slider to reset that parameter; Reset button restores all. Mic routing: Bass/Mid/Treble to Speed/Sway/Density (tap toggles). Quality: Full / Half / Low for FPS. Random, Mic/Tab, preset slots 1&ndash;6.</p>
+    </div>
+
+    <h2>About</h2>
+    <p>This started as about twenty lines of canvas code tucked behind the party page — a vague shimmer of rotating shapes that you would barely notice while reading about camping prices. Then one late evening became several, the controls multiplied, the gyroscope got involved, and it quietly became its own thing. It runs entirely in your browser; no library, no framework, just maths and a canvas element that got a little out of hand.</p>
+
+    <h2>Technology</h2>
+    <p>Viz2 is built with <strong>HTML5 Canvas 2D</strong> and a single <strong>requestAnimationFrame</strong> draw loop. Audio comes from the <strong>Web Audio API</strong>: an <strong>AnalyserNode</strong> with FFT for frequency bands, <strong>getUserMedia</strong> for the microphone, and <strong>getDisplayMedia</strong> for tab or screen capture so you can visualise another tab’s playback. On mobile, <strong>DeviceOrientation</strong> drives gyro parallax. Presets and auto-save use <strong>localStorage</strong>. Vanilla JavaScript, no frameworks or libraries.</p>
+
+    <h2>Sacred Geometry</h2>
+    <p>Five mandalas are always present, each built on a different sacred symmetry: <strong>5-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Pentagram" target="_blank" rel="noopener noreferrer">pentagram</a>), <strong>6-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Hexagram" target="_blank" rel="noopener noreferrer">hexagram</a>), <strong>7-fold</strong> (rare — found in <a href="https://en.wikipedia.org/wiki/Islamic_geometric_patterns" target="_blank" rel="noopener noreferrer">Sufi and Islamic geometric art</a> and <a href="https://en.wikipedia.org/wiki/Quasicrystal" target="_blank" rel="noopener noreferrer">quasicrystal geometry</a>), <strong>8-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Octagram" target="_blank" rel="noopener noreferrer">octagram</a> of ancient cosmology), and <strong>12-fold</strong> (the zodiac, the hours, the <a href="https://en.wikipedia.org/wiki/Chromatic_scale" target="_blank" rel="noopener noreferrer">chromatic scale</a>). Each form independently cycles through phases of emergence, full presence and dissolution — never quite in sync, so the composition is never the same twice.</p>
+    <p>The concentric rings within each mandala follow the <strong><a href="https://en.wikipedia.org/wiki/Golden_ratio" target="_blank" rel="noopener noreferrer">golden ratio φ ≈ 1.618</a></strong>, spacing at 1, 0.786, 0.618, 0.5, 0.382, 0.236 and 0.146 of the full radius — the same sequence found in nautilus shells, pine cones, the spiral of galaxies, and the proportions of the human body.</p>
+    <p>Each frame, two counter-rotating layers are drawn per mandala — one at full opacity, one at 45% — creating depth without a 3D engine. When Sound is on, the microphone (or captured tab) feeds the <strong>Web Audio FFT</strong>. You can choose which band (Bass, Mid, Treble) drives speed, sway, or density in the Mic routing grid. A beat fires when a band crosses its rolling average, sending a visual spike.</p>
+  </div>
+
+  <div id="hint">double-tap for controls &nbsp;·&nbsp; swipe &#8596; density &nbsp;·&nbsp; swipe &#8597; scale &nbsp;·&nbsp; pinch speed</div>
+
+  <div id="hud">
+    <div id="paneContainer"></div>
+    <div id="gestureGuide">
+      <span>swipe &#8596; density</span>
+      <span>swipe &#8597; scale</span>
+      <span>pinch speed</span>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var m = /[?&]clear=1/i.test(location.search);
+      if (m) {
+        try {
+          var keys = [];
+          for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+          keys.forEach(function(k) { if (k && k.indexOf('vis2_') === 0) localStorage.removeItem(k); });
+        } catch (e) {}
+        location.replace(location.pathname || '/visualiser2.html');
+        return;
+      }
+    })();
+  </script>
+  <script src="visualiser2.js"></script>
+  <script type="module" src="visualiser2-pane.js"></script>
+  <script>
+    document.addEventListener('touchstart', function dismissHint() {
+      const hint = document.getElementById('hint');
+      if (hint) hint.classList.add('gone');
+    }, { once: true, passive: true });
+
+    (function helpTabs() {
+      const tabMobile = document.getElementById('tabMobileHelp');
+      const tabDesktop = document.getElementById('tabDesktopHelp');
+      const panelMobile = document.getElementById('helpMobile');
+      const panelDesktop = document.getElementById('helpDesktop');
+      if (!tabMobile || !tabDesktop) return;
+      if (document.body.classList.contains('is-desktop')) {
+        tabDesktop.classList.add('active'); tabMobile.classList.remove('active');
+        panelDesktop.classList.add('active'); panelMobile.classList.remove('active');
+      }
+      tabMobile.addEventListener('click', function() {
+        tabMobile.classList.add('active'); tabDesktop.classList.remove('active');
+        panelMobile.classList.add('active'); panelDesktop.classList.remove('active');
+      });
+      tabDesktop.addEventListener('click', function() {
+        tabDesktop.classList.add('active'); tabMobile.classList.remove('active');
+        panelDesktop.classList.add('active'); panelMobile.classList.remove('active');
+      });
+    })();
+  </script>
+</body>
+</html>

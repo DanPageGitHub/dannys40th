@@ -42,7 +42,7 @@ const I = {
   bus_selfie:      'images/bus_selfie.jpg',
   bell_tents:      'images/bell_tents.jpg',
   pub_exterior:    'images/pub_exterior.jpg',
-  pub_canal_side:  'images/BargeInnAerial.webp',
+  pub_canal_side:  'images/the-barge-crop-circle-mecca.jpg',
   canal_narrowboat:'images/canal_narrowboat.jpg',
   white_horse:     'images/white_horse.jpg',
   rusty_crop_circle:'images/rustycropcircle.jpg',
@@ -59,12 +59,14 @@ let djSat = 0.72, djSep = 0.18, djBrt = 0.92;
 function setPhoto(id, key, pos, bf, fit, sepiaOverride) {
   const wrap = document.getElementById(id);
   if (!wrap || !I[key]) return;
+  // Always show a single image per slot
+  while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
   const img = document.createElement('img');
   img.src = I[key]; img.alt = '';
   const b = bf || '0.92';
   const objectFit = fit || 'cover';
   const sep = sepiaOverride !== undefined ? sepiaOverride : photoSep;
-  img.style.cssText = `width:100%;height:100%;object-fit:${objectFit};display:block;filter:saturate(0.72) sepia(${sep}) brightness(${b});transition:filter 0.6s,transform 0.7s;`;
+  img.style.cssText = `width:100%;height:100%;object-fit:${objectFit};display:block;filter:saturate(0.72) sepia(${sep}) brightness(${b});transition:opacity 0.8s ease,filter 0.6s,transform 0.7s;opacity:1;`;
   if (pos) img.style.objectPosition = pos;
   const isDJ = wrap.classList.contains('photo-dj');
   wrap.insertBefore(img, wrap.firstChild);
@@ -76,14 +78,88 @@ function setPhoto(id, key, pos, bf, fit, sepiaOverride) {
 }
 
 // heroBg is now a video iframe
-setPhoto('pHero','danny_sign','center 40%');
-setPhoto('pPub','pub_canal_side','center center', undefined, 'cover', 0.18);
-setPhoto('pTents','pub_exterior','center center', undefined, 'cover', 0.18);
-setPhoto('pSign','canal_narrowboat','center 45%', undefined, undefined, 0.18);
-setPhoto('pHorse','rusty_crop_circle','center 50%', undefined, undefined, 0.18);
 setPhoto('pDJ','dj_shot','center 50%');
 setPhoto('pBnbRoom','bnb_room','center 40%');
 setPhoto('pBnbBath','bnb_bath','center 40%');
+
+// Venue carousel (Where We're Going) — rotate through key images without stretching
+(function(){
+  const heroId = 'pHero';
+  const heroEl = document.getElementById(heroId);
+  if(!heroEl) return;
+  const sequence = [
+    // Start on the pub exterior, then rotate through canal, crop-circle mecca, and finally Danny
+    ['pub_exterior','center center'],
+    ['pub_canal_side','center center'],
+    ['crop_circle','center 45%'],
+    ['rusty_crop_circle','center 50%'],
+    ['danny_sign','center 40%'],
+  ];
+  let idx = 0;
+
+  function createImg(key,pos){
+    const img = document.createElement('img');
+    img.src = I[key];
+    img.alt = '';
+    // New slide starts transparent; both slides cross-fade via opacity.
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.75) sepia(0.18) brightness(0.94);transition:opacity 11.2s ease,filter 0.6s,transform 0.7s;opacity:0;';
+    if(pos) img.style.objectPosition = pos;
+    return img;
+  }
+
+  const FADE_MS = 11200;
+  const HOLD_MS = 3200; // steady time each image stays fully visible
+
+  // Initialise with first image if empty
+  if(!heroEl.querySelector('img')){
+    const [k,p] = sequence[0];
+    const first = createImg(k,p);
+    first.style.opacity = '1';
+    heroEl.appendChild(first);
+  }
+
+  function fadeTo(nextIdx, done){
+    const [key,pos] = sequence[nextIdx];
+    const current = heroEl.querySelector('img');
+    const next = createImg(key,pos);
+    heroEl.appendChild(next);
+    // Only start crossfade once the new image has loaded, so we never fade to black.
+    const doCrossfade = () => {
+      // Ensure the browser has registered the new element before changing opacity
+      void next.offsetWidth;
+      // Cross-fade: new image fades in while old image fades out
+      next.style.opacity = '1';
+      if(current){
+        current.style.opacity = '0';
+        // After the fade duration, remove the old image
+        setTimeout(() => {
+          if(current.parentNode === heroEl){
+            heroEl.removeChild(current);
+          }
+          if(typeof done === 'function') done();
+        }, FADE_MS + 50);
+      } else if(typeof done === 'function'){
+        done();
+      }
+    };
+
+    if(next.complete){
+      doCrossfade();
+    } else {
+      next.addEventListener('load', doCrossfade);
+    }
+  }
+
+  function scheduleNext(){
+    setTimeout(() => {
+      idx = (idx + 1) % sequence.length;
+      fadeTo(idx, scheduleNext);
+    }, HOLD_MS);
+  }
+
+  // Start the loop after the first image has had its initial hold time
+  scheduleNext();
+})();
 
 // Parallax backgrounds
 const px1 = document.getElementById('pxImg1');
@@ -646,6 +722,312 @@ let inFullscreen = false;
         cfg.cur = (cfg.cur + (dir===1?1:-1) + cfg.ids.length) % cfg.ids.length;
         document.getElementById(cfg.ids[cfg.cur]).click();
       }
+    }
+  });
+
+})();
+
+// HERO TUNING PANEL — padding, type sizes, wheel size per viewport
+(function(){
+  const panel = document.createElement('div');
+  panel.id = 'heroTuningPanel';
+  panel.style.cssText = [
+    'position:fixed','bottom:20px','left:20px','z-index:610','width:260px',
+    'background:rgba(14,13,11,0.95)','backdrop-filter:blur(8px)','-webkit-backdrop-filter:blur(8px)',
+    'border:1px solid rgba(74,173,171,0.5)','border-radius:3px',
+  'padding:12px 14px 14px','font-family:\"Libre Baskerville\",Georgia,serif',
+  'color:rgba(232,223,200,0.85)','font-size:0.75rem','letter-spacing:0.06em',
+  'pointer-events:all','user-select:text','opacity:0','transition:opacity 0.2s',
+  'max-height:70vh','overflow-y:auto'
+  ].join(';');
+
+  function row(label, id, min, max, step) {
+    return `<label style="display:block;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+        <span>${label}</span>
+        <span id="hero_lbl_${id}" style="color:#4aadab"></span>
+      </div>
+      <input type="range" id="hero_${id}" min="${min}" max="${max}" step="${step}" style="width:100%;accent-color:#4aadab">
+    </label>`;
+  }
+
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:1px solid rgba(74,173,171,0.4);padding-bottom:6px">
+      <span style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em;color:#4aadab">Hero tuning</span>
+      <span id="hero_bp" style="font-size:0.7rem;opacity:0.75"></span>
+    </div>
+
+    <div style="margin:4px 0 2px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.16em;color:rgba(232,223,200,0.65);border-bottom:1px solid rgba(74,173,171,0.3);padding-bottom:2px;">Layout</div>
+    ${row('Hero pad top','padTop',0,400,2)}
+    ${row('Hero pad bottom','padBottom',0,400,2)}
+    ${row('Hero pad X','padSides',0,120,2)}
+    ${row('Wheel scale','wheelScale',80,320,2)}
+
+    <div style="margin:6px 0 2px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.16em;color:rgba(232,223,200,0.65);border-bottom:1px solid rgba(74,173,171,0.3);padding-bottom:2px;">Title & copy</div>
+    ${row('Title offset','titleTop',-200,200,2)}
+    ${row('Title size','h1Size',56,320,1)}
+    ${row('Subtitle offset','subTop',-200,200,2)}
+    ${row('Subtitle size','subSize',32,144,1)}
+    ${row('Venue offset','venueTop',-200,200,2)}
+    ${row('Venue size','venueSize',24,120,1)}
+    ${row('CTA offset','ctaTop',-200,200,2)}
+    ${row('CTA text size','ctaSize',28,120,1)}
+    ${row('CTA box pad','ctaBox',0,240,2)}
+
+    <div style="margin:6px 0 2px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.16em;color:rgba(232,223,200,0.65);border-bottom:1px solid rgba(74,173,171,0.3);padding-bottom:2px;">Date line</div>
+    ${row('Date offset','badgeTop',-200,200,2)}
+    ${row('Date text size','badgeSize',24,160,1)}
+    ${row('Date box pad','badgeBox',0,260,2)}
+
+    <div style="margin:6px 0 2px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.16em;color:rgba(232,223,200,0.65);border-bottom:1px solid rgba(74,173,171,0.3);padding-bottom:2px;">Nav bar</div>
+    ${row('Nav pad Y','navPad',0,80,1)}
+    ${row('Nav font size','navFont',8,32,0.5)}
+    ${row('Nav text pad Y','navTextPad',-20,40,1)}
+    ${row('Nav letter spacing','navLetter',0,40,0.5)}
+    ${row('Nav max width','navMax',400,1600,10)}
+
+    <button id="hero_copy" style="margin-top:8px;width:100%;padding:6px 0;border-radius:2px;border:1px solid rgba(74,173,171,0.6);background:rgba(74,173,171,0.08);color:#4aadab;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;cursor:pointer">Copy current hero settings</button>
+    <div style="margin-top:4px;font-size:0.68rem;opacity:0.6;">Press 3 to toggle panel. Values are per current viewport width.</div>
+  `;
+  document.body.appendChild(panel);
+
+  const hero = document.getElementById('hero');
+  const nav = document.querySelector('nav');
+  const navInner = document.querySelector('.nav-inner');
+  const badge = hero ? hero.querySelector('.badge') : null;
+  const h1 = hero ? hero.querySelector('h1') : null;
+  const sub = hero ? hero.querySelector('.title-hand') : null;
+  const venue = hero ? hero.querySelector('.hero-venue') : null;
+  const cta = hero ? hero.querySelector('.hero-cta') : null;
+  const root = document.documentElement;
+
+  function px(num){ return Math.round(num) + 'px'; }
+  function setLbl(id, val, suffix){ const el=document.getElementById('hero_lbl_'+id); if(el) el.textContent=val + (suffix||''); }
+
+  function syncFromDOM() {
+    if(!hero || !badge || !h1 || !sub || !venue || !cta || !nav || !navInner) return;
+    const sHero = getComputedStyle(hero);
+    const sBadge = getComputedStyle(badge);
+    const sH1 = getComputedStyle(h1);
+    const sSub = getComputedStyle(sub);
+    const sVenue = getComputedStyle(venue);
+    const sCta = getComputedStyle(cta);
+    const sunScale = parseFloat(getComputedStyle(root).getPropertyValue('--hero-sun-scale') || '1');
+    const sNav = getComputedStyle(nav);
+    const sNavInner = getComputedStyle(navInner);
+    const firstNavLink = nav.querySelector('a');
+    const sNavLink = firstNavLink ? getComputedStyle(firstNavLink) : null;
+
+    const padTop = parseInt(sHero.paddingTop,10) || 0;
+    const padBottom = parseInt(sHero.paddingBottom,10) || 0;
+    const padSides = parseInt(sHero.paddingLeft,10) || 0;
+    const navPad = parseInt(sNav.paddingTop,10) || 0;
+    const navMax = parseInt(sNavInner.maxWidth,10) || navInner.clientWidth || 0;
+    const badgeTop = parseInt(sBadge.marginTop,10) || 0;
+    const h1Top = parseInt(sH1.marginTop,10) || 0;
+    const subTop = parseInt(sSub.marginTop,10) || 0;
+    const venueTop = parseInt(sVenue.marginTop,10) || 0;
+    const ctaTop = parseInt(sCta.marginTop,10) || 0;
+    const badgeSize = parseFloat(sBadge.fontSize) || 0;
+    const badgeBox = parseInt(sBadge.paddingTop,10) || 0;
+    const navFont = sNavLink ? parseFloat(sNavLink.fontSize) || 0 : 0;
+    const h1Size = parseFloat(sH1.fontSize) || 0;
+    const subSize = parseFloat(sSub.fontSize) || 0;
+    const venueSize = parseFloat(sVenue.fontSize) || 0;
+    const ctaSize = parseFloat(sCta.fontSize) || 0;
+    const ctaPadY = parseInt(sCta.paddingTop,10) || 0;
+    // Use nav link margin for vertical row spacing so we can go negative safely
+    const navTextPad = sNavLink ? parseInt(sNavLink.marginTop,10) || 0 : 0;
+
+    document.getElementById('hero_padTop').value = padTop;
+    document.getElementById('hero_padBottom').value = padBottom;
+    document.getElementById('hero_padSides').value = padSides;
+    document.getElementById('hero_navPad').value = navPad;
+    document.getElementById('hero_navMax').value = navMax;
+    document.getElementById('hero_badgeTop').value = badgeTop;
+    document.getElementById('hero_badgeSize').value = badgeSize;
+    document.getElementById('hero_badgeBox').value = badgeBox;
+    if(navFont) document.getElementById('hero_navFont').value = navFont;
+    const navLetter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-letter-spacing')) || 0;
+    document.getElementById('hero_navLetter').value = navLetter * 100; // store as "hundredths of em" for finer control
+    document.getElementById('hero_navTextPad').value = navTextPad;
+    document.getElementById('hero_titleTop').value = h1Top;
+    document.getElementById('hero_subTop').value = subTop;
+    document.getElementById('hero_venueTop').value = venueTop;
+    document.getElementById('hero_ctaTop').value = ctaTop;
+    document.getElementById('hero_h1Size').value = h1Size;
+    document.getElementById('hero_subSize').value = subSize;
+    document.getElementById('hero_venueSize').value = venueSize;
+    document.getElementById('hero_ctaSize').value = ctaSize;
+    document.getElementById('hero_wheelScale').value = sunScale * 100;
+    document.getElementById('hero_ctaBox').value = ctaPadY;
+
+    setLbl('padTop', padTop,'px');
+    setLbl('padBottom', padBottom,'px');
+    setLbl('padSides', padSides,'px');
+    setLbl('navPad', navPad,'px');
+    setLbl('navMax', navMax,'px');
+    setLbl('badgeTop', badgeTop,'px');
+    setLbl('badgeSize', Math.round(badgeSize),'px');
+    setLbl('badgeBox', badgeBox,'px');
+    if(navFont) setLbl('navFont', Math.round(navFont),'px');
+    setLbl('navLetter', navLetter.toFixed(2),'em');
+    setLbl('navTextPad', navTextPad,'px');
+    setLbl('titleTop', h1Top,'px');
+    setLbl('subTop', subTop,'px');
+    setLbl('venueTop', venueTop,'px');
+    setLbl('ctaTop', ctaTop,'px');
+    setLbl('h1Size', Math.round(h1Size),'px');
+    setLbl('subSize', Math.round(subSize),'px');
+    setLbl('venueSize', Math.round(venueSize),'px');
+    setLbl('ctaSize', Math.round(ctaSize),'px');
+    setLbl('ctaBox', ctaPadY,'px');
+    setLbl('wheelScale', (sunScale).toFixed(2),'×');
+
+    const bp = window.innerWidth;
+    const bpEl = document.getElementById('hero_bp');
+    if(bpEl) bpEl.textContent = `${bp}px`;
+  }
+
+  function applyFromControls() {
+    if(!hero || !badge || !h1 || !sub || !venue || !cta || !nav || !navInner) return;
+    const padTop = parseInt(document.getElementById('hero_padTop').value,10);
+    const padBottom = parseInt(document.getElementById('hero_padBottom').value,10);
+    const padSides = parseInt(document.getElementById('hero_padSides').value,10);
+    const navPad = parseInt(document.getElementById('hero_navPad').value,10);
+    const navMax = parseInt(document.getElementById('hero_navMax').value,10);
+    const badgeTop = parseInt(document.getElementById('hero_badgeTop').value,10);
+    const badgeSize = parseInt(document.getElementById('hero_badgeSize').value,10);
+    const badgeBox = parseInt(document.getElementById('hero_badgeBox').value,10);
+    const h1Top = parseInt(document.getElementById('hero_titleTop').value,10);
+    const subTop = parseInt(document.getElementById('hero_subTop').value,10);
+    const venueTop = parseInt(document.getElementById('hero_venueTop').value,10);
+    const ctaTop = parseInt(document.getElementById('hero_ctaTop').value,10);
+    const h1Size = parseInt(document.getElementById('hero_h1Size').value,10);
+    const subSize = parseInt(document.getElementById('hero_subSize').value,10);
+    const venueSize = parseInt(document.getElementById('hero_venueSize').value,10);
+    const ctaSize = parseInt(document.getElementById('hero_ctaSize').value,10);
+    const wheelPct = parseInt(document.getElementById('hero_wheelScale').value,10);
+    const ctaBox = parseInt(document.getElementById('hero_ctaBox').value,10);
+    const navFont = parseFloat(document.getElementById('hero_navFont').value);
+    const navLetter = parseFloat(document.getElementById('hero_navLetter').value) / 100;
+    const navTextPad = parseInt(document.getElementById('hero_navTextPad').value,10);
+
+    hero.style.paddingTop = px(padTop);
+    hero.style.paddingBottom = px(padBottom);
+    if(!isNaN(padSides)){
+      hero.style.paddingLeft = px(padSides);
+      hero.style.paddingRight = px(padSides);
+    }
+    nav.style.paddingTop = px(navPad);
+    nav.style.paddingBottom = px(navPad);
+    if(navMax){ navInner.style.maxWidth = px(navMax); }
+    badge.style.marginTop = px(badgeTop);
+    badge.style.fontSize = px(badgeSize);
+    badge.style.padding = px(badgeBox) + ' ' + px(badgeBox * 2);
+    h1.style.marginTop = px(h1Top);
+    sub.style.marginTop = px(subTop);
+    venue.style.marginTop = px(venueTop);
+    cta.style.marginTop = px(ctaTop);
+    h1.style.fontSize = px(h1Size);
+    sub.style.fontSize = px(subSize);
+    venue.style.fontSize = px(venueSize);
+    cta.style.fontSize = px(ctaSize);
+    // Use vertical padding slider and derive horizontal padding as 2× for a stable shape
+    cta.style.padding = px(ctaBox) + ' ' + px(ctaBox * 2);
+    if(navFont){
+      nav.querySelectorAll('a').forEach(a => {
+        a.style.fontSize = px(navFont);
+      });
+    }
+    if(!isNaN(navTextPad)){
+      nav.querySelectorAll('a').forEach(a => {
+        a.style.marginTop = px(navTextPad);
+        a.style.marginBottom = px(navTextPad);
+      });
+    }
+    document.documentElement.style.setProperty('--nav-letter-spacing', navLetter + 'em');
+    root.style.setProperty('--hero-sun-scale', (wheelPct/100).toFixed(2));
+
+    setLbl('padTop', padTop,'px');
+    setLbl('padBottom', padBottom,'px');
+    setLbl('padSides', padSides,'px');
+    setLbl('navPad', navPad,'px');
+    setLbl('navMax', navMax,'px');
+    setLbl('badgeTop', badgeTop,'px');
+    setLbl('badgeSize', badgeSize,'px');
+    setLbl('badgeBox', badgeBox,'px');
+    setLbl('titleTop', h1Top,'px');
+    setLbl('subTop', subTop,'px');
+    setLbl('venueTop', venueTop,'px');
+    setLbl('ctaTop', ctaTop,'px');
+    setLbl('h1Size', h1Size,'px');
+    setLbl('subSize', subSize,'px');
+    setLbl('venueSize', venueSize,'px');
+    setLbl('ctaSize', ctaSize,'px');
+    setLbl('ctaBox', ctaBox,'px');
+    setLbl('wheelScale', (wheelPct/100).toFixed(2),'×');
+    if(navFont) setLbl('navFont', Math.round(navFont),'px');
+    setLbl('navLetter', navLetter.toFixed(2),'em');
+    if(!isNaN(navTextPad)) setLbl('navTextPad', navTextPad,'px');
+  }
+
+  ['padTop','padBottom','padSides','navPad','navFont','navTextPad','navLetter','navMax','badgeTop','badgeSize','badgeBox','titleTop','subTop','venueTop','ctaTop','h1Size','subSize','venueSize','ctaSize','ctaBox','wheelScale'].forEach(id => {
+    const el = panel.querySelector('#hero_'+id);
+    if(el) el.addEventListener('input', applyFromControls);
+  });
+
+  const copyBtn = panel.querySelector('#hero_copy');
+  if(copyBtn){
+    copyBtn.addEventListener('click', async () => {
+      const w = window.innerWidth;
+      const payload = {
+        width: w,
+        padTop: parseInt(document.getElementById('hero_padTop').value,10),
+        padBottom: parseInt(document.getElementById('hero_padBottom').value,10),
+        padSides: parseInt(document.getElementById('hero_padSides').value,10),
+        navPad: parseInt(document.getElementById('hero_navPad').value,10),
+        navFont: parseFloat(document.getElementById('hero_navFont').value),
+        navLetter: parseFloat(document.getElementById('hero_navLetter').value) / 100,
+        navMax: parseInt(document.getElementById('hero_navMax').value,10),
+        navTextPad: parseInt(document.getElementById('hero_navTextPad').value,10),
+        badgeTop: parseInt(document.getElementById('hero_badgeTop').value,10),
+        badgeSize: parseInt(document.getElementById('hero_badgeSize').value,10),
+        badgeBox: parseInt(document.getElementById('hero_badgeBox').value,10),
+        titleTop: parseInt(document.getElementById('hero_titleTop').value,10),
+        subTop: parseInt(document.getElementById('hero_subTop').value,10),
+        venueTop: parseInt(document.getElementById('hero_venueTop').value,10),
+        ctaTop: parseInt(document.getElementById('hero_ctaTop').value,10),
+        h1Size: parseInt(document.getElementById('hero_h1Size').value,10),
+        subSize: parseInt(document.getElementById('hero_subSize').value,10),
+        venueSize: parseInt(document.getElementById('hero_venueSize').value,10),
+        ctaSize: parseInt(document.getElementById('hero_ctaSize').value,10),
+        ctaBox: parseInt(document.getElementById('hero_ctaBox').value,10),
+        wheelScale: parseInt(document.getElementById('hero_wheelScale').value,10) / 100
+      };
+      const text = 'hero-tune ' + JSON.stringify(payload, null, 2);
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        try { await navigator.clipboard.writeText(text); }
+        catch(e){ /* ignore */ }
+      }
+    });
+  }
+
+  function togglePanel() {
+    if(panel.style.opacity === '1'){
+      panel.style.opacity = '0';
+      panel.style.pointerEvents = 'none';
+    } else {
+      syncFromDOM();
+      panel.style.opacity = '1';
+      panel.style.pointerEvents = 'all';
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if(e.key === '3'){
+      e.preventDefault();
+      togglePanel();
     }
   });
 
@@ -1280,6 +1662,48 @@ if(videoWrap) {
       sp.style.display = sp.style.display === 'none' ? 'block' : 'none';
     }
   });
+})();
+
+// FAQ accordion + expand all
+(function() {
+  var list = document.querySelector('#faq .faq-list');
+  var expandBtn = document.getElementById('faqExpandAll');
+  if (!list || !expandBtn) return;
+  var items = list.querySelectorAll('.faq-item');
+  function allOpen() {
+    for (var i = 0; i < items.length; i++) { if (!items[i].classList.contains('faq-item--open')) return false; }
+    return true;
+  }
+  function updateExpandLabel() {
+    expandBtn.textContent = allOpen() ? 'Collapse all' : 'Expand all';
+    expandBtn.setAttribute('aria-label', allOpen() ? 'Collapse all FAQ answers' : 'Expand all FAQ answers');
+  }
+  list.addEventListener('click', function(e) {
+    var trigger = e.target.closest('.faq-trigger');
+    if (!trigger) return;
+    var item = trigger.closest('.faq-item');
+    if (!item) return;
+    e.preventDefault();
+    var open = item.classList.toggle('faq-item--open');
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    updateExpandLabel();
+  });
+  expandBtn.addEventListener('click', function() {
+    var openAll = !allOpen();
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var trigger = item.querySelector('.faq-trigger');
+      if (openAll) {
+        item.classList.add('faq-item--open');
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
+      } else {
+        item.classList.remove('faq-item--open');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      }
+    }
+    updateExpandLabel();
+  });
+  updateExpandLabel();
 })();
 
 });

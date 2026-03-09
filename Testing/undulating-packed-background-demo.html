@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Undulating packed-circle background demo</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --panel: rgba(10, 12, 16, 0.68);
+      --panel-border: rgba(255, 255, 255, 0.09);
+      --text: rgba(255, 255, 255, 0.92);
+      --muted: rgba(255, 255, 255, 0.68);
+      --button: rgba(255, 255, 255, 0.08);
+      --button-hover: rgba(255, 255, 255, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #07080b;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: var(--text);
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #07080b;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      place-items: centre;
+      padding: 32px;
+      pointer-events: none;
+    }
+
+    .copy {
+      width: min(720px, 100%);
+      text-align: centre;
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(9, 12, 16, 0.4), rgba(9, 12, 16, 0.2));
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2.4rem, 7vw, 5.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    p {
+      margin: 0 auto;
+      max-width: 52ch;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.7vw, 1.2rem);
+      line-height: 1.55;
+    }
+
+    .hud {
+      position: fixed;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      z-index: 2;
+      display: grid;
+      gap: 14px;
+      max-width: 960px;
+      margin-inline: auto;
+      padding: 16px;
+      border-radius: 20px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+    }
+
+    .hud-top,
+    .hud-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: centre;
+      justify-content: space-between;
+    }
+
+    .button-row,
+    .slider-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: centre;
+    }
+
+    button,
+    input[type="range"] {
+      pointer-events: auto;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--button);
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+      transform: translateY(-1px);
+    }
+
+    .slider {
+      min-width: 180px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: centre;
+      gap: 10px;
+    }
+
+    .slider label {
+      font-size: 0.92rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .slider input {
+      width: 100%;
+    }
+
+    .meta {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .tip {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        padding: 18px;
+      }
+
+      .copy {
+        padding: 24px;
+      }
+
+      .hud {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <main class="hero">
+    <section class="copy">
+      <h1>Undulating packed circles</h1>
+      <p>
+        A full-screen canvas background inspired by perforated spiral packing, rebuilt as a softer living web effect for web use
+      </p>
+    </section>
+  </main>
+
+  <section class="hud" aria-label="Background controls">
+    <div class="hud-top">
+      <div class="button-row">
+        <button id="togglePause" type="button">Pause</button>
+        <button id="regenerate" type="button">Regenerate</button>
+        <button id="cyclePalette" type="button">Palette</button>
+        <button id="toggleSound" type="button">Mic off</button>
+      </div>
+      <div class="meta" id="hudInfo">Loading…</div>
+    </div>
+
+    <div class="hud-controls">
+      <div class="slider-row">
+        <div class="slider">
+          <label for="motionRange">Motion</label>
+          <input id="motionRange" type="range" min="0" max="2" step="0.01" value="0.8">
+        </div>
+        <div class="slider">
+          <label for="densityRange">Density</label>
+          <input id="densityRange" type="range" min="0.4" max="1.4" step="0.01" value="0.95">
+        </div>
+        <div class="slider">
+          <label for="clusterRange">Clusters</label>
+          <input id="clusterRange" type="range" min="1" max="5" step="1" value="3">
+        </div>
+      </div>
+      <div class="tip">Keys: Space pause • P palette • R regenerate • M mic</div>
+    </div>
+  </section>
+
+  <script src="./undulating-packed-background.js"></script>
+</body>
+</html>

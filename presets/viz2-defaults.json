@@ -1,0 +1,128 @@
+[
+  {
+    "name": "Default",
+    "soundMode": false,
+    "lineDensity": 12,
+    "geoSpeed": 0.55,
+    "lateralAmp": 0.008,
+    "tunnelStrength": 0,
+    "geoScale": 1,
+    "paletteIdx": 0,
+    "freqBands": { "bassEnd": 15, "midEnd": 55, "trebleEnd": 256, "normCeil": 80, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.38, "y": 0.42 },
+      { "x": 0.62, "y": 0.55 },
+      { "x": 0.45, "y": 0.62 },
+      { "x": 0.58, "y": 0.38 },
+      { "x": 0.35, "y": 0.35 }
+    ]
+  },
+  {
+    "name": "Idle",
+    "soundMode": false,
+    "lineDensity": 11,
+    "geoSpeed": 0.45,
+    "lateralAmp": 0.006,
+    "tunnelStrength": 0.6,
+    "geoScale": 1,
+    "paletteIdx": 0,
+    "freqBands": { "bassEnd": 15, "midEnd": 55, "trebleEnd": 256, "normCeil": 80, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.38, "y": 0.42 },
+      { "x": 0.62, "y": 0.55 },
+      { "x": 0.45, "y": 0.62 },
+      { "x": 0.58, "y": 0.38 },
+      { "x": 0.35, "y": 0.35 }
+    ]
+  },
+  {
+    "name": "Ambient",
+    "soundMode": true,
+    "lineDensity": 12,
+    "geoSpeed": 0.5,
+    "lateralAmp": 0.007,
+    "tunnelStrength": 0.8,
+    "geoScale": 1,
+    "paletteIdx": 1,
+    "freqBands": { "bassEnd": 15, "midEnd": 55, "trebleEnd": 256, "normCeil": 90, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.38, "y": 0.42 },
+      { "x": 0.62, "y": 0.55 },
+      { "x": 0.45, "y": 0.62 },
+      { "x": 0.58, "y": 0.38 },
+      { "x": 0.35, "y": 0.35 }
+    ]
+  },
+  {
+    "name": "Bass / Dubstep",
+    "soundMode": true,
+    "lineDensity": 16,
+    "geoSpeed": 1,
+    "lateralAmp": 0.012,
+    "tunnelStrength": 2.5,
+    "geoScale": 1.1,
+    "paletteIdx": 4,
+    "freqBands": { "bassEnd": 25, "midEnd": 70, "trebleEnd": 256, "normCeil": 60, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.35, "y": 0.45 },
+      { "x": 0.65, "y": 0.5 },
+      { "x": 0.5, "y": 0.65 },
+      { "x": 0.55, "y": 0.35 },
+      { "x": 0.32, "y": 0.38 }
+    ]
+  },
+  {
+    "name": "Beats",
+    "soundMode": true,
+    "lineDensity": 18,
+    "geoSpeed": 1,
+    "lateralAmp": 0.008,
+    "tunnelStrength": 1,
+    "geoScale": 1,
+    "paletteIdx": 0,
+    "freqBands": { "bassEnd": 15, "midEnd": 55, "trebleEnd": 256, "normCeil": 80, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.38, "y": 0.42 },
+      { "x": 0.62, "y": 0.55 },
+      { "x": 0.45, "y": 0.62 },
+      { "x": 0.58, "y": 0.38 },
+      { "x": 0.35, "y": 0.35 }
+    ]
+  },
+  {
+    "name": "Jungle",
+    "soundMode": true,
+    "lineDensity": 18,
+    "geoSpeed": 0.7,
+    "lateralAmp": 0.01,
+    "tunnelStrength": 1.2,
+    "geoScale": 1.05,
+    "paletteIdx": 2,
+    "freqBands": { "bassEnd": 12, "midEnd": 50, "trebleEnd": 256, "normCeil": 85, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.4, "y": 0.45 },
+      { "x": 0.6, "y": 0.52 },
+      { "x": 0.48, "y": 0.6 },
+      { "x": 0.56, "y": 0.4 },
+      { "x": 0.36, "y": 0.38 }
+    ]
+  },
+  {
+    "name": "Breakcore",
+    "soundMode": true,
+    "lineDensity": 14,
+    "geoSpeed": 0.9,
+    "lateralAmp": 0.007,
+    "tunnelStrength": 1,
+    "geoScale": 0.95,
+    "paletteIdx": 5,
+    "freqBands": { "bassEnd": 12, "midEnd": 55, "trebleEnd": 256, "normCeil": 90, "minAvgGate": 2 },
+    "positions": [
+      { "x": 0.38, "y": 0.44 },
+      { "x": 0.62, "y": 0.52 },
+      { "x": 0.46, "y": 0.6 },
+      { "x": 0.57, "y": 0.38 },
+      { "x": 0.34, "y": 0.36 }
+    ]
+  }
+]
