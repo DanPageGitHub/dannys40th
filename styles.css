@@ -630,8 +630,8 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
 .badge{font-family:'IM Fell English',serif;font-size:clamp(2.2rem,7vw,4rem);letter-spacing:0.08em;color:var(--parchment);border:1px solid rgba(232,223,200,0.2);padding:18px 52px;border-radius:2px;margin-bottom:var(--hero-badge-mb);margin-top:var(--hero-badge-mt);display:inline-block;position:relative;z-index:1;text-shadow:0 0 30px rgba(232,223,200,0.2);}
 .badge-sun{display:inline-block;vertical-align:middle;height:0.9em;width:auto;margin-right:0.6em;object-fit:contain;}
 .badge-wheel{display:none;vertical-align:middle;width:1.26em;height:1.26em;opacity:0.55;object-fit:contain;}
-.badge-wheel--l{margin-right:0.55em;}
-.badge-wheel--r{margin-left:0.55em;}
+.badge-wheel--l{margin-right:0.22em;}
+.badge-wheel--r{margin-left:0.22em;}
 @media(min-width:768px){.badge-wheel{display:inline-block;}}
 h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var(--text-h1);font-weight:400;line-height:0.95;margin-bottom:0;margin-top:var(--hero-h1-mt);}
 .title-main{display:block;color:var(--parchment);text-shadow:0 0 60px rgba(200,169,110,0.3),0 2px 4px rgba(0,0,0,0.8);animation:flicker 8s ease infinite;}
