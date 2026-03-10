@@ -2151,11 +2151,11 @@ if(videoWrap) {
   const els = [...document.querySelectorAll('.pagan-svg, .pagan-wheel')];
   if (!els.length) return;
 
-  const REPEL_DIST = 230;   // px — start pushing when closer than this
-  const STRENGTH   = 0.9;   // force multiplier per tick
+  const REPEL_DIST = 320;   // px — start pushing when closer than this
+  const STRENGTH   = 1.6;   // force multiplier per tick
   const SPRING     = 0.018; // pull back toward natural position
   const DAMPING    = 0.76;  // velocity decay per tick
-  const MAX_OFFSET = 100;   // px max drift from natural position
+  const MAX_OFFSET = 140;   // px max drift from natural position
 
   const state = els.map(el => ({ el, ox: 0, oy: 0, vx: 0, vy: 0 }));
 

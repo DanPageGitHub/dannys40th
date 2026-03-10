@@ -60,7 +60,7 @@ body::before{
 .pagan-svg--r4{bottom:12%;right:5%;--base-rot:-24deg;animation:pagan-float-b 20s ease-in-out -11s infinite;}
 /* Wheel image — left and right */
 .pagan-wheel{position:absolute;opacity:0.065;will-change:transform;width:min(32vmin,260px);height:min(32vmin,260px);object-fit:contain;}
-.pagan-wheel--l{top:18%;left:2%;--base-rot:15deg;animation:pagan-float-c 21s ease-in-out -8s infinite;}
+.pagan-wheel--l{top:48%;left:1%;--base-rot:15deg;animation:pagan-float-c 21s ease-in-out -8s infinite;}
 .pagan-wheel--r{top:60%;right:1%;--base-rot:-19deg;animation:pagan-float-a 18s ease-in-out -13s infinite;}
 @keyframes pagan-float-a{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(28px,-24px) rotate(calc(var(--base-rot,0deg) + 3deg))}50%{transform:translate(-32px,20px) rotate(calc(var(--base-rot,0deg) - 2deg))}75%{transform:translate(24px,28px) rotate(calc(var(--base-rot,0deg) + 1.5deg))}}
 @keyframes pagan-float-b{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(-26px,22px) rotate(calc(var(--base-rot,0deg) - 3deg))}50%{transform:translate(30px,-20px) rotate(calc(var(--base-rot,0deg) + 2deg))}75%{transform:translate(-22px,-26px) rotate(calc(var(--base-rot,0deg) - 1.5deg))}}
