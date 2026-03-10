@@ -50,17 +50,21 @@ body::before{
 .pagan-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .pagan-svg{position:absolute;width:min(28vmin,220px);height:min(28vmin,220px);opacity:0.055;will-change:transform;}
 /* Staggered directions and timings so nearby symbols don’t move in unison */
-.pagan-svg--1{top:12%;left:8%;animation:pagan-float-a 14s ease-in-out -5s infinite;}
-.pagan-svg--3{bottom:25%;left:15%;animation:pagan-float-c 16s ease-in-out -9s infinite;}
+.pagan-svg--1{top:12%;left:8%;--base-rot:13deg;animation:pagan-float-a 14s ease-in-out -5s infinite;}
+.pagan-svg--3{bottom:25%;left:15%;--base-rot:-9deg;animation:pagan-float-c 16s ease-in-out -9s infinite;}
 /* Rune bar symbols — smaller, slightly more visible than original pagan SVGs */
 .pagan-svg--r1,.pagan-svg--r2,.pagan-svg--r3,.pagan-svg--r4{width:min(18vmin,140px);height:min(18vmin,140px);opacity:0.072;}
-.pagan-svg--r1{top:22%;right:9%;animation:pagan-float-b 19s ease-in-out -7s infinite;}
-.pagan-svg--r2{bottom:38%;right:14%;animation:pagan-float-a 22s ease-in-out -14s infinite;}
-.pagan-svg--r3{top:55%;left:6%;animation:pagan-float-c 17s ease-in-out -4s infinite;}
-.pagan-svg--r4{bottom:12%;right:5%;animation:pagan-float-b 20s ease-in-out -11s infinite;}
-@keyframes pagan-float-a{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(28px,-24px) rotate(3deg)}50%{transform:translate(-32px,20px) rotate(-2deg)}75%{transform:translate(24px,28px) rotate(1.5deg)}}
-@keyframes pagan-float-b{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(-26px,22px) rotate(-3deg)}50%{transform:translate(30px,-20px) rotate(2deg)}75%{transform:translate(-22px,-26px) rotate(-1.5deg)}}
-@keyframes pagan-float-c{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(20px,26px) rotate(-2deg)}50%{transform:translate(-28px,-22px) rotate(3deg)}75%{transform:translate(26px,20px) rotate(-2.5deg)}}
+.pagan-svg--r1{top:22%;right:9%;--base-rot:21deg;animation:pagan-float-b 19s ease-in-out -7s infinite;}
+.pagan-svg--r2{bottom:38%;right:14%;--base-rot:-17deg;animation:pagan-float-a 22s ease-in-out -14s infinite;}
+.pagan-svg--r3{top:55%;left:6%;--base-rot:8deg;animation:pagan-float-c 17s ease-in-out -4s infinite;}
+.pagan-svg--r4{bottom:12%;right:5%;--base-rot:-24deg;animation:pagan-float-b 20s ease-in-out -11s infinite;}
+/* Wheel image — left and right */
+.pagan-wheel{position:absolute;opacity:0.065;will-change:transform;width:min(32vmin,260px);height:min(32vmin,260px);object-fit:contain;}
+.pagan-wheel--l{top:38%;left:2%;--base-rot:15deg;animation:pagan-float-c 21s ease-in-out -8s infinite;}
+.pagan-wheel--r{top:60%;right:1%;--base-rot:-19deg;animation:pagan-float-a 18s ease-in-out -13s infinite;}
+@keyframes pagan-float-a{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(28px,-24px) rotate(calc(var(--base-rot,0deg) + 3deg))}50%{transform:translate(-32px,20px) rotate(calc(var(--base-rot,0deg) - 2deg))}75%{transform:translate(24px,28px) rotate(calc(var(--base-rot,0deg) + 1.5deg))}}
+@keyframes pagan-float-b{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(-26px,22px) rotate(calc(var(--base-rot,0deg) - 3deg))}50%{transform:translate(30px,-20px) rotate(calc(var(--base-rot,0deg) + 2deg))}75%{transform:translate(-22px,-26px) rotate(calc(var(--base-rot,0deg) - 1.5deg))}}
+@keyframes pagan-float-c{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(20px,26px) rotate(calc(var(--base-rot,0deg) - 2deg))}50%{transform:translate(-28px,-22px) rotate(calc(var(--base-rot,0deg) + 3deg))}75%{transform:translate(26px,20px) rotate(calc(var(--base-rot,0deg) - 2.5deg))}}
 .vignette{position:fixed;inset:0;z-index:12;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(8,7,5,0.55) 100%);}
 
 /* NAV */
