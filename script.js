@@ -59,7 +59,7 @@ const I = {
   // Specter apparition images
   caeden_mask:      'images/caedenmask.png',
   pixel_bw:         'images/pixel_bw.png',
-  mask2:            'images/Mask2.jpg',
+  mask2:            'images/Doctor.png',
 };
 
 // Photo filter tuning (must be before setPhoto calls)
@@ -179,7 +179,7 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
 (function(){
   const ghosts = [I.caeden_mask, I.pixel_bw, I.mask2];
 
-  // Each appearance cycles through all three treatments in sequence (filter transitions smoothly)
+  // One effect chosen at random per appearance — no cycling while visible
   const effects = [
     'brightness(0.75)',
     'sepia(0.5) hue-rotate(340deg) brightness(0.65)',
@@ -197,7 +197,7 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
     el.src = ghosts[Math.floor(Math.random() * ghosts.length)];
     el.setAttribute('aria-hidden', 'true');
     el.style.mixBlendMode = 'screen';
-    el.style.filter = effects[0]; // start on first effect
+    el.style.filter = effects[Math.floor(Math.random() * effects.length)];
 
     const side = Math.random() < 0.5 ? 'left' : 'right';
     el.style[side] = '0';
@@ -206,17 +206,11 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
     const narrow = window.innerWidth < 768;
     document.body.appendChild(el);
 
-    const holdMs = 25000 + Math.random() * 15000; // 25–40 s total visible
-    const segMs = holdMs / effects.length;        // time per effect
-
-    // Fade in, then step through remaining effects at equal intervals
     requestAnimationFrame(function(){ requestAnimationFrame(function(){
       el.style.opacity = narrow ? '0.06' : '0.17';
-      for (var i = 1; i < effects.length; i++) {
-        (function(idx){ setTimeout(function(){ el.style.filter = effects[idx]; }, segMs * idx); })(i);
-      }
     }); });
 
+    const holdMs = 17000; // fixed 17 s
     setTimeout(function(){
       el.style.opacity = '0';
       setTimeout(function(){ el.remove(); cooldown = false; scheduleNext(); }, 2200);
@@ -227,7 +221,7 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
     setTimeout(showGhost, 20000 + Math.random() * 15000); // 20–35 s gap
   }
 
-  setTimeout(showGhost, 45000); // first appearance after 45 s
+  setTimeout(showGhost, 60000); // first appearance after 60 s
 })();
 
 // RUNE BAND — scrolling rows (populate all .rune-scroll). Config is read by tick and by rune debug panel. Defaults match 4K rune-tune.
@@ -243,6 +237,8 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 33.33
     `<svg width="50" height="50" viewBox="0 0 42 48" fill="none"><path d="M32 10 C24 10 16 17 16 25 C16 30 19 35 24 37" stroke="#b87333" stroke-width="0.9" fill="none"/><path d="M10 38 C18 38 26 31 26 23 C26 18 23 13 18 11" stroke="#b87333" stroke-width="0.9" fill="none" stroke-dasharray="3 2"/><circle cx="21" cy="24" r="2" fill="#b87333" opacity="0.6"/></svg>`,
     /* Crop circle glyph pulled from external SVG asset */
     `<img src="images/crop-circle-glyph-thick.svg" alt="" class="rune-img">`,
+    /* Hexafoil (Seed of Life) */
+    `<img src="images/hexafoil2.svg" alt="" class="rune-img">`,
   ];
   // Repeat the set many times so very wide screens never "run out" of runes
   const double = [...syms, ...syms, ...syms, ...syms, ...syms, ...syms];
@@ -275,10 +271,13 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 33.33
     const period = periodFromCss ? parseFloat(periodFromCss) : ((window.__runeConfig && window.__runeConfig.periodMs) || 21000);
     const travel = travelFromCss ? parseFloat(travelFromCss) : ((window.__runeConfig && window.__runeConfig.travelPct) || 33.33);
     if(!document.hidden){
-      let delta = now - runeLastTime;
-      if(delta > RUNE_MAX_DELTA_MS) delta = RUNE_MAX_DELTA_MS;
-      runeScrollTime += delta;
-      runeScrollTime = runeScrollTime % period;
+      const delta = now - runeLastTime;
+      // Skip the advance entirely on large gaps (scroll throttle, tab switch, etc.)
+      // so the animation pauses briefly rather than jumping forward to catch up
+      if(delta <= RUNE_MAX_DELTA_MS){
+        runeScrollTime += delta;
+        runeScrollTime = runeScrollTime % period;
+      }
     }
     runeLastTime = now;
     const t = (runeScrollTime / period) * travel;
@@ -1128,190 +1127,7 @@ if(window.__debugMode) (function(){
 
 })();
 
-// RUNE BAR DEBUG PANEL — press R to toggle; Copy outputs rune-tune JSON for pasting into CSS/script
-if(window.__debugMode) (function(){
-  const DEFAULTS = {
-    scrollOpacity: 0.54,
-    periodSec: 55,
-    travelPct: 33.33,
-    bandPadY: 6,
-    bandBorderOpacity: 0.16,
-    bandFrostRadial: 0.08,
-    bandFrostLinear: 0.035,
-    bandFrostAfter: 0.02,
-    trackGlowRadial: 0.12,
-    trackGlowLinear: 0.075,
-    trackBorderOpacity: 0.2,
-    trackShadowHighlight: 0.04,
-    grainOpacity: 0.05,
-    trackAfterOpacity: 0.05,
-    runeSize: 90,
-    runeGap: 60,
-    bandFrostLinearBottom: 0.035
-  };
-  let styleEl = null;
-  function ensureStyle() {
-    if(!styleEl){
-      styleEl = document.createElement('style');
-      styleEl.id = 'rune-debug-style';
-      document.head.appendChild(styleEl);
-    }
-    return styleEl;
-  }
-  function applyRuneStyles(v){
-    const cfg = window.__runeConfig;
-    if(cfg){
-      cfg.periodMs = (v.periodSec || DEFAULTS.periodSec) * 1000;
-      cfg.travelPct = v.travelPct !== undefined ? v.travelPct : DEFAULTS.travelPct;
-    }
-    const s = v || DEFAULTS;
-    const bandPad = s.bandPadY ?? DEFAULTS.bandPadY;
-    const bandBorder = s.bandBorderOpacity ?? DEFAULTS.bandBorderOpacity;
-    const bandRad = s.bandFrostRadial ?? DEFAULTS.bandFrostRadial;
-    const bandLin = s.bandFrostLinear ?? DEFAULTS.bandFrostLinear;
-    const bandAfter = s.bandFrostAfter ?? DEFAULTS.bandFrostAfter;
-    const trackRad = s.trackGlowRadial ?? DEFAULTS.trackGlowRadial;
-    const trackLin = s.trackGlowLinear ?? DEFAULTS.trackGlowLinear;
-    const trackBorder = s.trackBorderOpacity ?? DEFAULTS.trackBorderOpacity;
-    const trackShadow = s.trackShadowHighlight ?? DEFAULTS.trackShadowHighlight;
-    const grain = s.grainOpacity ?? DEFAULTS.grainOpacity;
-    const trackAfter = s.trackAfterOpacity ?? DEFAULTS.trackAfterOpacity;
-    const runeSize = s.runeSize ?? DEFAULTS.runeSize;
-    const runeGap = s.runeGap ?? DEFAULTS.runeGap;
-    const scrollOp = s.scrollOpacity ?? DEFAULTS.scrollOpacity;
-    ensureStyle();
-    const enc = (n) => Math.round(n * 100) / 100;
-    styleEl.textContent = `
-.rune-band{ padding:${bandPad}px 0 !important; border-top-color:rgba(184,115,51,${enc(bandBorder)}) !important; border-bottom-color:rgba(184,115,51,${enc(bandBorder)}) !important; }
-.rune-band::before{ background:radial-gradient(ellipse at 50% 50%,rgba(46,123,122,${enc(bandRad)}) 0%,transparent 60%),linear-gradient(to bottom,rgba(46,123,122,${enc(bandLin)}) 0,transparent 35%,transparent 65%,rgba(46,123,122,${enc(bandLin)}) 100%) !important; }
-.rune-band::after{ background:linear-gradient(135deg,rgba(46,123,122,${enc(bandAfter)}) 0%,transparent 50%,rgba(160,70,42,${enc(bandAfter)}) 100%) !important; }
-.rune-track{ background-image:radial-gradient(ellipse at 50% 50%,rgba(46,123,122,${enc(trackRad)}) 0%,rgba(10,9,7,1) 80%),linear-gradient(to bottom,rgba(46,123,122,${enc(trackLin)}) 0,transparent 40%,transparent 60%,rgba(46,123,122,${enc(trackLin)}) 100%) !important; border-top-color:rgba(184,115,51,${enc(trackBorder)}) !important; border-bottom-color:rgba(184,115,51,${enc(trackBorder)}) !important; box-shadow:0 2px 4px rgba(0,0,0,0.7),0 -1px 0 rgba(232,223,200,${enc(trackShadow)}) !important; }
-.rune-track::before{ background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='${enc(grain)}'/%3E%3C/svg%3E") !important; }
-.rune-track::after{ background:linear-gradient(135deg,rgba(46,123,122,${enc(trackAfter)}) 0%,transparent 50%,rgba(160,70,42,${enc(trackAfter)}) 100%) !important; }
-.rune-scroll{ opacity:${enc(scrollOp)} !important; }
-.rune-scroll > *{ margin-right:${runeGap}px !important; }
-.rune-scroll svg,.rune-scroll .rune-img{ width:${runeSize}px !important; height:auto !important; }
-`;
-  }
-  function row(label, id, min, max, step, def) {
-    const d = def !== undefined ? def : (typeof min === 'number' && min >= 0 && max > min ? min : 0);
-    return `<label style="display:block;margin-bottom:6px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-        <span>${label}</span>
-        <span id="rune_lbl_${id}" style="font-variant-numeric:tabular-nums">${d}</span>
-      </div>
-      <input type="range" id="rune_${id}" min="${min}" max="${max}" step="${step}" value="${d}" style="width:100%;accent-color:rgba(74,173,171,0.8)">
-    </label>`;
-  }
-  const panel = document.createElement('div');
-  panel.id = 'runeDebugPanel';
-  panel.style.cssText = [
-    'position:fixed','top:20px','right:20px','z-index:610','width:280px',
-    'background:rgba(14,13,11,0.96)','backdrop-filter:blur(8px)','-webkit-backdrop-filter:blur(8px)',
-    'border:1px solid rgba(184,115,51,0.45)','border-radius:3px',
-    'padding:12px 14px 14px','font-family:\"Libre Baskerville\",Georgia,serif',
-    'color:rgba(232,223,200,0.9)','font-size:0.72rem','letter-spacing:0.05em',
-    'pointer-events:none','user-select:text','opacity:0','transition:opacity 0.2s',
-    'max-height:85vh','overflow-y:auto'
-  ].join(';');
-  panel.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:1px solid rgba(184,115,51,0.4);padding-bottom:6px">
-      <span style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--copper-l,#d4954a)">Rune bar</span>
-    </div>
-    <div style="margin:4px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Scroll</div>
-    ${row('Scroll opacity','scrollOpacity',0,1,0.01,0.54)}
-    ${row('Period (s)','periodSec',10,120,1,55)}
-    ${row('Travel %','travelPct',10,50,0.5,33.33)}
-    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Outer band</div>
-    ${row('Band pad Y','bandPadY',0,24,1,6)}
-    ${row('Band border opacity','bandBorderOpacity',0,0.6,0.01,0.16)}
-    ${row('Frost radial','bandFrostRadial',0,0.25,0.005,0.08)}
-    ${row('Frost linear','bandFrostLinear',0,0.12,0.005,0.035)}
-    ${row('Frost after','bandFrostAfter',0,0.08,0.005,0.02)}
-    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Inner track (glow)</div>
-    ${row('Track glow radial','trackGlowRadial',0,0.3,0.01,0.12)}
-    ${row('Track glow linear','trackGlowLinear',0,0.2,0.005,0.075)}
-    ${row('Track border opacity','trackBorderOpacity',0,0.6,0.01,0.2)}
-    ${row('Track shadow highlight','trackShadowHighlight',0,0.15,0.01,0.04)}
-    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Grain & overlay</div>
-    ${row('Grain opacity','grainOpacity',0,0.2,0.01,0.05)}
-    ${row('Track after opacity','trackAfterOpacity',0,0.15,0.005,0.05)}
-    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Symbols</div>
-    ${row('Rune size (px)','runeSize',40,160,2,90)}
-    ${row('Gap between runes','runeGap',20,120,2,60)}
-    <button id="rune_copy" style="margin-top:10px;width:100%;padding:8px 0;border-radius:2px;border:1px solid rgba(184,115,51,0.6);background:rgba(184,115,51,0.1);color:#d4954a;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;cursor:pointer">Copy rune settings</button>
-    <div style="margin-top:6px;font-size:0.65rem;opacity:0.65;">Press R to toggle. Paste JSON into script or bake into CSS.</div>
-  `;
-  document.body.appendChild(panel);
-  function getValues() {
-    const num = (id, def) => { const el = document.getElementById('rune_'+id); const v = el ? parseFloat(el.value) : def; return el && el.type === 'range' ? v : (el ? parseFloat(el.value) || def : def); };
-    return {
-      scrollOpacity: num('scrollOpacity', DEFAULTS.scrollOpacity),
-      periodSec: num('periodSec', DEFAULTS.periodSec),
-      travelPct: num('travelPct', DEFAULTS.travelPct),
-      bandPadY: num('bandPadY', DEFAULTS.bandPadY),
-      bandBorderOpacity: num('bandBorderOpacity', DEFAULTS.bandBorderOpacity),
-      bandFrostRadial: num('bandFrostRadial', DEFAULTS.bandFrostRadial),
-      bandFrostLinear: num('bandFrostLinear', DEFAULTS.bandFrostLinear),
-      bandFrostAfter: num('bandFrostAfter', DEFAULTS.bandFrostAfter),
-      trackGlowRadial: num('trackGlowRadial', DEFAULTS.trackGlowRadial),
-      trackGlowLinear: num('trackGlowLinear', DEFAULTS.trackGlowLinear),
-      trackBorderOpacity: num('trackBorderOpacity', DEFAULTS.trackBorderOpacity),
-      trackShadowHighlight: num('trackShadowHighlight', DEFAULTS.trackShadowHighlight),
-      grainOpacity: num('grainOpacity', DEFAULTS.grainOpacity),
-      trackAfterOpacity: num('trackAfterOpacity', DEFAULTS.trackAfterOpacity),
-      runeSize: num('runeSize', DEFAULTS.runeSize),
-      runeGap: num('runeGap', DEFAULTS.runeGap)
-    };
-  }
-  function syncLabels() {
-    const v = getValues();
-    const intIds = ['periodSec','bandPadY','runeSize','runeGap'];
-    ['scrollOpacity','periodSec','travelPct','bandPadY','bandBorderOpacity','bandFrostRadial','bandFrostLinear','bandFrostAfter','trackGlowRadial','trackGlowLinear','trackBorderOpacity','trackShadowHighlight','grainOpacity','trackAfterOpacity','runeSize','runeGap'].forEach(id => {
-      const el = document.getElementById('rune_lbl_'+id);
-      if(!el) return;
-      const val = v[id];
-      if(val == null) { el.textContent = ''; return; }
-      el.textContent = intIds.includes(id) ? Math.round(val) : (id === 'travelPct' ? Number(val).toFixed(2) : Number(val).toFixed(3));
-    });
-  }
-  function onInput() {
-    const v = getValues();
-    applyRuneStyles(v);
-    syncLabels();
-  }
-  ['scrollOpacity','periodSec','travelPct','bandPadY','bandBorderOpacity','bandFrostRadial','bandFrostLinear','bandFrostAfter','trackGlowRadial','trackGlowLinear','trackBorderOpacity','trackShadowHighlight','grainOpacity','trackAfterOpacity','runeSize','runeGap'].forEach(id => {
-    const el = document.getElementById('rune_'+id);
-    if(el) el.addEventListener('input', onInput);
-  });
-  document.getElementById('rune_copy').addEventListener('click', async () => {
-    const payload = getValues();
-    const text = 'rune-tune ' + JSON.stringify(payload, null, 2);
-    if(navigator.clipboard && navigator.clipboard.writeText) {
-      try { await navigator.clipboard.writeText(text); document.getElementById('rune_copy').textContent = 'Copied!'; setTimeout(() => { document.getElementById('rune_copy').textContent = 'Copy rune settings'; }, 1200); } catch(e){}
-    }
-  });
-  function togglePanel() {
-    const visible = panel.style.opacity === '1';
-    if(visible){
-      panel.style.opacity = '0';
-      panel.style.pointerEvents = 'none';
-      if(styleEl) styleEl.remove(); styleEl = null;
-      if(window.__runeConfig){ window.__runeConfig.periodMs = DEFAULTS.periodSec * 1000; window.__runeConfig.travelPct = DEFAULTS.travelPct; }
-    } else {
-      panel.style.opacity = '1';
-      panel.style.pointerEvents = 'all';
-      onInput();
-    }
-  }
-  document.addEventListener('keydown', e => {
-    if (!window.__debugMode) return;
-    if(e.key === 'r' || e.key === 'R'){
-      e.preventDefault();
-      togglePanel();
-    }
-  });
-})();
+// RUNE BAR DEBUG PANEL archived to _archive/rune-debug-panel.js
 
 function getFreqBand(analyser, dataArray, startBin, endBin) {
   analyser.getByteFrequencyData(dataArray);

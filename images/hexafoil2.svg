@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="85 85 230 230" width="230" height="230">
+  <!--
+    Hexafoil (Seed of Life / six-petal rose) construction:
+    Six circles of radius R, each centred at distance R from the origin,
+    at 0°, 60°, 120°, 180°, 240°, 300°.
+    Outer bounding circle of radius 2R contains all petals.
+    R = 100, centre = (200,200)
+  -->
+  <defs>
+    <style>
+      .hexafoil { fill: none; stroke: #b87333; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+      .outer    { fill: none; stroke: #b87333; stroke-width: 2.5; }
+    </style>
+    <!-- Clip to outer circle so arcs don't bleed outside -->
+    <clipPath id="outer-clip">
+      <circle cx="200" cy="200" r="100"/>
+    </clipPath>
+  </defs>
+
+  <!-- Outer bounding circle -->
+  <circle class="outer" cx="200" cy="200" r="100"/>
+
+  <!-- Six inner circles clipped to the outer boundary -->
+  <g clip-path="url(#outer-clip)">
+    <!-- 0° -->
+    <circle class="hexafoil" cx="300" cy="200" r="100"/>
+    <!-- 60° -->
+    <circle class="hexafoil" cx="250" cy="113.397" r="100"/>
+    <!-- 120° -->
+    <circle class="hexafoil" cx="150" cy="113.397" r="100"/>
+    <!-- 180° -->
+    <circle class="hexafoil" cx="100" cy="200" r="100"/>
+    <!-- 240° -->
+    <circle class="hexafoil" cx="150" cy="286.603" r="100"/>
+    <!-- 300° -->
+    <circle class="hexafoil" cx="250" cy="286.603" r="100"/>
+  </g>
+</svg>

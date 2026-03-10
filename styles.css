@@ -58,6 +58,7 @@ body::before{
 .pagan-svg--r3{top:35%;left:20%;--base-rot:8deg;animation:pagan-float-c 17s ease-in-out -4s infinite;}
 .pagan-svg--r4{bottom:12%;right:5%;--base-rot:-24deg;animation:pagan-float-b 20s ease-in-out -11s infinite;}
 /* Wheel image — left and right */
+.pagan-svg--h2{top:68%;left:28%;width:min(50vmin,380px);height:min(50vmin,380px);--base-rot:-15deg;animation:pagan-float-c 24s ease-in-out -14s infinite;}
 .pagan-wheel{position:absolute;opacity:0.055;will-change:transform;width:min(32vmin,260px);height:min(32vmin,260px);object-fit:contain;}
 .pagan-wheel--l{top:48%;left:1%;--base-rot:15deg;animation:pagan-float-c 21s ease-in-out -8s infinite;}
 .pagan-wheel--r{top:60%;right:1%;--base-rot:-19deg;animation:pagan-float-a 18s ease-in-out -13s infinite;}
@@ -468,7 +469,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
     /* Rune bar — 4K rune-tune (exact) */
     --rune-period-ms:21000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.38;
+    --rune-scroll-opacity:0.35;
     --rune-band-border-opacity:0.53;
     --rune-band-frost-radial:0.095;
     --rune-band-frost-linear:0.105;
@@ -492,7 +493,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   :root{
     --rune-period-ms:21000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.38;
+    --rune-scroll-opacity:0.35;
     --rune-band-pad-y:13px;
     --rune-band-border-opacity:0.53;
     --rune-band-frost-radial:0.095;
@@ -512,7 +513,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   :root{
     --rune-period-ms:28000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.39;
+    --rune-scroll-opacity:0.36;
     --rune-band-pad-y:8px;
     --rune-band-border-opacity:0.38;
     --rune-band-frost-radial:0.085;
@@ -532,7 +533,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   :root{
     --rune-period-ms:32000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.34;
+    --rune-scroll-opacity:0.37;
     --rune-band-pad-y:7px;
     --rune-band-border-opacity:0.3;
     --rune-band-frost-radial:0.08;
@@ -552,7 +553,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   :root{
     --rune-period-ms:35000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.40;
+    --rune-scroll-opacity:0.37;
     --rune-band-pad-y:6px;
     --rune-band-border-opacity:0.25;
     --rune-band-frost-radial:0.075;
@@ -572,7 +573,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   :root{
     --rune-period-ms:40000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.40;
+    --rune-scroll-opacity:0.37;
     --rune-band-pad-y:6px;
     --rune-band-border-opacity:0.22;
     --rune-band-frost-radial:0.07;
@@ -592,7 +593,7 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   :root{
     --rune-period-ms:45000;
     --rune-travel-pct:33.33;
-    --rune-scroll-opacity:0.40;
+    --rune-scroll-opacity:0.37;
     --rune-band-pad-y:6px;
     --rune-band-border-opacity:0.2;
     --rune-band-frost-radial:0.065;
@@ -628,8 +629,10 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
 .badge{font-family:'IM Fell English',serif;font-size:clamp(2.2rem,7vw,4rem);letter-spacing:0.08em;color:var(--parchment);border:1px solid rgba(232,223,200,0.2);padding:18px 52px;border-radius:2px;margin-bottom:var(--hero-badge-mb);margin-top:var(--hero-badge-mt);display:inline-block;position:relative;z-index:1;text-shadow:0 0 30px rgba(232,223,200,0.2);}
 .badge-sun{display:inline-block;vertical-align:middle;height:0.9em;width:auto;margin-right:0.6em;object-fit:contain;}
 .badge-wheel{display:none;width:0.85em;height:0.85em;opacity:0.38;object-fit:contain;flex-shrink:0;}
-.badge-wheel--l{margin-right:0.38em;}
-.badge-wheel--r{margin-left:0.38em;}
+.badge-wheel--l{margin-right:0.38em;animation:badge-wheel-cw 40s linear infinite;}
+.badge-wheel--r{margin-left:0.38em;animation:badge-wheel-ccw 40s linear infinite;}
+@keyframes badge-wheel-cw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes badge-wheel-ccw{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
 @media(min-width:768px){
   .badge-wheel{display:block;}
   .hero-content .badge{display:inline-flex;align-items:center;}
@@ -681,9 +684,9 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
   border-bottom:1px solid rgba(184,115,51,var(--rune-band-border-opacity,0.16));
   /* Shadow on outer band so the inner track appears to sit on top */
   box-shadow:0 3px 10px rgba(0,0,0,0.45);
-  /* Fade entire bar (background + borders + symbols) as one unit at edges */
-  -webkit-mask-image:linear-gradient(to right,transparent 0%,black 10%,black 90%,transparent 100%);
-  mask-image:linear-gradient(to right,transparent 0%,black 10%,black 90%,transparent 100%);
+  /* Fade in gutters only: transparent at page edge, full opacity at column edge */
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,black calc((100% - 1400px) / 2),black calc(100% - (100% - 1400px) / 2),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0%,black calc((100% - 1400px) / 2),black calc(100% - (100% - 1400px) / 2),transparent 100%);
 }
 /* Top bar: same top padding as others; overflow visible so outer shadow isn't clipped */
 .rune-band--top{padding-top:var(--rune-band-pad-y, 6px);overflow:visible;}
@@ -737,7 +740,7 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
   pointer-events:none;
   background:linear-gradient(135deg,rgba(46,123,122,var(--rune-track-after-opacity,0.05)) 0%,transparent 50%,rgba(160,70,42,var(--rune-track-after-opacity,0.05)) 100%);
 }
-.rune-scroll{display:flex;flex-wrap:nowrap;gap:0;align-items:center;opacity:var(--rune-scroll-opacity,0.40);animation:scroll-left 21s linear infinite;flex-shrink:0;}
+.rune-scroll{display:flex;flex-wrap:nowrap;gap:0;align-items:center;opacity:var(--rune-scroll-opacity,0.37);animation:scroll-left 21s linear infinite;flex-shrink:0;will-change:transform;}
 .rune-scroll--js{animation:none;}
 .rune-scroll > *{margin-right:var(--rune-gap,60px);}
 .rune-scroll svg{flex-shrink:0;display:block;width:var(--rune-size,90px);height:auto;}
