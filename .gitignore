@@ -16,6 +16,13 @@ agent-transcripts/
 
 # Archives and dev utilities (not needed for site)
 _archive/
+Testing/
+screenshots/
+scripts/
+serve.bat
+serve.js
+serve.py
+serve.sh
 fix_page.py
 *.pyc
 __pycache__/
