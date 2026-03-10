@@ -37,21 +37,25 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 
 const I = {
-  crop_circle:     'images/crop_circle.jpg',
-  dj_shot:         'images/dj_shot.jpg',
-  goat_mask:       'images/goat_mask.jpg',
-  danny_sign:      'images/danny_sign.jpg',
-  danny_crown:     'images/danny_crown.jpg',
-  film_group:      'images/film_group.jpg',
-  bus_selfie:      'images/bus_selfie.jpg',
-  bell_tents:      'images/bell_tents.jpg',
-  pub_exterior:    'images/pub_exterior.jpg',
-  pub_canal_side:  'images/the-barge-crop-circle-mecca.jpg',
-  canal_narrowboat:'images/canal_narrowboat.jpg',
-  white_horse:     'images/white_horse.jpg',
+  crop_circle:      'images/crop_circle.jpg',
+  dj_shot:          'images/dj_shot.jpg',
+  goat_mask:        'images/goat_mask.jpg',
+  danny_sign:       'images/danny_sign.jpg',
+  danny_crown:      'images/danny_crown.jpg',
+  film_group:       'images/film_group.jpg',
+  bus_selfie:       'images/bus_selfie.jpg',
+  bell_tents:       'images/bell_tents.jpg',
+  pub_exterior:     'images/pub_exterior.jpg',
+  pub_canal_side:   'images/the-barge-crop-circle-mecca.jpg',
+  barge_sunny_canal:'images/bargeinnpubgallery.jpg',
+  kenver_40th_1:    'images/kenver40th1.jpg',
+  kenver_40th_2:    'images/Kenver40th2.jpg',
+  canal_narrowboat: 'images/canal_narrowboat.jpg',
+  white_horse:      'images/white_horse.jpg',
   rusty_crop_circle:'images/rustycropcircle.jpg',
-  sunset_hero:     'images/Barge-Danny-Hero.jpg',
-  bnb_room:        'images/bnb_room.jpg',
+  sunset_hero:      'images/Barge-Danny-Hero.jpg',
+  // High-res B&B bedroom image (WebP) for the B&B section photo slot
+  bnb_room:         'images/BnbBedroom.webp',
 };
 
 // Photo filter tuning (must be before setPhoto calls)
@@ -90,12 +94,15 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
   const heroEl = document.getElementById(heroId);
   if(!heroEl) return;
   const sequence = [
-    // Start on the pub exterior, then rotate through canal, crop-circle mecca, Danny, and a DJ shot
+    // Start on the pub exterior, then rotate through canal, crop-circle mecca, sunny canal day, Kenver portrait, Danny, Kenver landscape, and a DJ shot
     ['pub_exterior','center center'],
     ['pub_canal_side','center center'],
     ['crop_circle','center 45%'],
+    ['barge_sunny_canal','center 55%'],
+    ['kenver_40th_1','center 50%'],
     ['rusty_crop_circle','center 50%'],
     ['danny_sign','center 40%'],
+    ['kenver_40th_2','center 50%'],
     ['dj_shot','center 50%'],
   ];
   let idx = 0;
@@ -1432,10 +1439,12 @@ function draw3DLine(cx, cy, ax, ay, bx, by, rotX, rotZ) {
 }
 
 const geomDefs = [
-  { sym:6,  phase:0,    speed:0.000065, phase2:0,    speed2:-0.000042, maxAlpha:0.22, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000 },
-  { sym:8,  phase:1.1,  speed:0.000048, phase2:0.5,  speed2: 0.000035, maxAlpha:0.18, col:TEAL,   x:0.62, y:0.55, size:4.2, period:85000 },
+  // Big compass wheels: visualiser only, hidden in normal site mode
+  { sym:6,  phase:0,    speed:0.000065, phase2:0,    speed2:-0.000042, maxAlpha:0.22, col:COPPER, x:0.38, y:0.42, size:3.8, period:70000, site:false },
+  { sym:8,  phase:1.1,  speed:0.000048, phase2:0.5,  speed2: 0.000035, maxAlpha:0.18, col:TEAL,   x:0.62, y:0.55, size:4.2, period:85000, site:false },
+  // Smaller geo layers (last two shared, the rust asterisk is visualiser-only)
   { sym:5,  phase:3.3,  speed:0.000078, phase2:1.2,  speed2:-0.000055, maxAlpha:0.16, col:GOLD,   x:0.45, y:0.62, size:3.2, period:60000 },
-  { sym:7,  phase:2.2,  speed:0.000055, phase2:0.8,  speed2: 0.000044, maxAlpha:0.14, col:RUST,   x:0.58, y:0.38, size:4.6, period:90000 },
+  { sym:7,  phase:2.2,  speed:0.000055, phase2:0.8,  speed2: 0.000044, maxAlpha:0.14, col:RUST,   x:0.58, y:0.38, size:4.6, period:90000, site:false },
   { sym:12, phase:5.1,  speed:0.000038, phase2:2.1,  speed2:-0.000028, maxAlpha:0.12, col:GOLD,   x:0.35, y:0.35, size:5.0, period:100000 },
 ];
 
@@ -1539,21 +1548,24 @@ const sparks = Array.from({length:80},()=>({x:Math.random(),y:0.85+Math.random()
 const floaters = Array.from({length:40},()=>({x:Math.random(),y:Math.random(),r:1.5+Math.random()*3,col:[TEAL,COPPER,GOLD,RUST][Math.floor(Math.random()*4)],vx:(Math.random()-0.5)*0.0002,vy:-(0.0001+Math.random()*0.0003),phase:Math.random()*Math.PI*2,speed:0.003+Math.random()*0.005}));
 const wisps = Array.from({length:4},()=>({x:Math.random(),y:0.3+Math.random()*0.6,w:0.35+Math.random()*0.45,h:0.04+Math.random()*0.07,col:Math.random()>0.5?TEAL:COPPER,vx:(Math.random()-0.5)*0.00005,phase:Math.random()*Math.PI*2,speed:0.0005+Math.random()*0.0006}));
 
-// Bouncing runes — rune-band style symbols (all 6 SVG rune bar types) drifting in the background
-const RUNE_FLOAT_COUNT = 18;
+// Bouncing runes — rune-band style symbols (all 6 SVG rune bar types) drifting in the background (site mode only).
+// Small, crisp strokes that echo the rune bar rather than big bokeh blobs.
+const RUNE_FLOAT_COUNT = 0;
 const RUNE_BOUNCE_MARGIN = 0.028;
 const runeFloaters = Array.from({length:RUNE_FLOAT_COUNT}, () => ({
   x: 0.08 + Math.random() * 0.84,
   y: 0.08 + Math.random() * 0.84,
   vx: (Math.random() - 0.5) * 0.00055,
   vy: (Math.random() - 0.5) * 0.0005,
-  size: 0.012 + Math.random() * 0.014,
+  // Small so they read as rune glyphs, but large enough to actually notice
+  size: 0.004 + Math.random() * 0.008,
   type: Math.floor(Math.random() * 6),
   rot: Math.random() * Math.PI * 2
 }));
-function drawRuneShape(ctx, type) {
+function drawRuneShape(ctx, type, pxScale) {
   const u = 0.5; // unit radius for shapes (match rune bar SVGs)
-  ctx.lineWidth = 1.2;
+  // Line width scales very gently with on-screen size so strokes stay crisp
+  ctx.lineWidth = 0.9 + (pxScale || 1) * 0.04;
   ctx.lineCap = 'round';
   if (type === 0) {
     // Rune bar sym 0: target — 3 circles, cross, X
@@ -1617,12 +1629,13 @@ function drawBouncingRune(r) {
   const py = r.y * H;
   const s = r.size * Math.min(W, H);
   ctx.save();
-  ctx.globalAlpha = 0.15;
+  // Brighter so they are clearly visible over the tunnel, but still behind main geo
+  ctx.globalAlpha = 0.4;
   ctx.strokeStyle = rgb(COPPER, 1);
   ctx.translate(px, py);
   ctx.rotate(r.rot);
   ctx.scale(s, s);
-  drawRuneShape(ctx, r.type);
+  drawRuneShape(ctx, r.type, s);
   ctx.restore();
 }
 
@@ -1635,8 +1648,8 @@ let midMouseX = 0.5, midMouseY = 0.5;   // first stage: catches mouse
 let smoothMouseX = 0.5, smoothMouseY = 0.5;  // second stage: slower, smoother
 const MOUSE_LERP_MID = 0.032;   // how fast mid follows raw (first stage)
 const MOUSE_LERP_SMOOTH = 0.006;  // how fast smooth follows mid (more delay, smoother)
-const MOUSE_LATERAL_SCALE = 0.058;
-const MOUSE_VERTICAL_SCALE = 0.048;
+const MOUSE_LATERAL_SCALE = 0.075;
+const MOUSE_VERTICAL_SCALE = 0.062;
 window.addEventListener('mousemove', function(e) {
   mouseX = e.clientX / window.innerWidth;
   mouseY = e.clientY / window.innerHeight;
@@ -1656,7 +1669,11 @@ function draw(){
   midMouseY += (mouseY - midMouseY) * MOUSE_LERP_MID;
   smoothMouseX += (midMouseX - smoothMouseX) * MOUSE_LERP_SMOOTH;
   smoothMouseY += (midMouseY - smoothMouseY) * MOUSE_LERP_SMOOTH;
-  if(scrollGeoOn) geomDefs.forEach(g => drawGeom(g, now));
+  // In site mode, skip the big compass wheels (geo defs with site:false). In fullscreen visualiser, draw all.
+  if(scrollGeoOn) {
+    const activeGeoms = inFullscreen ? geomDefs : geomDefs.filter(g => g.site !== false);
+    activeGeoms.forEach(g => drawGeom(g, now));
+  }
   if(wispsOn) wisps.forEach(w=>{
     w.x+=w.vx;
     if(w.x<-0.4)w.x=1.2;if(w.x>1.2)w.x=-0.4;
@@ -1690,18 +1707,21 @@ function draw(){
       ctx.fillStyle=g;ctx.beginPath();ctx.arc(m.x*W,m.y*H,m.r*6,0,Math.PI*2);ctx.fill();
     });
   }
-  // Bouncing runes — update position with bounce, then draw
-  const margin = RUNE_BOUNCE_MARGIN;
-  runeFloaters.forEach(r => {
-    r.x += r.vx;
-    r.y += r.vy;
-    if (r.x < margin) { r.x = margin; r.vx = Math.abs(r.vx); }
-    if (r.x > 1 - margin) { r.x = 1 - margin; r.vx = -Math.abs(r.vx); }
-    if (r.y < margin) { r.y = margin; r.vy = Math.abs(r.vy); }
-    if (r.y > 1 - margin) { r.y = 1 - margin; r.vy = -Math.abs(r.vy); }
-    r.rot += 0.00015;
-    drawBouncingRune(r);
-  });
+  // Bouncing runes — update position with bounce, then draw (site mode only; hide in fullscreen visualiser)
+  if (!inFullscreen) {
+    const margin = RUNE_BOUNCE_MARGIN;
+    runeFloaters.forEach(r => {
+      r.x += r.vx;
+      r.y += r.vy;
+      if (r.x < margin) { r.x = margin; r.vx = Math.abs(r.vx); }
+      if (r.x > 1 - margin) { r.x = 1 - margin; r.vx = -Math.abs(r.vx); }
+      if (r.y < margin) { r.y = margin; r.vy = Math.abs(r.vy); }
+      if (r.y > 1 - margin) { r.y = 1 - margin; r.vy = -Math.abs(r.vy); }
+      // Slow, gentle rotation so they feel like drifting symbols rather than blobs
+      r.rot += 0.00008;
+      drawBouncingRune(r);
+    });
+  }
   t+=0.016;
   requestAnimationFrame(draw);
 }
