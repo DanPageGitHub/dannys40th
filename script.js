@@ -1648,8 +1648,8 @@ let midMouseX = 0.5, midMouseY = 0.5;   // first stage: catches mouse
 let smoothMouseX = 0.5, smoothMouseY = 0.5;  // second stage: slower, smoother
 const MOUSE_LERP_MID = 0.032;   // how fast mid follows raw (first stage)
 const MOUSE_LERP_SMOOTH = 0.006;  // how fast smooth follows mid (more delay, smoother)
-const MOUSE_LATERAL_SCALE = 0.075;
-const MOUSE_VERTICAL_SCALE = 0.062;
+const MOUSE_LATERAL_SCALE = 0.14;
+const MOUSE_VERTICAL_SCALE = 0.11;
 window.addEventListener('mousemove', function(e) {
   mouseX = e.clientX / window.innerWidth;
   mouseY = e.clientY / window.innerHeight;
