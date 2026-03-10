@@ -51,11 +51,13 @@ body::before{
 .pagan-svg{position:absolute;width:min(28vmin,220px);height:min(28vmin,220px);opacity:0.055;will-change:transform;}
 /* Staggered directions and timings so nearby symbols don’t move in unison */
 .pagan-svg--1{top:12%;left:8%;animation:pagan-float-a 14s ease-in-out 0s infinite;}
-.pagan-svg--2{top:18%;right:12%;animation:pagan-float-b 18s ease-in-out 2.3s infinite;}
 .pagan-svg--3{bottom:25%;left:15%;animation:pagan-float-c 16s ease-in-out 4.7s infinite;}
-.pagan-svg--4{bottom:15%;right:8%;animation:pagan-float-a 20s ease-in-out 1.1s infinite;}
-.pagan-svg--5{top:45%;left:5%;animation:pagan-float-b 17s ease-in-out 3.5s infinite;}
-.pagan-svg--6{top:35%;right:6%;animation:pagan-float-c 15s ease-in-out 5.9s infinite;}
+/* Rune bar symbols — smaller, slightly more visible than original pagan SVGs */
+.pagan-svg--r1,.pagan-svg--r2,.pagan-svg--r3,.pagan-svg--r4{width:min(18vmin,140px);height:min(18vmin,140px);opacity:0.072;}
+.pagan-svg--r1{top:22%;right:9%;animation:pagan-float-b 19s ease-in-out 1.8s infinite;}
+.pagan-svg--r2{bottom:38%;right:14%;animation:pagan-float-a 22s ease-in-out 6.2s infinite;}
+.pagan-svg--r3{top:55%;left:6%;animation:pagan-float-c 17s ease-in-out 3.1s infinite;}
+.pagan-svg--r4{bottom:12%;right:5%;animation:pagan-float-b 20s ease-in-out 8.4s infinite;}
 @keyframes pagan-float-a{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(28px,-24px) rotate(3deg)}50%{transform:translate(-32px,20px) rotate(-2deg)}75%{transform:translate(24px,28px) rotate(1.5deg)}}
 @keyframes pagan-float-b{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(-26px,22px) rotate(-3deg)}50%{transform:translate(30px,-20px) rotate(2deg)}75%{transform:translate(-22px,-26px) rotate(-1.5deg)}}
 @keyframes pagan-float-c{0%,100%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(20px,26px) rotate(-2deg)}50%{transform:translate(-28px,-22px) rotate(3deg)}75%{transform:translate(26px,20px) rotate(-2.5deg)}}
@@ -837,6 +839,62 @@ strong.pale{color:var(--parchment);}
 .map-btn{display:block;width:fit-content;margin:32px auto 0;font-family:'IM Fell English',serif;font-style:italic;font-size:var(--text-cta);letter-spacing:0.06em;color:var(--gold-l);background:rgba(18,12,6,0.85);border:1px solid rgba(184,115,51,0.5);text-decoration:none;padding:24px 56px;border-radius:2px;box-shadow:0 0 28px rgba(184,115,51,0.2);transition:box-shadow 0.3s,transform 0.25s,border-color 0.3s,color 0.3s;text-align:center;}
 .map-btn:hover{transform:translateY(-2px);color:var(--parchment);border-color:rgba(212,149,74,0.75);box-shadow:0 0 40px rgba(184,115,51,0.35);}
 
+/* TICKETS: Save the date / RSVP actions */
+.tickets-bar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+  margin-top:30px;
+}
+.tickets-header{
+  margin:0;
+  font-family:'IM Fell English',serif;
+  font-size:2.6rem;
+  font-weight:400;
+  letter-spacing:0.06em;
+  text-transform:none;
+  color:var(--gold-l);
+  text-align:center;
+}
+.tickets-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px 56px;
+  border-radius:2px;
+  font-family:'IM Fell English',serif;
+  font-style:italic;
+  font-size:var(--text-cta);
+  letter-spacing:0.06em;
+  color:var(--gold-l);
+  background:rgba(18,12,6,0.85);
+  border:1px solid rgba(184,115,51,0.5);
+  text-decoration:none;
+  box-shadow:0 0 28px rgba(184,115,51,0.2);
+  transition:box-shadow 0.3s,transform 0.25s,border-color 0.3s,color 0.3s;
+  white-space:nowrap;
+}
+.tickets-btn:hover{
+  transform:translateY(-2px);
+  color:var(--parchment);
+  border-color:rgba(212,149,74,0.75);
+  box-shadow:0 0 40px rgba(184,115,51,0.35);
+}
+@media(max-width:700px){
+  .tickets-bar{
+    flex-direction:column;
+  }
+  .tickets-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .tickets-btn{
+    width:100%;
+  }
+}
+
+
 /* VIDEO */
 .video-wrap{margin-top:28px;border-radius:2px;overflow:hidden;border:1px solid rgba(184,115,51,0.16);position:relative;background:rgba(8,7,5,0.8);aspect-ratio:16/9;}
 .video-wrap video{width:100%;height:100%;object-fit:cover;display:block;}
@@ -993,7 +1051,8 @@ strong.pale{color:var(--parchment);}
 .sec-aura--tickets   { background:radial-gradient(ellipse 70% 50% at 25% 85%, rgba(218,165,85,0.16) 0%,transparent 68%); }
 #tickets.sec{box-shadow:0 0 60px rgba(0,0,0,0.4),0 0 40px rgba(218,165,85,0.11);}
 #tickets .sec-inner{box-shadow:inset 0 0 60px rgba(0,0,0,0.3),0 0 40px rgba(0,0,0,0.4),0 0 30px rgba(218,165,85,0.09);}
-#schedule .sec-inner > p:first-of-type,#tickets .sec-inner > p:first-of-type{font-size:1.3rem;}
+#schedule .sec-inner > p:first-of-type{font-size:1.3rem;}
+#tickets .sec-inner > p{font-size:1.3rem;}
 .sec-aura--costs     { background:radial-gradient(ellipse 55% 65% at 82% 45%, rgba(184,115,51,0.20) 0%,transparent 70%); }
 .sec-aura--bnb       { background:radial-gradient(ellipse 65% 55% at 50% 75%, rgba(200,169,110,0.19) 0%,transparent 68%); }
 .sec-aura--venue     { background:radial-gradient(ellipse 55% 50% at 50% 30%, rgba(46,123,122,0.18) 0%,transparent 60%);  }
