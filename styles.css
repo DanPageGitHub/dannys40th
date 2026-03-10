@@ -1022,8 +1022,8 @@ strong.pale{color:var(--parchment);}
 .faq-q{flex:1;min-width:0;font-family:'IM Fell English',serif;font-size:1.65rem;font-weight:500;color:rgba(227,201,138,0.9);line-height:1.3;}
 .faq-chevron{flex-shrink:0;width:28px;height:28px;color:var(--gold-l);opacity:0.9;transition:transform 0.3s ease;}
 .faq-item--open .faq-chevron{transform:rotate(180deg);}
-.faq-a-wrap{overflow:hidden;max-height:0;transition:max-height 0.2s ease;}
-.faq-item--open .faq-a-wrap{max-height:1200px;transition:max-height 0.55s ease;}
+.faq-a-wrap{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.35s ease,opacity 0.2s ease;}
+.faq-item--open .faq-a-wrap{max-height:1200px;opacity:1;transition:max-height 0.65s ease-out,opacity 0.35s ease 0.05s;}
 .faq-a{font-size:1.2rem;line-height:1.85;color:#e8dfc8;margin:0;padding:16px 16px 18px 16px;}
 .room-list{margin-top:14px;border-top:1px solid rgba(184,115,51,0.1);padding-top:14px;}
 .room-item{padding:10px 0;border-bottom:1px solid rgba(184,115,51,0.07);}
