@@ -56,6 +56,9 @@ const I = {
   sunset_hero:      'images/Barge-Danny-Hero.jpg',
   // High-res B&B bedroom image (WebP) for the B&B section photo slot
   bnb_room:         'images/BnbBedroom.webp',
+  // Specter apparition images (B&W PNGs, white-vignette cutouts)
+  caeden_mask:      'images/caedenmask.png',
+  pixel_bw:         'images/pixel_bw.png',
 };
 
 // Photo filter tuning (must be before setPhoto calls)
@@ -218,6 +221,60 @@ if(aHI) {
   sched.parentElement.appendChild(lurk);
   sched.parentElement.addEventListener('mouseenter', () => lurk.style.opacity = '0.13');
   sched.parentElement.addEventListener('mouseleave', () => lurk.style.opacity = '0');
+})();
+
+// SPECTER APPARITIONS — B&W ghost images that fade in/out in the viewport margins
+(function(){
+  const ghosts = [I.caeden_mask, I.pixel_bw];
+
+  // Three rotating visual treatments: white ghost / copper tint / dim spectral
+  const effects = [
+    { filter: 'invert(1) brightness(0.6)',                                       blend: 'screen' },
+    { filter: 'invert(1) sepia(0.45) hue-rotate(340deg) brightness(0.55)',       blend: 'screen' },
+    { filter: 'invert(1) brightness(0.42) contrast(1.25)',                       blend: 'screen' },
+  ];
+  let effectIdx = 0;
+  let cooldown = false;
+
+  function showGhost() {
+    // Only show once the hero section is scrolled past
+    if (cooldown || window.scrollY < window.innerHeight * 0.8) { scheduleNext(); return; }
+    cooldown = true;
+
+    const effect = effects[effectIdx % effects.length];
+    effectIdx++;
+
+    const el = document.createElement('img');
+    el.className = 'specter';
+    el.src = ghosts[Math.floor(Math.random() * ghosts.length)];
+    el.setAttribute('aria-hidden', 'true');
+    el.style.filter = effect.filter;
+    el.style.mixBlendMode = effect.blend;
+
+    const side = Math.random() < 0.5 ? 'left' : 'right';
+    el.style[side] = '0';
+    el.style.top = (15 + Math.floor(Math.random() * 55)) + 'vh';
+
+    const narrow = window.innerWidth < 768;
+    document.body.appendChild(el);
+
+    // Double rAF ensures the transition fires (element must be painted first)
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      el.style.opacity = narrow ? '0.06' : '0.17';
+    }); });
+
+    const holdMs = 25000 + Math.random() * 15000; // 25–40 s — roughly half the total cycle
+    setTimeout(function(){
+      el.style.opacity = '0';
+      setTimeout(function(){ el.remove(); cooldown = false; scheduleNext(); }, 2200);
+    }, holdMs);
+  }
+
+  function scheduleNext() {
+    setTimeout(showGhost, 20000 + Math.random() * 15000); // 20–35 s gap
+  }
+
+  setTimeout(showGhost, 45000); // first appearance after 45 s
 })();
 
 // RUNE BAND — scrolling rows (populate all .rune-scroll). Config is read by tick and by rune debug panel. Defaults match 4K rune-tune.
@@ -2085,6 +2142,55 @@ if(videoWrap) {
     updateExpandLabel();
   });
   updateExpandLabel();
+})();
+
+// Gentle repulsion between floating background symbols so they don't clump.
+// Uses the CSS `translate` property (independent of `transform`) so it
+// composes cleanly with the existing float/rotate animations.
+(function initPaganRepulsion() {
+  const els = [...document.querySelectorAll('.pagan-svg, .pagan-wheel')];
+  if (!els.length) return;
+
+  const REPEL_DIST = 230;   // px — start pushing when closer than this
+  const STRENGTH   = 0.9;   // force multiplier per tick
+  const SPRING     = 0.018; // pull back toward natural position
+  const DAMPING    = 0.76;  // velocity decay per tick
+  const MAX_OFFSET = 100;   // px max drift from natural position
+
+  const state = els.map(el => ({ el, ox: 0, oy: 0, vx: 0, vy: 0 }));
+
+  function tick() {
+    const rects = state.map(s => s.el.getBoundingClientRect());
+    const cx = rects.map(r => r.left + r.width  / 2);
+    const cy = rects.map(r => r.top  + r.height / 2);
+
+    const fx = new Array(state.length).fill(0);
+    const fy = new Array(state.length).fill(0);
+
+    for (let i = 0; i < state.length; i++) {
+      for (let j = i + 1; j < state.length; j++) {
+        const dx = cx[j] - cx[i];
+        const dy = cy[j] - cy[i];
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < REPEL_DIST) {
+          const f  = (REPEL_DIST - dist) / REPEL_DIST * STRENGTH;
+          const nx = dx / dist, ny = dy / dist;
+          fx[i] -= nx * f;  fy[i] -= ny * f;
+          fx[j] += nx * f;  fy[j] += ny * f;
+        }
+      }
+    }
+
+    state.forEach((s, i) => {
+      s.vx = (s.vx + fx[i] - s.ox * SPRING) * DAMPING;
+      s.vy = (s.vy + fy[i] - s.oy * SPRING) * DAMPING;
+      s.ox = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, s.ox + s.vx));
+      s.oy = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, s.oy + s.vy));
+      s.el.style.translate = `${s.ox.toFixed(1)}px ${s.oy.toFixed(1)}px`;
+    });
+  }
+
+  setInterval(tick, 120);
 })();
 
 });
