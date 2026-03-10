@@ -1,3 +1,7 @@
+// Debug mode: set to true when you want debug panel keyboard shortcuts (1, 2, 3, 9, R, arrows).
+// In Cursor: change to true and save, or in console: window.__debugMode = true
+window.__debugMode = false;
+
 document.addEventListener('DOMContentLoaded', function() {
 
 // In-page links: scroll without showing hash in URL
@@ -48,7 +52,6 @@ const I = {
   rusty_crop_circle:'images/rustycropcircle.jpg',
   sunset_hero:     'images/Barge-Danny-Hero.jpg',
   bnb_room:        'images/bnb_room.jpg',
-  bnb_bath:        'images/bnb_bath.jpg',
 };
 
 // Photo filter tuning (must be before setPhoto calls)
@@ -80,7 +83,6 @@ function setPhoto(id, key, pos, bf, fit, sepiaOverride) {
 // heroBg is now a video iframe
 setPhoto('pDJ','dj_shot','center 50%');
 setPhoto('pBnbRoom','bnb_room','center 40%');
-setPhoto('pBnbBath','bnb_bath','center 40%');
 
 // Venue carousel (Where We're Going) — rotate through key images without stretching
 (function(){
@@ -88,12 +90,13 @@ setPhoto('pBnbBath','bnb_bath','center 40%');
   const heroEl = document.getElementById(heroId);
   if(!heroEl) return;
   const sequence = [
-    // Start on the pub exterior, then rotate through canal, crop-circle mecca, and finally Danny
+    // Start on the pub exterior, then rotate through canal, crop-circle mecca, Danny, and a DJ shot
     ['pub_exterior','center center'],
     ['pub_canal_side','center center'],
     ['crop_circle','center 45%'],
     ['rusty_crop_circle','center 50%'],
     ['danny_sign','center 40%'],
+    ['dj_shot','center 50%'],
   ];
   let idx = 0;
 
@@ -102,13 +105,14 @@ setPhoto('pBnbBath','bnb_bath','center 40%');
     img.src = I[key];
     img.alt = '';
     // New slide starts transparent; both slides cross-fade via opacity.
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.75) sepia(0.18) brightness(0.94);transition:opacity 11.2s ease,filter 0.6s,transform 0.7s;opacity:0;';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.75) sepia(0.18) brightness(0.94);transition:opacity 1.2s ease,filter 0.6s,transform 0.7s;opacity:0;';
     if(pos) img.style.objectPosition = pos;
     return img;
   }
 
-  const FADE_MS = 11200;
+  const FADE_MS = 1200;
   const HOLD_MS = 3200; // steady time each image stays fully visible
+  let slideVisibleAt = 0; // when current slide became fully visible (time-based scheduling)
 
   // Initialise with first image if empty
   if(!heroEl.querySelector('img')){
@@ -116,6 +120,7 @@ setPhoto('pBnbBath','bnb_bath','center 40%');
     const first = createImg(k,p);
     first.style.opacity = '1';
     heroEl.appendChild(first);
+    slideVisibleAt = Date.now();
   }
 
   function fadeTo(nextIdx, done){
@@ -125,21 +130,20 @@ setPhoto('pBnbBath','bnb_bath','center 40%');
     heroEl.appendChild(next);
     // Only start crossfade once the new image has loaded, so we never fade to black.
     const doCrossfade = () => {
-      // Ensure the browser has registered the new element before changing opacity
       void next.offsetWidth;
-      // Cross-fade: new image fades in while old image fades out
       next.style.opacity = '1';
       if(current){
         current.style.opacity = '0';
-        // After the fade duration, remove the old image
         setTimeout(() => {
           if(current.parentNode === heroEl){
             heroEl.removeChild(current);
           }
+          slideVisibleAt = Date.now();
           if(typeof done === 'function') done();
         }, FADE_MS + 50);
-      } else if(typeof done === 'function'){
-        done();
+      } else {
+        slideVisibleAt = Date.now();
+        if(typeof done === 'function') done();
       }
     };
 
@@ -151,13 +155,14 @@ setPhoto('pBnbBath','bnb_bath','center 40%');
   }
 
   function scheduleNext(){
+    const elapsed = Date.now() - slideVisibleAt;
+    const wait = Math.max(0, HOLD_MS - elapsed);
     setTimeout(() => {
       idx = (idx + 1) % sequence.length;
       fadeTo(idx, scheduleNext);
-    }, HOLD_MS);
+    }, wait);
   }
 
-  // Start the loop after the first image has had its initial hold time
   scheduleNext();
 })();
 
@@ -208,29 +213,59 @@ if(aHI) {
   sched.parentElement.addEventListener('mouseleave', () => lurk.style.opacity = '0');
 })();
 
-// RUNE BAND — scrolling rows (populate all .rune-scroll)
+// RUNE BAND — scrolling rows (populate all .rune-scroll). Config is read by tick and by rune debug panel. Defaults match 4K rune-tune.
+window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 29.5 };
 (function(){
   const scrollContainers = document.querySelectorAll('.rune-scroll');
   if(!scrollContainers.length) return;
   const syms = [
     `<svg width="90" height="90" viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="22" stroke="#b87333" stroke-width="1"/><circle cx="26" cy="26" r="13" stroke="#b87333" stroke-width="1"/><circle cx="26" cy="26" r="5" stroke="#b87333" stroke-width="1"/><line x1="26" y1="4" x2="26" y2="48" stroke="#b87333" stroke-width="0.8"/><line x1="4" y1="26" x2="48" y2="26" stroke="#b87333" stroke-width="0.8"/><line x1="10" y1="10" x2="42" y2="42" stroke="#b87333" stroke-width="0.6"/><line x1="42" y1="10" x2="10" y2="42" stroke="#b87333" stroke-width="0.6"/></svg>`,
-    `<svg width="90" height="90" viewBox="0 0 44 44" fill="none"><path d="M22 4 L24.5 17 L37 11 L28 22 L37 33 L24.5 27 L22 40 L19.5 27 L7 33 L16 22 L7 11 L19.5 17 Z" stroke="#b87333" stroke-width="0.9" fill="none"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="19" stroke="#b87333" stroke-width="0.8"/><path d="M23 4 C28 4 38 13 38 23 C38 33 28 42 23 42" stroke="#b87333" stroke-width="0.8" fill="none"/><path d="M23 4 C18 4 8 13 8 23 C8 33 18 42 23 42" stroke="#b87333" stroke-width="0.8" fill="none" stroke-dasharray="3 2"/><circle cx="23" cy="23" r="3" stroke="#b87333" stroke-width="0.8"/></svg>`,
     `<svg width="90" height="78" viewBox="0 0 48 42" fill="none"><path d="M2 21 C8 6 16 2 24 2 C32 2 40 6 46 21 C40 36 32 40 24 40 C16 40 8 36 2 21Z" stroke="#b87333" stroke-width="0.8" fill="none"/><circle cx="24" cy="21" r="7" stroke="#b87333" stroke-width="0.8"/><circle cx="24" cy="21" r="2.5" fill="#b87333" opacity="0.5"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 40 50" fill="none"><path d="M30 8 C22 8 14 14 14 25 C14 32 18 38 24 40 C18 38 10 32 10 22 C10 12 18 4 28 6" stroke="#b87333" stroke-width="0.9" fill="none"/><circle cx="20" cy="25" r="4" stroke="#b87333" stroke-width="0.8"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="18" stroke="#b87333" stroke-width="0.8"/><line x1="22" y1="4" x2="22" y2="40" stroke="#b87333" stroke-width="0.7"/><line x1="4" y1="22" x2="40" y2="22" stroke="#b87333" stroke-width="0.7"/><circle cx="22" cy="22" r="4" stroke="#b87333" stroke-width="0.8"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 42 48" fill="none"><path d="M32 10 C24 10 16 17 16 25 C16 30 19 35 24 37" stroke="#b87333" stroke-width="0.9" fill="none"/><path d="M10 38 C18 38 26 31 26 23 C26 18 23 13 18 11" stroke="#b87333" stroke-width="0.9" fill="none" stroke-dasharray="3 2"/><circle cx="21" cy="24" r="2" fill="#b87333" opacity="0.6"/></svg>`,
+    /* Crop circle glyph pulled from external SVG asset */
+    `<img src="images/crop-circle-glyph-thick.svg" alt="" class="rune-img">`,
   ];
-  // Repeat set three times so translateX(-33.33%) loops perfectly on wide screens
-  const double = [...syms, ...syms, ...syms];
+  // Repeat the set many times so very wide screens never "run out" of runes
+  const double = [...syms, ...syms, ...syms, ...syms, ...syms, ...syms];
   scrollContainers.forEach(scroll => {
     double.forEach(s => {
       const tmp = document.createElement('div');
       tmp.innerHTML = s;
-      const svg = tmp.querySelector('svg');
-      if(svg) { svg.style.marginRight = '80px'; scroll.appendChild(svg); }
+      const el = tmp.querySelector('svg, img');
+      if(el) {
+        /* margin and size controlled by CSS per breakpoint (rune-tune) */
+        scroll.appendChild(el);
+      }
     });
+    scroll.classList.add('rune-scroll--js');
   });
+
+  // Scroll time only advances while visible; cap delta per frame so a stalled frame never causes a visible skip
+  const RUNE_MAX_DELTA_MS = 80;
+  let runeScrollTime = 0;
+  let runeLastTime = performance.now();
+  function tickRune(now) {
+    now = typeof now === 'number' ? now : performance.now();
+    const root = document.documentElement;
+    const periodFromCss = getComputedStyle(root).getPropertyValue('--rune-period-ms').trim();
+    const travelFromCss = getComputedStyle(root).getPropertyValue('--rune-travel-pct').trim();
+    const period = periodFromCss ? parseFloat(periodFromCss) : ((window.__runeConfig && window.__runeConfig.periodMs) || 21000);
+    const travel = travelFromCss ? parseFloat(travelFromCss) : ((window.__runeConfig && window.__runeConfig.travelPct) || 29.5);
+    if(!document.hidden){
+      let delta = now - runeLastTime;
+      if(delta > RUNE_MAX_DELTA_MS) delta = RUNE_MAX_DELTA_MS;
+      runeScrollTime += delta;
+      runeScrollTime = runeScrollTime % period;
+    }
+    runeLastTime = now;
+    const t = (runeScrollTime / period) * travel;
+    scrollContainers.forEach(el => { el.style.transform = `translateX(-${t}%)`; });
+    requestAnimationFrame(tickRune);
+  }
+  requestAnimationFrame(tickRune);
 })();
 
 // MIC / BEAT DETECTION
@@ -272,7 +307,7 @@ let minAvgGate = 2;   // minimum rolling avg before ratio fires
 // DEBUG PANEL
 const SITE_DEFAULTS = {
   lineDensity: 1, geoSpeed: 0.55, geoOpacity: 0.85, geoLineWidth: 0.65,
-  lateralAmp: 0.008, tunnelStrength: 1.0, moteCount: 20, floatCount: 12,
+  lateralAmp: 0.008, tunnelStrength: 1.5, moteCount: 20, floatCount: 12,
   wispsOn: false, motesOn: true, scrollGeoOn: true,
 };
 const VIS_DEFAULTS = {
@@ -675,7 +710,11 @@ let inFullscreen = false;
   setRowHighlight(curRow);
 
   document.addEventListener('keydown', e => {
-    // 1 — toggle panel visibility
+    // Escape — exit fullscreen (always on)
+    if(e.key === 'Escape' && inFullscreen) { exitFullscreen(); return; }
+    if (!window.__debugMode) return;
+
+    // 1 — main debug panel, 2 — freq band panel
     if(e.key === '2') {
       const fp = document.getElementById('freqPanel');
       if(fp) fp.style.display = fp.style.display === 'none' ? 'block' : 'none';
@@ -688,9 +727,6 @@ let inFullscreen = false;
       if(hidden) applyDefaults(); else applySiteDefaults();
       return;
     }
-
-    // Escape — exit fullscreen
-    if(e.key === 'Escape' && inFullscreen) { exitFullscreen(); return; }
 
     // Arrow keys — only when no text input focused
     if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
@@ -889,6 +925,8 @@ let inFullscreen = false;
     if(bpEl) bpEl.textContent = `${bp}px`;
   }
 
+  const MOBILE_BREAKPOINT = 700;
+
   function applyFromControls() {
     if(!hero || !badge || !h1 || !sub || !venue || !cta || !nav || !navInner) return;
     const padTop = parseInt(document.getElementById('hero_padTop').value,10);
@@ -972,6 +1010,36 @@ let inFullscreen = false;
     if(!isNaN(navTextPad)) setLbl('navTextPad', navTextPad,'px');
   }
 
+  function clearHeroPanelInlineStyles() {
+    if(!hero || !nav || !navInner) return;
+    hero.style.removeProperty('padding-top');
+    hero.style.removeProperty('padding-bottom');
+    hero.style.removeProperty('padding-left');
+    hero.style.removeProperty('padding-right');
+    nav.style.removeProperty('padding-top');
+    nav.style.removeProperty('padding-bottom');
+    navInner.style.removeProperty('max-width');
+    if(badge){ badge.style.removeProperty('margin-top'); badge.style.removeProperty('font-size'); badge.style.removeProperty('padding'); }
+    if(h1){ h1.style.removeProperty('margin-top'); h1.style.removeProperty('font-size'); }
+    if(sub){ sub.style.removeProperty('margin-top'); sub.style.removeProperty('font-size'); }
+    if(venue){ venue.style.removeProperty('margin-top'); venue.style.removeProperty('font-size'); }
+    if(cta){ cta.style.removeProperty('margin-top'); cta.style.removeProperty('font-size'); cta.style.removeProperty('padding'); }
+    nav.querySelectorAll('a').forEach(a => {
+      a.style.removeProperty('font-size');
+      a.style.removeProperty('margin-top');
+      a.style.removeProperty('margin-bottom');
+    });
+    root.style.removeProperty('--nav-letter-spacing');
+    root.style.removeProperty('--hero-sun-scale');
+  }
+
+  let lastViewportWidth = window.innerWidth;
+  window.addEventListener('resize', function() {
+    const w = window.innerWidth;
+    if(w <= MOBILE_BREAKPOINT && lastViewportWidth > MOBILE_BREAKPOINT) clearHeroPanelInlineStyles();
+    lastViewportWidth = w;
+  });
+
   ['padTop','padBottom','padSides','navPad','navFont','navTextPad','navLetter','navMax','badgeTop','badgeSize','badgeBox','titleTop','subTop','venueTop','ctaTop','h1Size','subSize','venueSize','ctaSize','ctaBox','wheelScale'].forEach(id => {
     const el = panel.querySelector('#hero_'+id);
     if(el) el.addEventListener('input', applyFromControls);
@@ -1017,6 +1085,7 @@ let inFullscreen = false;
     if(panel.style.opacity === '1'){
       panel.style.opacity = '0';
       panel.style.pointerEvents = 'none';
+      if(window.innerWidth <= MOBILE_BREAKPOINT) clearHeroPanelInlineStyles();
     } else {
       syncFromDOM();
       panel.style.opacity = '1';
@@ -1025,12 +1094,198 @@ let inFullscreen = false;
   }
 
   document.addEventListener('keydown', e => {
+    if (!window.__debugMode) return;
     if(e.key === '3'){
       e.preventDefault();
       togglePanel();
     }
   });
 
+})();
+
+// RUNE BAR DEBUG PANEL — press R to toggle; Copy outputs rune-tune JSON for pasting into CSS/script
+(function(){
+  const DEFAULTS = {
+    scrollOpacity: 0.54,
+    periodSec: 55,
+    travelPct: 33.33,
+    bandPadY: 6,
+    bandBorderOpacity: 0.16,
+    bandFrostRadial: 0.08,
+    bandFrostLinear: 0.035,
+    bandFrostAfter: 0.02,
+    trackGlowRadial: 0.12,
+    trackGlowLinear: 0.075,
+    trackBorderOpacity: 0.2,
+    trackShadowHighlight: 0.04,
+    grainOpacity: 0.05,
+    trackAfterOpacity: 0.05,
+    runeSize: 90,
+    runeGap: 60,
+    bandFrostLinearBottom: 0.035
+  };
+  let styleEl = null;
+  function ensureStyle() {
+    if(!styleEl){
+      styleEl = document.createElement('style');
+      styleEl.id = 'rune-debug-style';
+      document.head.appendChild(styleEl);
+    }
+    return styleEl;
+  }
+  function applyRuneStyles(v){
+    const cfg = window.__runeConfig;
+    if(cfg){
+      cfg.periodMs = (v.periodSec || DEFAULTS.periodSec) * 1000;
+      cfg.travelPct = v.travelPct !== undefined ? v.travelPct : DEFAULTS.travelPct;
+    }
+    const s = v || DEFAULTS;
+    const bandPad = s.bandPadY ?? DEFAULTS.bandPadY;
+    const bandBorder = s.bandBorderOpacity ?? DEFAULTS.bandBorderOpacity;
+    const bandRad = s.bandFrostRadial ?? DEFAULTS.bandFrostRadial;
+    const bandLin = s.bandFrostLinear ?? DEFAULTS.bandFrostLinear;
+    const bandAfter = s.bandFrostAfter ?? DEFAULTS.bandFrostAfter;
+    const trackRad = s.trackGlowRadial ?? DEFAULTS.trackGlowRadial;
+    const trackLin = s.trackGlowLinear ?? DEFAULTS.trackGlowLinear;
+    const trackBorder = s.trackBorderOpacity ?? DEFAULTS.trackBorderOpacity;
+    const trackShadow = s.trackShadowHighlight ?? DEFAULTS.trackShadowHighlight;
+    const grain = s.grainOpacity ?? DEFAULTS.grainOpacity;
+    const trackAfter = s.trackAfterOpacity ?? DEFAULTS.trackAfterOpacity;
+    const runeSize = s.runeSize ?? DEFAULTS.runeSize;
+    const runeGap = s.runeGap ?? DEFAULTS.runeGap;
+    const scrollOp = s.scrollOpacity ?? DEFAULTS.scrollOpacity;
+    ensureStyle();
+    const enc = (n) => Math.round(n * 100) / 100;
+    styleEl.textContent = `
+.rune-band{ padding:${bandPad}px 0 !important; border-top-color:rgba(184,115,51,${enc(bandBorder)}) !important; border-bottom-color:rgba(184,115,51,${enc(bandBorder)}) !important; }
+.rune-band::before{ background:radial-gradient(ellipse at 50% 50%,rgba(46,123,122,${enc(bandRad)}) 0%,transparent 60%),linear-gradient(to bottom,rgba(46,123,122,${enc(bandLin)}) 0,transparent 35%,transparent 65%,rgba(46,123,122,${enc(bandLin)}) 100%) !important; }
+.rune-band::after{ background:linear-gradient(135deg,rgba(46,123,122,${enc(bandAfter)}) 0%,transparent 50%,rgba(160,70,42,${enc(bandAfter)}) 100%) !important; }
+.rune-track{ background-image:radial-gradient(ellipse at 50% 50%,rgba(46,123,122,${enc(trackRad)}) 0%,rgba(10,9,7,1) 80%),linear-gradient(to bottom,rgba(46,123,122,${enc(trackLin)}) 0,transparent 40%,transparent 60%,rgba(46,123,122,${enc(trackLin)}) 100%) !important; border-top-color:rgba(184,115,51,${enc(trackBorder)}) !important; border-bottom-color:rgba(184,115,51,${enc(trackBorder)}) !important; box-shadow:0 2px 4px rgba(0,0,0,0.7),0 -1px 0 rgba(232,223,200,${enc(trackShadow)}) !important; }
+.rune-track::before{ background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='${enc(grain)}'/%3E%3C/svg%3E") !important; }
+.rune-track::after{ background:linear-gradient(135deg,rgba(46,123,122,${enc(trackAfter)}) 0%,transparent 50%,rgba(160,70,42,${enc(trackAfter)}) 100%) !important; }
+.rune-scroll{ opacity:${enc(scrollOp)} !important; }
+.rune-scroll > *{ margin-right:${runeGap}px !important; }
+.rune-scroll svg,.rune-scroll .rune-img{ width:${runeSize}px !important; height:auto !important; }
+`;
+  }
+  function row(label, id, min, max, step, def) {
+    const d = def !== undefined ? def : (typeof min === 'number' && min >= 0 && max > min ? min : 0);
+    return `<label style="display:block;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+        <span>${label}</span>
+        <span id="rune_lbl_${id}" style="font-variant-numeric:tabular-nums">${d}</span>
+      </div>
+      <input type="range" id="rune_${id}" min="${min}" max="${max}" step="${step}" value="${d}" style="width:100%;accent-color:rgba(74,173,171,0.8)">
+    </label>`;
+  }
+  const panel = document.createElement('div');
+  panel.id = 'runeDebugPanel';
+  panel.style.cssText = [
+    'position:fixed','top:20px','right:20px','z-index:610','width:280px',
+    'background:rgba(14,13,11,0.96)','backdrop-filter:blur(8px)','-webkit-backdrop-filter:blur(8px)',
+    'border:1px solid rgba(184,115,51,0.45)','border-radius:3px',
+    'padding:12px 14px 14px','font-family:\"Libre Baskerville\",Georgia,serif',
+    'color:rgba(232,223,200,0.9)','font-size:0.72rem','letter-spacing:0.05em',
+    'pointer-events:none','user-select:text','opacity:0','transition:opacity 0.2s',
+    'max-height:85vh','overflow-y:auto'
+  ].join(';');
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:1px solid rgba(184,115,51,0.4);padding-bottom:6px">
+      <span style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--copper-l,#d4954a)">Rune bar</span>
+    </div>
+    <div style="margin:4px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Scroll</div>
+    ${row('Scroll opacity','scrollOpacity',0,1,0.01,0.54)}
+    ${row('Period (s)','periodSec',10,120,1,55)}
+    ${row('Travel %','travelPct',10,50,0.5,33.33)}
+    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Outer band</div>
+    ${row('Band pad Y','bandPadY',0,24,1,6)}
+    ${row('Band border opacity','bandBorderOpacity',0,0.6,0.01,0.16)}
+    ${row('Frost radial','bandFrostRadial',0,0.25,0.005,0.08)}
+    ${row('Frost linear','bandFrostLinear',0,0.12,0.005,0.035)}
+    ${row('Frost after','bandFrostAfter',0,0.08,0.005,0.02)}
+    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Inner track (glow)</div>
+    ${row('Track glow radial','trackGlowRadial',0,0.3,0.01,0.12)}
+    ${row('Track glow linear','trackGlowLinear',0,0.2,0.005,0.075)}
+    ${row('Track border opacity','trackBorderOpacity',0,0.6,0.01,0.2)}
+    ${row('Track shadow highlight','trackShadowHighlight',0,0.15,0.01,0.04)}
+    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Grain & overlay</div>
+    ${row('Grain opacity','grainOpacity',0,0.2,0.01,0.05)}
+    ${row('Track after opacity','trackAfterOpacity',0,0.15,0.005,0.05)}
+    <div style="margin:6px 0 2px;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(232,223,200,0.6);">Symbols</div>
+    ${row('Rune size (px)','runeSize',40,160,2,90)}
+    ${row('Gap between runes','runeGap',20,120,2,60)}
+    <button id="rune_copy" style="margin-top:10px;width:100%;padding:8px 0;border-radius:2px;border:1px solid rgba(184,115,51,0.6);background:rgba(184,115,51,0.1);color:#d4954a;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;cursor:pointer">Copy rune settings</button>
+    <div style="margin-top:6px;font-size:0.65rem;opacity:0.65;">Press R to toggle. Paste JSON into script or bake into CSS.</div>
+  `;
+  document.body.appendChild(panel);
+  function getValues() {
+    const num = (id, def) => { const el = document.getElementById('rune_'+id); const v = el ? parseFloat(el.value) : def; return el && el.type === 'range' ? v : (el ? parseFloat(el.value) || def : def); };
+    return {
+      scrollOpacity: num('scrollOpacity', DEFAULTS.scrollOpacity),
+      periodSec: num('periodSec', DEFAULTS.periodSec),
+      travelPct: num('travelPct', DEFAULTS.travelPct),
+      bandPadY: num('bandPadY', DEFAULTS.bandPadY),
+      bandBorderOpacity: num('bandBorderOpacity', DEFAULTS.bandBorderOpacity),
+      bandFrostRadial: num('bandFrostRadial', DEFAULTS.bandFrostRadial),
+      bandFrostLinear: num('bandFrostLinear', DEFAULTS.bandFrostLinear),
+      bandFrostAfter: num('bandFrostAfter', DEFAULTS.bandFrostAfter),
+      trackGlowRadial: num('trackGlowRadial', DEFAULTS.trackGlowRadial),
+      trackGlowLinear: num('trackGlowLinear', DEFAULTS.trackGlowLinear),
+      trackBorderOpacity: num('trackBorderOpacity', DEFAULTS.trackBorderOpacity),
+      trackShadowHighlight: num('trackShadowHighlight', DEFAULTS.trackShadowHighlight),
+      grainOpacity: num('grainOpacity', DEFAULTS.grainOpacity),
+      trackAfterOpacity: num('trackAfterOpacity', DEFAULTS.trackAfterOpacity),
+      runeSize: num('runeSize', DEFAULTS.runeSize),
+      runeGap: num('runeGap', DEFAULTS.runeGap)
+    };
+  }
+  function syncLabels() {
+    const v = getValues();
+    const intIds = ['periodSec','bandPadY','runeSize','runeGap'];
+    ['scrollOpacity','periodSec','travelPct','bandPadY','bandBorderOpacity','bandFrostRadial','bandFrostLinear','bandFrostAfter','trackGlowRadial','trackGlowLinear','trackBorderOpacity','trackShadowHighlight','grainOpacity','trackAfterOpacity','runeSize','runeGap'].forEach(id => {
+      const el = document.getElementById('rune_lbl_'+id);
+      if(!el) return;
+      const val = v[id];
+      if(val == null) { el.textContent = ''; return; }
+      el.textContent = intIds.includes(id) ? Math.round(val) : (id === 'travelPct' ? Number(val).toFixed(2) : Number(val).toFixed(3));
+    });
+  }
+  function onInput() {
+    const v = getValues();
+    applyRuneStyles(v);
+    syncLabels();
+  }
+  ['scrollOpacity','periodSec','travelPct','bandPadY','bandBorderOpacity','bandFrostRadial','bandFrostLinear','bandFrostAfter','trackGlowRadial','trackGlowLinear','trackBorderOpacity','trackShadowHighlight','grainOpacity','trackAfterOpacity','runeSize','runeGap'].forEach(id => {
+    const el = document.getElementById('rune_'+id);
+    if(el) el.addEventListener('input', onInput);
+  });
+  document.getElementById('rune_copy').addEventListener('click', async () => {
+    const payload = getValues();
+    const text = 'rune-tune ' + JSON.stringify(payload, null, 2);
+    if(navigator.clipboard && navigator.clipboard.writeText) {
+      try { await navigator.clipboard.writeText(text); document.getElementById('rune_copy').textContent = 'Copied!'; setTimeout(() => { document.getElementById('rune_copy').textContent = 'Copy rune settings'; }, 1200); } catch(e){}
+    }
+  });
+  function togglePanel() {
+    const visible = panel.style.opacity === '1';
+    if(visible){
+      panel.style.opacity = '0';
+      panel.style.pointerEvents = 'none';
+      if(styleEl) styleEl.remove(); styleEl = null;
+      if(window.__runeConfig){ window.__runeConfig.periodMs = DEFAULTS.periodSec * 1000; window.__runeConfig.travelPct = DEFAULTS.travelPct; }
+    } else {
+      panel.style.opacity = '1';
+      panel.style.pointerEvents = 'all';
+      onInput();
+    }
+  }
+  document.addEventListener('keydown', e => {
+    if (!window.__debugMode) return;
+    if(e.key === 'r' || e.key === 'R'){
+      e.preventDefault();
+      togglePanel();
+    }
+  });
 })();
 
 function getFreqBand(analyser, dataArray, startBin, endBin) {
@@ -1200,8 +1455,10 @@ function drawGeom(g, now) {
   // Uses smoothScroll (lerped each frame) for gradual ramp
   const drift = smoothScroll * tunnelStrength;
   const lateralSway = Math.sin(now * 0.00008 + g.phase * 1.7) * (lateralAmp + beatSwayAdd) * W;
-  const cx = W * 0.5 + (g.x - 0.5) * W * (1 + drift) + lateralSway;
-  const cy = H * 0.5 + (g.y - 0.5) * H * (1 + drift);
+  const mouseLateral = (smoothMouseX - 0.5) * W * MOUSE_LATERAL_SCALE;
+  const mouseVertical = (smoothMouseY - 0.5) * H * MOUSE_VERTICAL_SCALE;
+  const cx = W * 0.5 + (g.x - 0.5) * W * (1 + drift) + lateralSway + mouseLateral;
+  const cy = H * 0.5 + (g.y - 0.5) * H * (1 + drift) + mouseVertical;
   const R = Math.min(W, H) * g.size;
   const rot1 = g.phase  + now * g.speed * geoSpeed * beatSpeedScroll;
   const rot2 = g.phase2 + now * g.speed2 * geoSpeed * beatSpeedScroll;
@@ -1282,6 +1539,93 @@ const sparks = Array.from({length:80},()=>({x:Math.random(),y:0.85+Math.random()
 const floaters = Array.from({length:40},()=>({x:Math.random(),y:Math.random(),r:1.5+Math.random()*3,col:[TEAL,COPPER,GOLD,RUST][Math.floor(Math.random()*4)],vx:(Math.random()-0.5)*0.0002,vy:-(0.0001+Math.random()*0.0003),phase:Math.random()*Math.PI*2,speed:0.003+Math.random()*0.005}));
 const wisps = Array.from({length:4},()=>({x:Math.random(),y:0.3+Math.random()*0.6,w:0.35+Math.random()*0.45,h:0.04+Math.random()*0.07,col:Math.random()>0.5?TEAL:COPPER,vx:(Math.random()-0.5)*0.00005,phase:Math.random()*Math.PI*2,speed:0.0005+Math.random()*0.0006}));
 
+// Bouncing runes — rune-band style symbols (all 6 SVG rune bar types) drifting in the background
+const RUNE_FLOAT_COUNT = 18;
+const RUNE_BOUNCE_MARGIN = 0.028;
+const runeFloaters = Array.from({length:RUNE_FLOAT_COUNT}, () => ({
+  x: 0.08 + Math.random() * 0.84,
+  y: 0.08 + Math.random() * 0.84,
+  vx: (Math.random() - 0.5) * 0.00055,
+  vy: (Math.random() - 0.5) * 0.0005,
+  size: 0.012 + Math.random() * 0.014,
+  type: Math.floor(Math.random() * 6),
+  rot: Math.random() * Math.PI * 2
+}));
+function drawRuneShape(ctx, type) {
+  const u = 0.5; // unit radius for shapes (match rune bar SVGs)
+  ctx.lineWidth = 1.2;
+  ctx.lineCap = 'round';
+  if (type === 0) {
+    // Rune bar sym 0: target — 3 circles, cross, X
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.9, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.52, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.2, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, -u); ctx.lineTo(0, u); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-u, 0); ctx.lineTo(u, 0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-u * 0.77, -u * 0.77); ctx.lineTo(u * 0.77, u * 0.77); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(u * 0.77, -u * 0.77); ctx.lineTo(-u * 0.77, u * 0.77); ctx.stroke();
+  } else if (type === 1) {
+    // Rune bar sym 1: circle + two arcs (left/right) + inner circle
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.85, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.13, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, -u);
+    ctx.bezierCurveTo(u * 0.22, -u, u * 0.65, 0, 0, u);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, -u);
+    ctx.bezierCurveTo(-u * 0.22, -u, -u * 0.65, 0, 0, u);
+    ctx.stroke();
+  } else if (type === 2) {
+    // Rune bar sym 2: diamond/eye + circle + dot
+    ctx.beginPath();
+    ctx.moveTo(0, -u); ctx.lineTo(u * 0.96, 0); ctx.lineTo(0, u); ctx.lineTo(-u * 0.96, 0); ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.33, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.arc(0, 0, u * 0.12, 0, Math.PI * 2); ctx.fill();
+  } else if (type === 3) {
+    // Rune bar sym 3: spiral/comma + circle
+    ctx.beginPath();
+    ctx.moveTo(u * 0.48, -u * 0.32);
+    ctx.bezierCurveTo(u * 0.04, -u * 0.32, -u * 0.22, -u * 0.08, -u * 0.22, u * 0.17);
+    ctx.bezierCurveTo(-u * 0.22, u * 0.35, u * 0.04, u * 0.52, u * 0.22, u * 0.48);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.32, 0, Math.PI * 2); ctx.stroke();
+  } else if (type === 4) {
+    // Rune bar sym 4: circle + cross + small inner circle
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.9, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, -u); ctx.lineTo(0, u); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-u, 0); ctx.lineTo(u, 0); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, u * 0.18, 0, Math.PI * 2); ctx.stroke();
+  } else {
+    // Rune bar sym 5: two curves + centre dot
+    ctx.beginPath();
+    ctx.moveTo(u * 0.52, -u * 0.42);
+    ctx.bezierCurveTo(u * 0.13, -u * 0.42, -u * 0.13, -u * 0.15, -u * 0.13, u * 0.04);
+    ctx.bezierCurveTo(-u * 0.13, u * 0.25, u * 0.04, u * 0.35, u * 0.13, u * 0.31);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-u * 0.42, u * 0.35);
+    ctx.bezierCurveTo(-u * 0.13, u * 0.35, u * 0.13, u * 0.08, u * 0.13, -u * 0.1);
+    ctx.bezierCurveTo(u * 0.13, -u * 0.31, -u * 0.04, -u * 0.4, -u * 0.13, -u * 0.35);
+    ctx.stroke();
+    ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.arc(0, 0, u * 0.1, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function drawBouncingRune(r) {
+  const px = r.x * W;
+  const py = r.y * H;
+  const s = r.size * Math.min(W, H);
+  ctx.save();
+  ctx.globalAlpha = 0.15;
+  ctx.strokeStyle = rgb(COPPER, 1);
+  ctx.translate(px, py);
+  ctx.rotate(r.rot);
+  ctx.scale(s, s);
+  drawRuneShape(ctx, r.type);
+  ctx.restore();
+}
+
 let t=0;
 let smoothScroll = 0; // lerped scroll fraction for tunnel drift
 
@@ -1291,8 +1635,8 @@ let midMouseX = 0.5, midMouseY = 0.5;   // first stage: catches mouse
 let smoothMouseX = 0.5, smoothMouseY = 0.5;  // second stage: slower, smoother
 const MOUSE_LERP_MID = 0.032;   // how fast mid follows raw (first stage)
 const MOUSE_LERP_SMOOTH = 0.006;  // how fast smooth follows mid (more delay, smoother)
-const MOUSE_LATERAL_SCALE = 0.025;
-const MOUSE_VERTICAL_SCALE = 0.02;
+const MOUSE_LATERAL_SCALE = 0.058;
+const MOUSE_VERTICAL_SCALE = 0.048;
 window.addEventListener('mousemove', function(e) {
   mouseX = e.clientX / window.innerWidth;
   mouseY = e.clientY / window.innerHeight;
@@ -1302,12 +1646,16 @@ function draw(){
   ctx.clearRect(0,0,W,H);
   const now = performance.now();
   updateBeat(now);
-  // Lerp scroll fraction toward actual value — ~3s ramp at 60fps (0.008 per frame)
+  // Lerp scroll fraction toward actual value — slightly faster so scroll feels more responsive
   if(!inFullscreen) {
     const totalH = document.body.scrollHeight - window.innerHeight;
     const targetScroll = totalH > 0 ? window.scrollY / totalH : 0;
-    smoothScroll += (targetScroll - smoothScroll) * 0.008;
+    smoothScroll += (targetScroll - smoothScroll) * 0.018;
   }
+  midMouseX += (mouseX - midMouseX) * MOUSE_LERP_MID;
+  midMouseY += (mouseY - midMouseY) * MOUSE_LERP_MID;
+  smoothMouseX += (midMouseX - smoothMouseX) * MOUSE_LERP_SMOOTH;
+  smoothMouseY += (midMouseY - smoothMouseY) * MOUSE_LERP_SMOOTH;
   if(scrollGeoOn) geomDefs.forEach(g => drawGeom(g, now));
   if(wispsOn) wisps.forEach(w=>{
     w.x+=w.vx;
@@ -1342,6 +1690,18 @@ function draw(){
       ctx.fillStyle=g;ctx.beginPath();ctx.arc(m.x*W,m.y*H,m.r*6,0,Math.PI*2);ctx.fill();
     });
   }
+  // Bouncing runes — update position with bounce, then draw
+  const margin = RUNE_BOUNCE_MARGIN;
+  runeFloaters.forEach(r => {
+    r.x += r.vx;
+    r.y += r.vy;
+    if (r.x < margin) { r.x = margin; r.vx = Math.abs(r.vx); }
+    if (r.x > 1 - margin) { r.x = 1 - margin; r.vx = -Math.abs(r.vx); }
+    if (r.y < margin) { r.y = margin; r.vy = Math.abs(r.vy); }
+    if (r.y > 1 - margin) { r.y = 1 - margin; r.vy = -Math.abs(r.vy); }
+    r.rot += 0.00015;
+    drawBouncingRune(r);
+  });
   t+=0.016;
   requestAnimationFrame(draw);
 }
@@ -1658,6 +2018,7 @@ if(videoWrap) {
   });
 
   document.addEventListener('keydown', e => {
+    if (!window.__debugMode) return;
     if(e.key === '9') {
       sp.style.display = sp.style.display === 'none' ? 'block' : 'none';
     }
