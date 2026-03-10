@@ -33,7 +33,7 @@
   --hero-venue-mb:clamp(28px,4vw,72px);
   --hero-cta-py:clamp(16px,2vw,46px);
   --hero-cta-px:clamp(52px,6vw,140px);
-  --hero-sun-scale:1;
+  --hero-sun-scale:1.32;
   --nav-letter-spacing:0.08em;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -64,27 +64,28 @@ body::before{
 /* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:300;display:flex;justify-content:center;
-  /* Dark base with a soft golden frost across the full bar */
+  /* Dark base with subtle teal/copper frosting */
   background:
-    radial-gradient(ellipse at 50% 50%,rgba(200,169,110,0.14) 0%,rgba(200,169,110,0.03) 55%,transparent 95%),
-    rgba(10,9,7,0.96);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(184,115,51,0.22);
-  box-shadow:0 0 26px rgba(0,0,0,0.75),0 0 38px rgba(184,115,51,0.35);
+    radial-gradient(ellipse at 50% 0%,rgba(46,123,122,0.14) 0%,transparent 55%),
+    linear-gradient(to bottom,rgba(184,115,51,0.08) 0,transparent 55%),
+    rgba(10,9,7,0.94);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(184,115,51,0.16);
+  box-shadow:0 0 18px rgba(0,0,0,0.7),0 0 26px rgba(184,115,51,0.22);
 }
 nav::after{
   content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;
   background:linear-gradient(to right,transparent,var(--teal-glow),var(--copper),transparent);
-  opacity:0.7;
+  opacity:0.45;
 }
 /* Nav inner caps width on 4K so links cluster instead of spreading across the screen */
 .nav-inner{display:flex;justify-content:center;flex-wrap:wrap;max-width:1200px;width:100%;overflow:visible;}
 nav a{
   font-family:'IM Fell English',serif;
   font-size:1.15rem;
-  letter-spacing:calc(var(--nav-letter-spacing) * 0.9);
-  color:rgba(227,201,138,0.9);
+  letter-spacing:calc(var(--nav-letter-spacing) * 0.7);
+  color:rgba(227,201,138,0.8);
   text-decoration:none;
   padding:14px 22px;
   transition:color 0.25s;
@@ -117,7 +118,12 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
 .hero-photo::after{content:'';position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(to bottom,transparent 0%,rgba(14,13,11,0.6) 50%,var(--ink) 100%);pointer-events:none;}
 @keyframes slowdrift{from{transform:scale(1.04) translateX(-0.5%)}to{transform:scale(1.1) translateX(0.5%)}}
 .hero-fog{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to bottom,transparent 45%,rgba(14,13,11,0.75) 72%,var(--ink) 100%),radial-gradient(ellipse 80% 60% at 50% 80%,rgba(46,123,122,0.08) 0%,transparent 70%),radial-gradient(ellipse at 50% 50%,rgba(10,9,7,0.1) 0%,rgba(10,9,7,0.5) 100%);}
-.hero-sun{position:absolute;z-index:0;pointer-events:none;width:min(82vmin,860px);height:min(82vmin,860px);top:52%;left:50%;transform:translate(-50%,-50%) scale(var(--hero-sun-scale));opacity:0.15;animation:sun-rot 90s linear infinite;}
+.hero-sun{position:absolute;z-index:0;pointer-events:none;width:min(82vmin,860px);height:min(82vmin,860px);top:52%;left:50%;transform:translate(-50%,-50%) scale(var(--hero-sun-scale)) translateZ(0);opacity:0.15;animation:sun-rot 90s linear infinite;contain:layout paint;}
+/* Hero symbol: crop circle (default) vs wheel. Switch back by removing hero-symbol-crop from #hero. */
+#hero.hero-symbol-crop .hero-sun--wheel{display:none;}
+#hero.hero-symbol-crop .hero-sun--crop{display:block;}
+#hero:not(.hero-symbol-crop) .hero-sun--crop{display:none;}
+#hero:not(.hero-symbol-crop) .hero-sun--wheel{display:block;}
 /* Hero content max-width keeps title/CTA from stretching on 4K/ultra-wide */
 .hero-content{max-width:720px;width:100%;margin:0 auto;}
 /* On mid-width viewports the fixed nav can wrap and get taller; ensure the date badge clears it, then gently scale the hero so everything stays above the fold. */
@@ -144,6 +150,153 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
   #hero{padding:2px 18px 2px;min-height:auto;}
   .hero-cta{padding:4px 20px;min-height:38px;font-size:0.9rem;}
   .hero-content{transform:scale(0.92);transform-origin:top center;}
+}
+
+/* 560–599px: tune hero to 582px hero-tune payload */
+@media(min-width:560px) and (max-width:599px){
+  :root{
+    --hero-sun-scale:2.11;
+  }
+  #hero{
+    padding:118px 18px 198px;
+    min-height:auto;
+  }
+  nav{
+    padding-top:9px;
+    padding-bottom:9px;
+  }
+  .nav-inner{
+    max-width:1170px;
+  }
+  nav a{
+    font-size:21px;
+    letter-spacing:0.115em;
+  }
+  .badge{
+    margin-top:-6px;
+    margin-bottom:var(--hero-badge-mb);
+    font-size:46px;
+    padding:14px 28px;
+  }
+  h1{
+    margin-top:8px;
+    font-size:127px;
+  }
+  .title-hand{
+    margin-top:32px;
+    font-size:66px;
+  }
+  .hero-venue{
+    margin-top:24px;
+    font-size:36px;
+  }
+  .hero-cta{
+    margin-top:38px;
+    font-size:44px;
+    padding:8px 32px;
+    min-height:52px;
+    box-sizing:border-box;
+  }
+}
+
+/* 720–760px: tune hero to 740px hero-tune payload */
+@media(min-width:720px) and (max-width:760px){
+  :root{
+    --hero-sun-scale:1.45;
+  }
+  #hero{
+    padding:136px 4px 72px;
+    min-height:auto;
+  }
+  nav{
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+  .nav-inner{
+    max-width:1450px;
+  }
+  nav a{
+    font-size:26px;
+  }
+  .badge{
+    margin-top:0;
+    margin-bottom:var(--hero-badge-mb);
+    font-size:49px;
+    padding:10px 20px;
+  }
+  h1{
+    margin-top:44px;
+    font-size:136px;
+  }
+  .title-hand{
+    margin-top:8px;
+    font-size:59px;
+  }
+  .hero-venue{
+    margin-top:28px;
+    font-size:42px;
+  }
+  .hero-cta{
+    margin-top:20px;
+    font-size:40px;
+    padding:20px 40px;
+    min-height:52px;
+    box-sizing:border-box;
+  }
+}
+
+/* 760–800px: iPad Mini (768px) — override 768–1200 margin/scale; apply hero-tune.
+   Use #hero / .hero-content so these win over later .hero-content .badge and :root vars. */
+@media(min-width:760px) and (max-width:800px){
+  :root{
+    --hero-sun-scale:1.47;
+  }
+  #hero{
+    margin-top:0;
+    padding:102px 38px 92px;
+    min-height:auto;
+  }
+  #hero .hero-content{
+    transform:none;
+  }
+  nav{
+    padding-top:25px;
+    padding-bottom:25px;
+  }
+  .nav-inner{
+    max-width:1020px;
+  }
+  nav a{
+    font-size:16px;
+    letter-spacing:0.08em;
+    margin-top:-20px;
+    margin-bottom:-20px;
+  }
+  #hero .hero-content .badge{
+    margin-top:-4px;
+    margin-bottom:var(--hero-badge-mb);
+    font-size:49px;
+    padding:14px;
+  }
+  #hero h1{
+    margin-top:0;
+    font-size:152px;
+  }
+  #hero .title-hand{
+    margin-top:32px;
+    font-size:61px;
+  }
+  #hero .hero-venue{
+    margin-top:36px;
+    font-size:47px;
+  }
+  #hero .hero-cta{
+    margin-top:54px;
+    font-size:54px;
+    padding:26px;
+    min-height:auto;
+    box-sizing:border-box;
+  }
 }
 /* Badge + subtitle one line from 600px (match 2K); very tight so hero fits above fold at 600×375 */
 @media(min-width:600px){
@@ -252,10 +405,10 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
 @media(min-width:2560px){
   .hero-content{max-width:1320px;width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;}
   :root{
-    /* Hero padding & sun scale */
+    /* Hero padding & sun scale (2560 hero-tune: wheelScale 1.58) */
     --hero-pad-top:150px;
     --hero-pad-bottom:60px;
-    --hero-sun-scale:1.2;
+    --hero-sun-scale:1.58;
     /* Fix CTA type size at this breakpoint so it isn't clamped back to 32px by the base scale */
     --text-hero-cta:70px;
     /* Nav spacing for this layout */
@@ -308,8 +461,150 @@ nav a[href*="forms.gle"],nav a[href="#rsvp"]{-webkit-text-stroke:0.5px var(--gol
     --text-hero-sub:clamp(1.8rem,4vw,7rem);
     --text-hero-venue:clamp(1rem,2vw,5.5rem);
     --text-hero-cta:clamp(1.5rem,2.8vw,3.5rem);
+    /* Rune bar — 4K rune-tune (exact) */
+    --rune-period-ms:21000;
+    --rune-travel-pct:29.5;
+    --rune-scroll-opacity:0.51;
+    --rune-band-border-opacity:0.53;
+    --rune-band-frost-radial:0.095;
+    --rune-band-frost-linear:0.105;
+    --rune-band-frost-after:0.055;
+    --rune-track-glow-radial:0.12;
+    --rune-track-glow-linear:0.105;
+    --rune-track-border-opacity:0.19;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:88px;
+    --rune-gap:44px;
+    --rune-band-pad-y:13px;
+  }
+  .rune-track::before{
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.11'/%3E%3C/svg%3E");
   }
 }
+
+/* Rune bar — 2K (2560) uses same 4K rune-tune; scaled values from 1920 down */
+@media(min-width:2560px) and (max-width:3839px){
+  :root{
+    --rune-period-ms:21000;
+    --rune-travel-pct:29.5;
+    --rune-scroll-opacity:0.51;
+    --rune-band-pad-y:13px;
+    --rune-band-border-opacity:0.53;
+    --rune-band-frost-radial:0.095;
+    --rune-band-frost-linear:0.105;
+    --rune-band-frost-after:0.055;
+    --rune-track-glow-radial:0.12;
+    --rune-track-glow-linear:0.105;
+    --rune-track-border-opacity:0.19;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:88px;
+    --rune-gap:44px;
+  }
+  .rune-track::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.11'/%3E%3C/svg%3E");}
+}
+@media(min-width:1920px) and (max-width:2559px){
+  :root{
+    --rune-period-ms:28000;
+    --rune-travel-pct:30;
+    --rune-scroll-opacity:0.52;
+    --rune-band-pad-y:8px;
+    --rune-band-border-opacity:0.38;
+    --rune-band-frost-radial:0.085;
+    --rune-band-frost-linear:0.08;
+    --rune-band-frost-after:0.045;
+    --rune-track-glow-radial:0.11;
+    --rune-track-glow-linear:0.09;
+    --rune-track-border-opacity:0.2;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:62px;
+    --rune-gap:32px;
+  }
+  .rune-track::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.08'/%3E%3C/svg%3E");}
+}
+@media(min-width:1600px) and (max-width:1919px){
+  :root{
+    --rune-period-ms:32000;
+    --rune-travel-pct:30;
+    --rune-scroll-opacity:0.53;
+    --rune-band-pad-y:7px;
+    --rune-band-border-opacity:0.3;
+    --rune-band-frost-radial:0.08;
+    --rune-band-frost-linear:0.07;
+    --rune-band-frost-after:0.04;
+    --rune-track-glow-radial:0.11;
+    --rune-track-glow-linear:0.08;
+    --rune-track-border-opacity:0.2;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:56px;
+    --rune-gap:28px;
+  }
+  .rune-track::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.07'/%3E%3C/svg%3E");}
+}
+@media(min-width:1400px) and (max-width:1599px){
+  :root{
+    --rune-period-ms:35000;
+    --rune-travel-pct:31;
+    --rune-scroll-opacity:0.54;
+    --rune-band-pad-y:6px;
+    --rune-band-border-opacity:0.25;
+    --rune-band-frost-radial:0.075;
+    --rune-band-frost-linear:0.065;
+    --rune-band-frost-after:0.035;
+    --rune-track-glow-radial:0.1;
+    --rune-track-glow-linear:0.075;
+    --rune-track-border-opacity:0.2;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:52px;
+    --rune-gap:26px;
+  }
+  .rune-track::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");}
+}
+@media(min-width:1200px) and (max-width:1399px){
+  :root{
+    --rune-period-ms:40000;
+    --rune-travel-pct:31;
+    --rune-scroll-opacity:0.54;
+    --rune-band-pad-y:6px;
+    --rune-band-border-opacity:0.22;
+    --rune-band-frost-radial:0.07;
+    --rune-band-frost-linear:0.06;
+    --rune-band-frost-after:0.03;
+    --rune-track-glow-radial:0.1;
+    --rune-track-glow-linear:0.075;
+    --rune-track-border-opacity:0.19;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:48px;
+    --rune-gap:24px;
+  }
+  .rune-track::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");}
+}
+@media(min-width:1024px) and (max-width:1199px){
+  :root{
+    --rune-period-ms:45000;
+    --rune-travel-pct:32;
+    --rune-scroll-opacity:0.54;
+    --rune-band-pad-y:6px;
+    --rune-band-border-opacity:0.2;
+    --rune-band-frost-radial:0.065;
+    --rune-band-frost-linear:0.055;
+    --rune-band-frost-after:0.028;
+    --rune-track-glow-radial:0.1;
+    --rune-track-glow-linear:0.07;
+    --rune-track-border-opacity:0.19;
+    --rune-track-shadow-highlight:0.04;
+    --rune-track-after-opacity:0.05;
+    --rune-size:44px;
+    --rune-gap:22px;
+  }
+  .rune-track::before{background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");}
+}
+
 @keyframes sun-rot{from{transform:translate(-50%,-50%) scale(var(--hero-sun-scale)) rotate(0deg)}to{transform:translate(-50%,-50%) scale(var(--hero-sun-scale)) rotate(360deg)}}
 /* Short viewport: compact hero so badge through CTA stay above the fold */
 @media(max-height:700px){
@@ -364,15 +659,83 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
 .rsvp-form-intro-text{margin-top:16px;margin-bottom:0;font-family:'IM Fell English',serif;font-style:italic;color:var(--copper-l);}
 .rsvp-form-placeholder{font-size:0.95rem;color:var(--parch-dim);text-align:center;padding:28px 24px;border:1px dashed rgba(184,115,51,0.35);border-radius:2px;margin:0;}
 
-/* RUNE BAND */
-.rune-band{position:relative;z-index:2;width:100%;overflow:hidden;padding:16px 0;background:rgba(14,13,11,0.9);border-top:1px solid rgba(184,115,51,0.12);border-bottom:1px solid rgba(184,115,51,0.12);}
+/* RUNE BAND — two-layer bar. Shadow on outer band so inner track reads on top.
+ * Variables (--rune-*) set per breakpoint; 4K rune-tune is the reference.
+ */
+.rune-band{
+  position:relative;
+  z-index:14;
+  width:100%;
+  overflow:hidden;
+  padding:var(--rune-band-pad-y, 6px) 0;
+  background:#070605;
+  border-top:1px solid rgba(184,115,51,var(--rune-band-border-opacity,0.16));
+  border-bottom:1px solid rgba(184,115,51,var(--rune-band-border-opacity,0.16));
+  /* Shadow on outer band so the inner track appears to sit on top */
+  box-shadow:0 3px 10px rgba(0,0,0,0.45);
+}
+/* Top bar: same top padding as others; overflow visible so outer shadow isn't clipped */
+.rune-band--top{padding-top:var(--rune-band-pad-y, 6px);overflow:visible;}
+.rune-band--top .rune-track{overflow:hidden;}
 .rune-band--mobile-footer{display:none;}
-.rune-band::before,.rune-band::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:1;pointer-events:none;}
-.rune-band::before{left:0;background:linear-gradient(to right,var(--ink),transparent);}
-.rune-band::after{right:0;background:linear-gradient(to left,var(--ink),transparent);}
-.rune-track{display:flex;overflow:hidden;width:100%;}
-.rune-scroll{display:flex;flex-wrap:nowrap;gap:0;align-items:center;opacity:0.78;animation:scroll-left 55s linear infinite;flex-shrink:0;}
-.rune-scroll svg{flex-shrink:0;display:block;}
+.rune-band::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(ellipse at 50% 50%,rgba(46,123,122,var(--rune-band-frost-radial,0.08)) 0%,transparent 60%),
+    linear-gradient(to bottom,rgba(46,123,122,var(--rune-band-frost-linear,0.035)) 0,transparent 35%,transparent 65%,rgba(46,123,122,var(--rune-band-frost-linear,0.035)) 100%);
+}
+.rune-band::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:linear-gradient(135deg,rgba(46,123,122,var(--rune-band-frost-after,0.02)) 0%,transparent 50%,rgba(160,70,42,var(--rune-band-frost-after,0.02)) 100%);
+}
+.rune-track{
+  position:relative;
+  width:100%;
+  padding:4px 0;
+  background-color:#070605;
+  background-image:
+    radial-gradient(ellipse at 50% 50%,rgba(46,123,122,var(--rune-track-glow-radial,0.12)) 0%,rgba(10,9,7,1) 80%),
+    linear-gradient(to bottom,rgba(46,123,122,var(--rune-track-glow-linear,0.075)) 0,transparent 40%,transparent 60%,rgba(46,123,122,var(--rune-track-glow-linear,0.075)) 100%);
+  border-top:1px solid rgba(184,115,51,var(--rune-track-border-opacity,0.2));
+  border-bottom:1px solid rgba(184,115,51,var(--rune-track-border-opacity,0.2));
+  overflow:hidden;
+  /* Only a thin top highlight so inner clearly sits on top; no drop shadow here */
+  box-shadow:0 -1px 0 rgba(232,223,200,var(--rune-track-shadow-highlight,0.04));
+}
+.rune-track::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+  background-size:150px 150px;
+  mix-blend-mode:overlay;
+}
+.rune-track::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(46,123,122,var(--rune-track-after-opacity,0.05)) 0%,transparent 50%,rgba(160,70,42,var(--rune-track-after-opacity,0.05)) 100%);
+}
+.rune-scroll{display:flex;flex-wrap:nowrap;gap:0;align-items:center;opacity:var(--rune-scroll-opacity,0.54);animation:scroll-left 21s linear infinite;flex-shrink:0;}
+.rune-scroll--js{animation:none;}
+.rune-scroll > *{margin-right:var(--rune-gap,60px);}
+.rune-scroll svg{flex-shrink:0;display:block;width:var(--rune-size,90px);height:auto;}
+.rune-scroll .rune-img{
+  width:var(--rune-size,90px);
+  height:auto;
+  display:block;
+  background:transparent;
+}
 .rune-scroll--mobile-footer svg{width:220px;height:auto;}
 @keyframes scroll-left{from{transform:translateX(0)}to{transform:translateX(-33.33%)}}
 
@@ -444,14 +807,14 @@ strong.pale{color:var(--parchment);}
 /* PHOTOS */
 .photo-hero-wrap{width:100%;border-radius:2px;overflow:hidden;height:420px;position:relative;margin-bottom:14px;cursor:default;}
 .photo-hero-wrap img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.75) sepia(0.18) brightness(0.94);transition:filter 0.6s,transform 0.7s;}
-.photo-hero-wrap:hover img{filter:saturate(0.9) sepia(0.08) brightness(1.02);transform:scale(1.02);}
+.photo-hero-wrap:hover img{filter:saturate(0.9) sepia(0.08) brightness(1.02);}
 #pHero{height:auto;aspect-ratio:4/3;max-width:700px;margin-left:auto;margin-right:auto;background:none;position:relative;}
 #pHero img{object-fit:cover;position:absolute;inset:0;}
 #pPub,#pTents,#pSign,#pHorse{height:auto;aspect-ratio:4/3;}
 .photo-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .photo-sm{border-radius:2px;overflow:hidden;position:relative;cursor:default;}
 .photo-sm img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.72) sepia(0.2) brightness(0.92);transition:filter 0.5s,transform 0.6s;}
-.photo-sm:hover img{filter:saturate(0.88) sepia(0.08) brightness(1.0);transform:scale(1.04);}
+.photo-sm:hover img{filter:saturate(0.88) sepia(0.08) brightness(1.0);}
 .photo-sm.h220{height:220px;}.photo-sm.h200{height:200px;}.photo-sm.h260{height:260px;}
 #venue .sec-label{margin-bottom:clamp(14px,2.2vw,32px);}
 #venue .photo-hero-wrap,#venue .photo-sm{border:1px solid rgba(200,169,110,0.5);}
@@ -514,19 +877,7 @@ strong.pale{color:var(--parchment);}
 .slot-title{font-family:'IM Fell English',serif;font-size:1.1rem;color:var(--parchment);margin-bottom:4px;}
 .slot-items{list-style:none;}
 .slot-items li{font-family:'Libre Baskerville',Georgia,serif;font-size:1.15rem;color:rgba(232,223,200,0.85);line-height:1.7;padding-left:22px;padding-top:7px;padding-bottom:7px;position:relative;}
-.slot-items li::before{position:absolute;left:-3px;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);}
-/* Day slots: pagan elemental + star symbols (fire, water, stars) */
-.slot.day .slot-items li:nth-child(5n+1)::before{content:'△';}
-.slot.day .slot-items li:nth-child(5n+2)::before{content:'▽';}
-.slot.day .slot-items li:nth-child(5n+3)::before{content:'✦';}
-.slot.day .slot-items li:nth-child(5n+4)::before{content:'★';}
-.slot.day .slot-items li:nth-child(5n+5)::before{content:'✶';}
-/* Evening slots: right-facing crescent only, full moon, fire, stars (no left-facing moons) */
-.slot.evening .slot-items li:nth-child(5n+1)::before{content:'☽';}
-.slot.evening .slot-items li:nth-child(5n+2)::before{content:'◯';}
-.slot.evening .slot-items li:nth-child(5n+3)::before{content:'△';}
-.slot.evening .slot-items li:nth-child(5n+4)::before{content:'✦';}
-.slot.evening .slot-items li:nth-child(5n+5)::before{content:'★';}
+.slot-items li::before{position:absolute;left:-3px;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);content:'✦';}
 .slot p{font-family:'Libre Baskerville',Georgia,serif;font-size:1.15rem;color:rgba(232,223,200,0.85);line-height:1.7;margin:0;}
 
 /* LINEUP MILESTONE (no inner box, same gold accent as schedule cards) */
@@ -545,7 +896,7 @@ strong.pale{color:var(--parchment);}
 /* LINEUP */
 .lineup-hero{width:100%;border-radius:2px;overflow:hidden;height:480px;position:relative;margin-bottom:16px;cursor:default;}
 .lineup-hero img{width:100%;height:100%;object-fit:cover;object-position:center 50%;display:block;filter:saturate(0.72) sepia(0.2) brightness(0.92);transition:filter 0.6s,transform 0.7s;}
-.lineup-hero:hover img{filter:saturate(0.88) sepia(0.08) brightness(1.0);transform:scale(1.02);}
+.lineup-hero:hover img{filter:saturate(0.88) sepia(0.08) brightness(1.0);}
 .tbc-band{background:rgba(14,13,11,0.45);border:1px solid rgba(184,115,51,0.18);border-radius:2px;padding:28px 36px;text-align:center;}
 .tbc-band p{font-family:'Libre Baskerville',Georgia,serif;font-size:1.65rem;color:var(--parch-dim);font-style:italic;line-height:1.75;margin:0;}
 .tbc-band p span{color:var(--teal-l);font-style:normal;}
@@ -596,10 +947,10 @@ strong.pale{color:var(--parchment);}
 .faq-list{display:flex;flex-direction:column;gap:0;}
 .faq-item{border-bottom:1px solid rgba(184,115,51,0.18);}
 .faq-item:last-child{border-bottom:none;}
-.faq-trigger{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:none;cursor:pointer;padding:22px 0 26px 16px;border-left:3px solid transparent;transition:border-left-color 0.25s,background 0.2s;}
+.faq-trigger{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:none;cursor:pointer;padding:22px 16px 26px 16px;border-left:3px solid transparent;transition:border-left-color 0.25s,background 0.2s;}
 .faq-trigger:hover{border-left-color:rgba(184,115,51,0.4);background:rgba(184,115,51,0.04);}
 .faq-item--open .faq-trigger{border-left-color:var(--copper);}
-.faq-q{font-family:'IM Fell English',serif;font-size:1.65rem;font-weight:500;color:rgba(227,201,138,0.9);line-height:1.3;}
+.faq-q{flex:1;min-width:0;font-family:'IM Fell English',serif;font-size:1.65rem;font-weight:500;color:rgba(227,201,138,0.9);line-height:1.3;}
 .faq-chevron{flex-shrink:0;width:28px;height:28px;color:var(--gold-l);opacity:0.9;transition:transform 0.3s ease;}
 .faq-item--open .faq-chevron{transform:rotate(180deg);}
 .faq-a-wrap{overflow:hidden;max-height:0;transition:max-height 0.2s ease;}
@@ -610,7 +961,7 @@ strong.pale{color:var(--parchment);}
 .room-item:last-child{border-bottom:none;}
 .room-name{font-family:'IM Fell English',serif;font-size:1rem;color:var(--parchment);margin-bottom:2px;}
 .room-price{font-family:'IM Fell English',serif;font-size:1rem;color:var(--gold-l);}
-.bnb-photos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;height:260px;}
+.bnb-photos{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:18px;height:260px;}
 .bnb-photos .photo-sm{height:100%;min-height:0;}
 .bnb-photos .photo-sm img{object-fit:cover;object-position:center center;}
 .note-box{margin-top:22px;padding:22px 26px;background:rgba(46,123,122,0.06);border:1px solid rgba(74,173,171,0.18);border-radius:2px;}
@@ -666,11 +1017,32 @@ footer a:hover{color:var(--teal-l);}
 
 /* DESKTOP HERO BOOST — sizing handled by clamp() above */
 
+/* Stack Camp/van + What's happening? + Getting There into full-width rows below 960px (horizontally focused boxes) */
+@media(max-width:960px){
+  :root{--text-h2:2.25rem;}
+  .costs-grid{grid-template-columns:1fr;}
+  .schedule-dates{grid-template-columns:1fr;}
+  .ctier{min-width:0;padding:24px 20px;}
+  .sdate{min-width:0;}
+  .sdate-header,.sdate-slots{padding:16px 20px;}
+  .sdate-day{font-size:2.4rem;}
+  /* Getting There: distances 2x2, travel cards stacked */
+  .dist-band{grid-template-columns:repeat(2,1fr);}
+  .dist-item{border-right:none;border-bottom:1px solid rgba(184,115,51,0.18);padding:18px 16px;}
+  .dist-item:nth-child(odd){border-right:1px solid rgba(184,115,51,0.18);}
+  .dist-item:nth-last-child(-n+2){border-bottom:none;}
+  .travel-grid{grid-template-columns:1fr;}
+  .tcard{min-width:0;padding:20px 18px;}
+  /* Get Involved: no bullets on mobile/iPad so activity names fit better */
+  #involve .inv-mark{display:none;}
+  #involve .inv-item{gap:0;}
+}
+
 /* RESPONSIVE — Breakpoint: mobile (max-width 700px) */
 @media(max-width:700px){
   :root{
     --text-h1:2.4rem;
-    --text-h2:1.65rem;
+    --text-h2:2.5rem;
     --text-h3:1.25rem;
     --text-hero-cta:1.2rem;
     --text-cta:1.5rem;
@@ -681,9 +1053,9 @@ footer a:hover{color:var(--teal-l);}
     --space-sw:20px;
   }
 
-  /* Nav — touch targets ≥44px */
-  nav{justify-content:center;flex-wrap:wrap;padding:4px 0;}
-  nav a{padding:12px 14px;font-size:0.8rem;min-height:44px;display:inline-flex;align-items:center;}
+  /* Nav — touch targets ≥44px; cap font-size so hero panel or wrong breakpoint never blows it up */
+  nav{justify-content:center;flex-wrap:wrap;padding:4px 0;touch-action:manipulation;}
+  nav a{padding:12px 14px;font-size:min(1.2rem,21px);min-height:44px;display:inline-flex;align-items:center;}
   nav a::after{display:none;}
 
   /* Hero — extra top padding so fixed nav doesn’t overlap when it wraps */
@@ -702,8 +1074,7 @@ footer a:hover{color:var(--teal-l);}
   .rsvp-form-wrap{padding:var(--space-inner-y) var(--space-inner-x);}
 
   /* Sub-headings — below h2 in hierarchy */
-  .sdate-day{font-size:1.5rem;}
-  .lineup-milestone-head{font-size:1.5rem;}
+  .sdate-day{font-size:2.4rem;}
   .faq-q{font-size:1.5rem;}
   .inv-text{font-size:1.1rem;}
 
@@ -718,15 +1089,16 @@ footer a:hover{color:var(--teal-l);}
   .bnb-photos .photo-sm{height:170px;}
   .costs-grid{grid-template-columns:1fr;}
   .schedule-dates{grid-template-columns:1fr;}
+  .sdate .sdate-header{border-top:none;}
   .dist-band{grid-template-columns:repeat(2,1fr);}
-  .dist-item{border-right:none;border-bottom:1px solid rgba(184,115,51,0.1);padding:14px;}
-  .dist-item:nth-child(odd){border-right:1px solid rgba(184,115,51,0.1);}
+  /* Make dividers between cities a bit stronger on small screens */
+  .dist-item{border-right:none;border-bottom:1px solid rgba(184,115,51,0.18);padding:14px;}
+  .dist-item:nth-child(odd){border-right:1px solid rgba(184,115,51,0.18);}
   .dist-item:nth-last-child(-n+2){border-bottom:none;}
   .parallax-strip{height:140px;}
   .quick-actions{grid-template-columns:1fr;padding:28px 16px 36px;}
-  /* Rune bands — smaller at mobile */
-  .rune-band{padding:10px 0;}
-  .rune-band::before,.rune-band::after{width:80px;}
+  /* Rune bands — tablet */
+  .rune-band{padding:8px 0;}
   .rune-scroll svg{transform:scale(0.72);transform-origin:center center;}
 
   /* Component padding */
@@ -800,11 +1172,11 @@ footer a:hover{color:var(--teal-l);}
   nav a{
     font-size:17px;
   }
-  .involve-grid{grid-template-columns:1fr;}
+  /* Keep Get Involved cards at two columns even on narrow mobile so they don't become a huge vertical list */
+  .involve-grid{grid-template-columns:repeat(2,1fr);}
   .involve-cta,.map-btn{padding:18px 36px;}
-  /* Rune bands — smaller again at narrow mobile */
-  .rune-band{padding:6px 0;}
-  .rune-band::before,.rune-band::after{width:60px;}
+  /* Rune bands — compact at narrow mobile but still taller than before */
+  .rune-band{padding:10px 0;}
   .rune-scroll svg{transform:scale(0.5);transform-origin:center center;}
 }
 
@@ -835,12 +1207,12 @@ footer a:hover{color:var(--teal-l);}
 /* iPhone XR / small phones: refine hero at 400–500px width (uses latest 412/414/430 hero-tune) */
 @media(min-width:400px) and (max-width:500px){
   :root{
-    --hero-sun-scale:1.42;
+    --hero-sun-scale:1.87;
     --nav-letter-spacing:0.035em;
   }
   #hero{
     padding-top:116px;
-    padding-bottom:128px;
+    padding-bottom:50px;
     padding-left:18px;
     padding-right:18px;
     min-height:auto;
@@ -885,12 +1257,12 @@ footer a:hover{color:var(--teal-l);}
 /* Extra-small phones (e.g. 360×800): tighten hero using 360px hero-tune */
 @media(max-width:380px){
   :root{
-    --hero-sun-scale:1.3;
+    --hero-sun-scale:1.71;
     --nav-letter-spacing:0.05em;
   }
   #hero{
     padding-top:118px;
-    padding-bottom:166px;
+    padding-bottom:48px;
     padding-left:12px;
     padding-right:12px;
     min-height:auto;
@@ -930,12 +1302,14 @@ footer a:hover{color:var(--teal-l);}
     margin-top:-8px;
     margin-bottom:-8px;
   }
+  /* City boxes don't work at 360px; hide Getting There dist-band */
+  .dist-band{display:none;}
 }
 
 /* Small phones around 390–393px wide: use 390 hero-tune */
 @media(min-width:381px) and (max-width:399px){
   :root{
-    --hero-sun-scale:1.32;
+    --hero-sun-scale:1.74;
     --nav-letter-spacing:0.08em;
   }
   #hero{

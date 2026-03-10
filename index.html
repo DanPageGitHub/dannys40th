@@ -44,15 +44,15 @@
 <!-- Viz link removed from nav per request -->
 </div>
 </nav>
-<!-- HERO -->
-<section id="hero">
+<!-- HERO. To show the wheel instead of the crop circle, remove class hero-symbol-crop from #hero. -->
+<section id="hero" class="hero-symbol-crop">
 <div class="hero-photo" id="heroBg">
 <video autoplay muted loop playsinline style="position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);pointer-events:none;">
 <source src="Video/hero.mp4" type="video/mp4">
 </video>
 </div>
 <div class="hero-fog"></div>
-<svg class="hero-sun" fill="none" viewBox="0 0 200 200">
+<svg class="hero-sun hero-sun--wheel" fill="none" viewBox="0 0 200 200" aria-hidden="true">
 <circle cx="100" cy="100" r="90" stroke="#b87333" stroke-width="1.5"></circle>
 <circle cx="100" cy="100" r="60" stroke="#b87333" stroke-width="1"></circle>
 <circle cx="100" cy="100" r="30" stroke="#b87333" stroke-width="1"></circle>
@@ -73,6 +73,7 @@
 <line stroke="#b87333" stroke-width="2" x1="180" x2="172" y1="20" y2="28"></line>
 <line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="180" y2="172"></line>
 </svg>
+<img class="hero-sun hero-sun--crop" src="images/CropCircle2.svg" alt="">
 <div class="hero-content">
 <div class="badge">Fri 24 - Mon 27 Jul <span class="badge-year">2026</span></div>
 <h1>
@@ -121,8 +122,8 @@
 <div class="sec-label">Where We're Going</div>
 <h2>The Barge Inn, Honey Street</h2>
 <div class="sec-inner">
-<p>A canal-side pub built in 1810, tucked away in the Vale of Pewsey. It sits right on the Duke's Ley Line running between Avebury and Stonehenge, with the Alton Barnes White Horse cut into the hillside directly opposite and Adam's Grave long barrow watching from the ridge above.</p>
-<p>Inside you'll find the famous crop circle room, its painted ceiling once described as the Sistine Chapel of Wiltshire. It's a place steeped in odd little bits of history and folklore, the sort of spot that feels a touch magical the moment you arrive. There is nowhere quite like it.</p>
+<p>A legendary canal-side pub built in 1810, tucked away in the beautiful Vale of Pewsey, The Barge Inn sits right on the Duke's Ley Line, an ancient alignment said to run between Avebury and Stonehenge.</p>
+<p>With the Alton Barnes White Horse carved into the hillside directly opposite, it's hard not to feel like you've stumbled upon somewhere steeped in a touch of magic.</p>
 <div class="photo-hero-wrap grain-overlay reveal" id="pHero"></div>
 </div>
 </section>
@@ -134,7 +135,7 @@
 <div class="lineup-milestone reveal">
 <div class="lineup-milestone-head">Celebrating something too?</div>
 <div class="sec-inner">
-<p>I'd love it if you want to make it a joint celebration. I know a lot of people are turning 40 this year, but it definitely doesn't have to be limited to that. If you've got something worth celebrating, give me a shout and we can plan something fun together.</p>
+<p>If you'd like to make this a joint do, let me know! I'm well up for joining forces. I'll change the URL and everything. Maybe.</p>
 <a class="involve-cta" href="#rsvp">Buddy up!</a>
 </div>
 </div>
@@ -146,7 +147,7 @@
 <div class="sec-aura sec-aura--involve"></div>
 <h2>Get involved</h2>
 <div class="sec-inner">
-<p>Here are some of the ways you could get stuck in. If any of it fits, <a class="inline" href="#rsvp">drop it in the form</a> or message me. More hands make it better.</p>
+<p>Here are some of the ways you could get stuck in. If you'd be up for helping out with any of this, <a class="inline" href="#rsvp">stick it in the form</a> or drop me a message. I'd be eternally grateful.</p>
 <div class="involve-grid">
 <a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Event planning</div></a>
 <a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">DJing / live sets</div></a>
@@ -155,9 +156,9 @@
 <a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Up for a jam</div></a>
 <a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Decor to contribute</div></a>
 <a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Lighting to contribute</div></a>
-<a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Barbecue chef</div></a>
-<a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Cinema helper / curator</div></a>
-<a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">General help over the weekend</div></a>
+<a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Barbecueing</div></a>
+<a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">Cinema helper</div></a>
+<a class="inv-item reveal" href="#rsvp"><div class="inv-mark">✦</div><div class="inv-text">General help</div></a>
 </div>
 <a class="involve-cta" href="#rsvp">Sign me up</a>
 </div>
@@ -203,7 +204,6 @@
 <div class="slot-time">Evening</div>
 <ul class="slot-items">
 <li>More music, more dancing</li>
-<li>Whatever Saturday becomes</li>
 </ul>
 </div>
 </div>
@@ -214,16 +214,16 @@
 </div>
 <div class="sdate-slots">
 <div class="slot day">
-<div class="slot-time">Morning</div>
+<div class="slot-time">Midday-ish</div>
 <ul class="slot-items">
-<li>Canal walk, pub lunch, no rush</li>
-<li>Camping available Sunday night</li>
+<li>Pub lunch, Avebury excursion, no rush! No obligations!</li>
 </ul>
 </div>
 <div class="slot evening">
 <div class="slot-time">Evening</div>
 <ul class="slot-items">
 <li>Cinema night</li>
+<li>Camp on Sunday night. Book the Monday off</li>
 </ul>
 </div>
 </div>
@@ -238,7 +238,7 @@
 <div class="sec-aura sec-aura--tickets"></div>
 <h2>Tickets</h2>
 <div class="sec-inner">
-<p>I'm still sorting out how tickets or contributions will work. It'll be very cheap. I'll keep everyone updated as the details come together.</p>
+<p>I'm still figuring out how tickets or contributions will work. It'll be very cheap. I'll keep everyone updated as the details come together.</p>
 </div>
 </section>
 </div>
@@ -253,7 +253,7 @@
 <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:10px;opacity:0.85"><line x1="2" y1="30" x2="34" y2="30" stroke="#b87333" stroke-width="1.3"/><polyline points="18,4 2,30 34,30" stroke="#b87333" stroke-width="1.3" fill="none"/><line x1="18" y1="4" x2="18" y2="16" stroke="#b87333" stroke-width="0.9"/><rect x="14.5" y="21" width="7" height="9" stroke="#b87333" stroke-width="1" fill="none"/></svg>
 <div class="ctier-lbl">Camp or van stay</div>
 <div class="ctier-price">£15<span style="font-size:0.95rem;font-weight:400;font-family:'Libre Baskerville',serif">/night</span></div>
-<div class="ctier-detail">Per adult, paid to the venue.<br/>£5 for under-16s · Free for under-5s. Tents welcome, or bring your van.<br/><br/><strong style="color:var(--parchment);">Hardstanding pitch</strong> (caravan or motorhome): £20/night. Electric hookup available for an extra £6/night.</div>
+<div class="ctier-detail">Per adult, paid to the venue.<br/>£5 for under-16s · Free for under-5s. It's the same price for vans with an extra £6 per day for an electric hook-up. Limited van spots available so book early.<br/><br/><strong style="color:var(--parchment);">Hardstanding pitch</strong> (caravan or motorhome): £15/night too. Electric hookup available for an extra £6/night.</div>
 </div>
 <div class="ctier glamp reveal">
 <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:10px;opacity:0.85"><line x1="2" y1="30" x2="34" y2="30" stroke="#b87333" stroke-width="1.3"/><path d="M18 4 Q7 20 6 30 Q18 25 30 30 Q29 20 18 4Z" stroke="#b87333" stroke-width="1.3" fill="none"/><line x1="18" y1="4" x2="18" y2="8" stroke="#b87333" stroke-width="2"/></svg>
@@ -274,7 +274,6 @@
 <div class="sec-inner">
 <div class="bnb-photos">
 <div class="photo-sm h260 grain-overlay reveal" id="pBnbRoom"></div>
-<div class="photo-sm h260 grain-overlay reveal" id="pBnbBath"></div>
 </div>
 <div class="ctier bnb reveal">
 <div class="ctier-detail">There are three en-suite doubles in the pub itself, from £90/night including breakfast. These will go quickly, so if you want one, don't hang about. Book via Booking.com only, not by phone or email.</div>
@@ -420,7 +419,7 @@
 <h2 class="rsvp-title"><em>Form</em> a rabble</h2>
 <p class="rsvp-note">And I'll be in touch with more details</p>
 <div class="rsvp-form-wrap">
-<iframe data-tally-src="https://tally.so/embed/RG4oBv?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Danny's 40th RSVP"></iframe>
+<iframe src="https://tally.so/embed/RG4oBv?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Danny's 40th RSVP" loading="eager"></iframe>
 </div>
  </section>
 </div>

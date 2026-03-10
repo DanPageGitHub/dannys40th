@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <style>
+      * { fill:none; stroke:#b87333; stroke-width:1.8; }
+      .dot { fill:#b87333; stroke:none; }
+    </style>
+  </defs>
+
+  <!-- OUTER RING -->
+  <circle cx="400" cy="400" r="330"/>
+
+  <!-- 8 SMALL OUTER CIRCLES -->
+  <circle cx="400" cy="140" r="28"/>
+  <circle cx="660" cy="400" r="28"/>
+  <circle cx="400" cy="660" r="28"/>
+  <circle cx="140" cy="400" r="28"/>
+  <circle cx="584" cy="216" r="28"/>
+  <circle cx="584" cy="584" r="28"/>
+  <circle cx="216" cy="584" r="28"/>
+  <circle cx="216" cy="216" r="28"/>
+
+  <!-- Centre dots on outer circles -->
+  <circle cx="400" cy="140" r="4" class="dot"/>
+  <circle cx="660" cy="400" r="4" class="dot"/>
+  <circle cx="400" cy="660" r="4" class="dot"/>
+  <circle cx="140" cy="400" r="4" class="dot"/>
+  <circle cx="584" cy="216" r="4" class="dot"/>
+  <circle cx="584" cy="584" r="4" class="dot"/>
+  <circle cx="216" cy="584" r="4" class="dot"/>
+  <circle cx="216" cy="216" r="4" class="dot"/>
+
+  <!-- SPOKES -->
+  <line x1="400" y1="168" x2="400" y2="238"/>
+  <line x1="632" y1="400" x2="562" y2="400"/>
+  <line x1="400" y1="632" x2="400" y2="562"/>
+  <line x1="168" y1="400" x2="238" y2="400"/>
+  <line x1="564" y1="236" x2="562" y2="238"/>
+  <line x1="564" y1="564" x2="562" y2="562"/>
+  <line x1="236" y1="564" x2="238" y2="562"/>
+  <line x1="236" y1="236" x2="238" y2="238"/>
+
+  <!-- MIDDLE RING -->
+  <circle cx="400" cy="400" r="228"/>
+
+  <!-- DIAMOND -->
+  <polygon points="400,178 622,400 400,622 178,400"/>
+
+  <!-- STRAIGHT SQUARE -->
+  <polygon points="238,238 562,238 562,562 238,562"/>
+
+  <!-- INNER BOLD RING -->
+  <circle cx="400" cy="400" r="130"/>
+
+  <!-- 4 INNER SATELLITE CIRCLES -->
+  <circle cx="400" cy="268" r="34"/>
+  <circle cx="532" cy="400" r="34"/>
+  <circle cx="400" cy="532" r="34"/>
+  <circle cx="268" cy="400" r="34"/>
+
+  <!-- Centre dots on inner satellites -->
+  <circle cx="400" cy="268" r="4" class="dot"/>
+  <circle cx="532" cy="400" r="4" class="dot"/>
+  <circle cx="400" cy="532" r="4" class="dot"/>
+  <circle cx="268" cy="400" r="4" class="dot"/>
+
+  <!-- INNER CROSS -->
+  <line x1="400" y1="268" x2="400" y2="532"/>
+  <line x1="268" y1="400" x2="532" y2="400"/>
+
+  <!-- SMALL CENTRAL RING -->
+  <circle cx="400" cy="400" r="52"/>
+
+  <!-- CENTRE DOT -->
+  <circle cx="400" cy="400" r="6" class="dot"/>
+
+</svg>
