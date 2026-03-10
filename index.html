@@ -53,15 +53,35 @@
 <!-- Viz link removed from nav per request -->
 </div>
 </nav>
-<!-- HERO. To show the crop circle instead, add class hero-symbol-crop to #hero. -->
-<section id="hero">
+<!-- HERO. To show the wheel instead of the crop circle, remove class hero-symbol-crop from #hero. -->
+<section id="hero" class="hero-symbol-crop">
 <div class="hero-photo" id="heroBg">
 <video autoplay muted loop playsinline style="position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);pointer-events:none;">
 <source src="Video/hero.mp4" type="video/mp4">
 </video>
 </div>
 <div class="hero-fog"></div>
-<img class="hero-sun hero-sun--wheel" src="images/wheel_exact.svg" alt="" aria-hidden="true">
+<svg class="hero-sun hero-sun--wheel" fill="none" viewBox="0 0 200 200" aria-hidden="true">
+<circle cx="100" cy="100" r="90" stroke="#b87333" stroke-width="1.5"></circle>
+<circle cx="100" cy="100" r="60" stroke="#b87333" stroke-width="1"></circle>
+<circle cx="100" cy="100" r="30" stroke="#b87333" stroke-width="1"></circle>
+<line stroke="#b87333" stroke-width="1" x1="100" x2="100" y1="10" y2="190"></line>
+<line stroke="#b87333" stroke-width="1" x1="10" x2="190" y1="100" y2="100"></line>
+<line stroke="#b87333" stroke-width="0.8" x1="27" x2="173" y1="27" y2="173"></line>
+<line stroke="#b87333" stroke-width="0.8" x1="173" x2="27" y1="27" y2="173"></line>
+<circle cx="100" cy="10" fill="#b87333" r="3"></circle><circle cx="100" cy="190" fill="#b87333" r="3"></circle>
+<circle cx="10" cy="100" fill="#b87333" r="3"></circle><circle cx="190" cy="100" fill="#b87333" r="3"></circle>
+<circle cx="27" cy="27" fill="#b87333" r="2.5"></circle><circle cx="173" cy="173" fill="#b87333" r="2.5"></circle>
+<circle cx="173" cy="27" fill="#b87333" r="2.5"></circle><circle cx="27" cy="173" fill="#b87333" r="2.5"></circle>
+<line stroke="#b87333" stroke-width="2.5" x1="100" x2="100" y1="2" y2="12"></line>
+<line stroke="#b87333" stroke-width="2.5" x1="100" x2="100" y1="188" y2="198"></line>
+<line stroke="#b87333" stroke-width="2.5" x1="2" x2="12" y1="100" y2="100"></line>
+<line stroke="#b87333" stroke-width="2.5" x1="188" x2="198" y1="100" y2="100"></line>
+<line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="20" y2="28"></line>
+<line stroke="#b87333" stroke-width="2" x1="172" x2="180" y1="172" y2="180"></line>
+<line stroke="#b87333" stroke-width="2" x1="180" x2="172" y1="20" y2="28"></line>
+<line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="180" y2="172"></line>
+</svg>
 <img class="hero-sun hero-sun--crop" src="images/CropCircle2.svg" alt="">
 <div class="hero-content">
 <div class="badge">Fri 24 - Mon 27 Jul <span class="badge-year">2026</span></div>
