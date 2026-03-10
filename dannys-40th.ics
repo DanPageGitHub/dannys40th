@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//dannys40th//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:dannys40th-2026-07-24@dannys40th.party
+DTSTAMP:20250310T120000Z
+DTSTART;TZID=Europe/London:20260724T180000
+DTEND;TZID=Europe/London:20260727T100000
+SUMMARY:Danny's 40th at The Barge Inn
+LOCATION:The Barge Inn, Honey Street, Pewsey, SN9 5PS
+DESCRIPTION:Danny's 40th weekend at The Barge Inn, Honey Street, Pewsey, SN9 5PS. Map: https://maps.google.com/?q=The+Barge+Inn+Honey+Street+Pewsey+SN9+5PS
+END:VEVENT
+END:VCALENDAR
+

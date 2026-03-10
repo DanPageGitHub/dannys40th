@@ -56,9 +56,10 @@ const I = {
   sunset_hero:      'images/Barge-Danny-Hero.jpg',
   // High-res B&B bedroom image (WebP) for the B&B section photo slot
   bnb_room:         'images/BnbBedroom.webp',
-  // Specter apparition images (B&W PNGs, white-vignette cutouts)
+  // Specter apparition images
   caeden_mask:      'images/caedenmask.png',
   pixel_bw:         'images/pixel_bw.png',
+  mask2:            'images/Mask2.jpg',
 };
 
 // Photo filter tuning (must be before setPhoto calls)
@@ -87,8 +88,6 @@ function setPhoto(id, key, pos, bf, fit, sepiaOverride) {
   });
 }
 
-// heroBg is now a video iframe
-setPhoto('pDJ','dj_shot','center 50%');
 setPhoto('pBnbRoom','bnb_room','center 40%');
 
 // Venue carousel (Where We're Going) — rotate through key images without stretching
@@ -176,64 +175,16 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
   scheduleNext();
 })();
 
-// Parallax backgrounds
-const px1 = document.getElementById('pxImg1');
-if(px1) px1.style.backgroundImage = `url(${I.canal_narrowboat})`;
-
-function updateParallax() {
-  const strip = document.getElementById('pxStrip1');
-  const img = document.getElementById('pxImg1');
-  if(!strip||!img) return;
-  const rect = strip.getBoundingClientRect();
-  const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-  img.style.transform = `translateY(${(progress - 0.5) * 80}px)`;
-}
-let parallaxScheduled = false;
-function scheduleParallax() {
-  if (parallaxScheduled) return;
-  parallaxScheduled = true;
-  requestAnimationFrame(function() {
-    parallaxScheduled = false;
-    updateParallax();
-  });
-}
-window.addEventListener('scroll', scheduleParallax, {passive:true});
-updateParallax();
-
-// White horse icon
-const aHI = document.getElementById('aHorseIcon');
-if(aHI) {
-  const img = document.createElement('img');
-  img.src = I.white_horse;
-  img.style.cssText = 'width:48px;height:28px;object-fit:cover;object-position:center 40%;border-radius:2px;filter:saturate(0.4) sepia(0.4) brightness(0.75);display:block;margin:0 auto 8px;';
-  aHI.replaceWith(img);
-}
-
-// Goat lurks in schedule section
-(function(){
-  const sched = document.getElementById('schedule');
-  if(!sched) return;
-  const lurk = document.createElement('img');
-  lurk.src = I.goat_mask;
-  lurk.style.cssText = 'position:absolute;right:-20px;bottom:0;width:165px;opacity:0;filter:saturate(0.2) sepia(0.6) brightness(0.4);pointer-events:none;z-index:0;transition:opacity 1.5s ease;transform:scaleX(-1);';
-  sched.parentElement.style.position = 'relative';
-  sched.parentElement.style.overflow = 'hidden';
-  sched.parentElement.appendChild(lurk);
-  sched.parentElement.addEventListener('mouseenter', () => lurk.style.opacity = '0.13');
-  sched.parentElement.addEventListener('mouseleave', () => lurk.style.opacity = '0');
-})();
-
 // SPECTER APPARITIONS — B&W ghost images that fade in/out in the viewport margins
 (function(){
-  const ghosts = [I.caeden_mask, I.pixel_bw];
+  const ghosts = [I.caeden_mask, I.pixel_bw, I.mask2];
 
-  // Three rotating visual treatments: white ghost / copper tint / dim spectral
+  // Each appearance cycles through all three treatments in sequence (filter transitions smoothly)
   const effects = [
-    { filter: 'invert(1) brightness(0.6)',                                       blend: 'screen' },
-    { filter: 'invert(1) sepia(0.45) hue-rotate(340deg) brightness(0.55)',       blend: 'screen' },
-    { filter: 'invert(1) brightness(0.42) contrast(1.25)',                       blend: 'screen' },
+    'brightness(0.75)',
+    'sepia(0.5) hue-rotate(340deg) brightness(0.65)',
+    'brightness(0.55) contrast(1.3)',
   ];
-  let effectIdx = 0;
   let cooldown = false;
 
   function showGhost() {
@@ -241,29 +192,31 @@ if(aHI) {
     if (cooldown || window.scrollY < window.innerHeight * 0.8) { scheduleNext(); return; }
     cooldown = true;
 
-    const effect = effects[effectIdx % effects.length];
-    effectIdx++;
-
     const el = document.createElement('img');
     el.className = 'specter';
     el.src = ghosts[Math.floor(Math.random() * ghosts.length)];
     el.setAttribute('aria-hidden', 'true');
-    el.style.filter = effect.filter;
-    el.style.mixBlendMode = effect.blend;
+    el.style.mixBlendMode = 'screen';
+    el.style.filter = effects[0]; // start on first effect
 
     const side = Math.random() < 0.5 ? 'left' : 'right';
     el.style[side] = '0';
-    el.style.top = (15 + Math.floor(Math.random() * 55)) + 'vh';
+    el.style.top = (5 + Math.floor(Math.random() * 20)) + 'vh';
 
     const narrow = window.innerWidth < 768;
     document.body.appendChild(el);
 
-    // Double rAF ensures the transition fires (element must be painted first)
+    const holdMs = 25000 + Math.random() * 15000; // 25–40 s total visible
+    const segMs = holdMs / effects.length;        // time per effect
+
+    // Fade in, then step through remaining effects at equal intervals
     requestAnimationFrame(function(){ requestAnimationFrame(function(){
       el.style.opacity = narrow ? '0.06' : '0.17';
+      for (var i = 1; i < effects.length; i++) {
+        (function(idx){ setTimeout(function(){ el.style.filter = effects[idx]; }, segMs * idx); })(i);
+      }
     }); });
 
-    const holdMs = 25000 + Math.random() * 15000; // 25–40 s — roughly half the total cycle
     setTimeout(function(){
       el.style.opacity = '0';
       setTimeout(function(){ el.remove(); cooldown = false; scheduleNext(); }, 2200);
@@ -278,17 +231,16 @@ if(aHI) {
 })();
 
 // RUNE BAND — scrolling rows (populate all .rune-scroll). Config is read by tick and by rune debug panel. Defaults match 4K rune-tune.
-window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 29.5 };
+window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 33.33 };
 (function(){
   const scrollContainers = document.querySelectorAll('.rune-scroll');
   if(!scrollContainers.length) return;
   const syms = [
     `<svg width="90" height="90" viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="22" stroke="#b87333" stroke-width="1"/><circle cx="26" cy="26" r="13" stroke="#b87333" stroke-width="1"/><circle cx="26" cy="26" r="5" stroke="#b87333" stroke-width="1"/><line x1="26" y1="4" x2="26" y2="48" stroke="#b87333" stroke-width="0.8"/><line x1="4" y1="26" x2="48" y2="26" stroke="#b87333" stroke-width="0.8"/><line x1="10" y1="10" x2="42" y2="42" stroke="#b87333" stroke-width="0.6"/><line x1="42" y1="10" x2="10" y2="42" stroke="#b87333" stroke-width="0.6"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="19" stroke="#b87333" stroke-width="0.8"/><path d="M23 4 C28 4 38 13 38 23 C38 33 28 42 23 42" stroke="#b87333" stroke-width="0.8" fill="none"/><path d="M23 4 C18 4 8 13 8 23 C8 33 18 42 23 42" stroke="#b87333" stroke-width="0.8" fill="none" stroke-dasharray="3 2"/><circle cx="23" cy="23" r="3" stroke="#b87333" stroke-width="0.8"/></svg>`,
-    `<svg width="90" height="78" viewBox="0 0 48 42" fill="none"><path d="M2 21 C8 6 16 2 24 2 C32 2 40 6 46 21 C40 36 32 40 24 40 C16 40 8 36 2 21Z" stroke="#b87333" stroke-width="0.8" fill="none"/><circle cx="24" cy="21" r="7" stroke="#b87333" stroke-width="0.8"/><circle cx="24" cy="21" r="2.5" fill="#b87333" opacity="0.5"/></svg>`,
-    `<svg width="90" height="90" viewBox="0 0 40 50" fill="none"><path d="M30 8 C22 8 14 14 14 25 C14 32 18 38 24 40 C18 38 10 32 10 22 C10 12 18 4 28 6" stroke="#b87333" stroke-width="0.9" fill="none"/><circle cx="20" cy="25" r="4" stroke="#b87333" stroke-width="0.8"/></svg>`,
+    `<svg width="50" height="50" viewBox="0 0 40 50" fill="none"><path d="M30 8 C22 8 14 14 14 25 C14 32 18 38 24 40 C18 38 10 32 10 22 C10 12 18 4 28 6" stroke="#b87333" stroke-width="0.9" fill="none"/><circle cx="20" cy="25" r="4" stroke="#b87333" stroke-width="0.8"/></svg>`,
     `<svg width="90" height="90" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="18" stroke="#b87333" stroke-width="0.8"/><line x1="22" y1="4" x2="22" y2="40" stroke="#b87333" stroke-width="0.7"/><line x1="4" y1="22" x2="40" y2="22" stroke="#b87333" stroke-width="0.7"/><circle cx="22" cy="22" r="4" stroke="#b87333" stroke-width="0.8"/></svg>`,
-    `<svg width="90" height="90" viewBox="0 0 42 48" fill="none"><path d="M32 10 C24 10 16 17 16 25 C16 30 19 35 24 37" stroke="#b87333" stroke-width="0.9" fill="none"/><path d="M10 38 C18 38 26 31 26 23 C26 18 23 13 18 11" stroke="#b87333" stroke-width="0.9" fill="none" stroke-dasharray="3 2"/><circle cx="21" cy="24" r="2" fill="#b87333" opacity="0.6"/></svg>`,
+    `<svg width="50" height="50" viewBox="0 0 42 48" fill="none"><path d="M32 10 C24 10 16 17 16 25 C16 30 19 35 24 37" stroke="#b87333" stroke-width="0.9" fill="none"/><path d="M10 38 C18 38 26 31 26 23 C26 18 23 13 18 11" stroke="#b87333" stroke-width="0.9" fill="none" stroke-dasharray="3 2"/><circle cx="21" cy="24" r="2" fill="#b87333" opacity="0.6"/></svg>`,
     /* Crop circle glyph pulled from external SVG asset */
     `<img src="images/crop-circle-glyph-thick.svg" alt="" class="rune-img">`,
   ];
@@ -309,15 +261,19 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 29.5 
 
   // Scroll time only advances while visible; cap delta per frame so a stalled frame never causes a visible skip
   const RUNE_MAX_DELTA_MS = 80;
-  let runeScrollTime = 0;
+  const _initPeriod = ((window.__runeConfig && window.__runeConfig.periodMs) || 21000);
+  const _initTravel = ((window.__runeConfig && window.__runeConfig.travelPct) || 33.33);
+  let runeScrollTime = Math.random() * _initPeriod;
   let runeLastTime = performance.now();
+  // Apply immediately so no frame ever shows position 0
+  (function(){ const t = (runeScrollTime / _initPeriod) * _initTravel; scrollContainers.forEach(el => { el.style.transform = `translateX(-${t}%)`; }); })();
   function tickRune(now) {
     now = typeof now === 'number' ? now : performance.now();
     const root = document.documentElement;
     const periodFromCss = getComputedStyle(root).getPropertyValue('--rune-period-ms').trim();
     const travelFromCss = getComputedStyle(root).getPropertyValue('--rune-travel-pct').trim();
     const period = periodFromCss ? parseFloat(periodFromCss) : ((window.__runeConfig && window.__runeConfig.periodMs) || 21000);
-    const travel = travelFromCss ? parseFloat(travelFromCss) : ((window.__runeConfig && window.__runeConfig.travelPct) || 29.5);
+    const travel = travelFromCss ? parseFloat(travelFromCss) : ((window.__runeConfig && window.__runeConfig.travelPct) || 33.33);
     if(!document.hidden){
       let delta = now - runeLastTime;
       if(delta > RUNE_MAX_DELTA_MS) delta = RUNE_MAX_DELTA_MS;
@@ -329,21 +285,26 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 29.5 
     scrollContainers.forEach(el => { el.style.transform = `translateX(-${t}%)`; });
     requestAnimationFrame(tickRune);
   }
-  requestAnimationFrame(tickRune);
+  // Wait for any images (e.g. crop-circle SVG) to decode before starting the tick.
+  // This prevents the layout shift from image load changing what 33.33% means in pixels.
+  const runeImgs = Array.from(document.querySelectorAll('.rune-scroll img'));
+  const decodeAll = runeImgs.map(img => img.decode ? img.decode().catch(() => {}) : Promise.resolve());
+  const fallback = new Promise(resolve => setTimeout(resolve, 800));
+  Promise.race([Promise.all(decodeAll), fallback]).then(() => {
+    runeLastTime = performance.now();
+    requestAnimationFrame(tickRune);
+  });
 })();
 
 // MIC / BEAT DETECTION
 let micOn = false;
 let micAnalyser = null;
 let micDataArray = null;
-let micBassArray = null;
-let micTrebleArray = null;
 let micAvg = 0;
 let bassAvg = 0;
 let midAvg  = 0;
 let trebleAvg = 0;
 let beatSpeedScroll = 1;
-let beatSpeedHero   = 1;
 let beatDensityAdd  = 0;   // additive density bonus from treble
 let beatSwayAdd     = 0;   // additive sway bonus from bass
 let beatCooldown    = 0;
@@ -399,7 +360,7 @@ let floatOpacity    = 0.5;
 
 let inFullscreen = false;
 
-(function(){
+if(window.__debugMode) (function(){
   const panel = document.createElement('div');
   panel.id = 'debugPanel';
   panel.style.cssText = [
@@ -828,7 +789,7 @@ let inFullscreen = false;
 })();
 
 // HERO TUNING PANEL — padding, type sizes, wheel size per viewport
-(function(){
+if(window.__debugMode) (function(){
   const panel = document.createElement('div');
   panel.id = 'heroTuningPanel';
   panel.style.cssText = [
@@ -1168,7 +1129,7 @@ let inFullscreen = false;
 })();
 
 // RUNE BAR DEBUG PANEL — press R to toggle; Copy outputs rune-tune JSON for pasting into CSS/script
-(function(){
+if(window.__debugMode) (function(){
   const DEFAULTS = {
     scrollOpacity: 0.54,
     periodSec: 55,
@@ -1362,7 +1323,6 @@ function getFreqBand(analyser, dataArray, startBin, endBin) {
 function updateBeat(now) {
   // Always decay spikes toward base
   beatSpeedScroll += (1 - beatSpeedScroll) * 0.06;
-  beatSpeedHero   += (1 - beatSpeedHero)   * 0.09;
   beatDensityAdd  += (0 - beatDensityAdd)  * 0.08;
   beatSwayAdd     += (0 - beatSwayAdd)     * 0.07;
 
@@ -1404,7 +1364,6 @@ function updateBeat(now) {
     beatCooldown = now + 180;
     if((bassHit && bassToSpeed) || (midHit && midToSpeed) || (trebleHit && trebleToSpeed)) {
       beatSpeedScroll = geoSpeed * (beatSpikeSize + Math.random() * 2.0);
-      beatSpeedHero   = geoSpeed * (beatSpikeSize * 0.72 + Math.random() * 2.5);
     }
     if((bassHit && bassToSway) || (midHit && midToSway) || (trebleHit && trebleToSway))
       beatSwayAdd = beatSwaySpike * (1.5 + Math.random());
@@ -1451,49 +1410,6 @@ function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = win
 resize(); window.addEventListener('resize', resize);
 const TEAL=[46,123,122],COPPER=[184,115,51],RUST=[160,70,42],GOLD=[200,169,110];
 function rgb(c,a){return `rgba(${c[0]},${c[1]},${c[2]},${a})`;}
-
-// 3D rotation helpers — project a point rotated on X and Z axes onto 2D canvas
-function project3D(px, py, pz, rotX, rotZ) {
-  // Rotate around Z axis
-  const cosZ = Math.cos(rotZ), sinZ = Math.sin(rotZ);
-  const x1 = px*cosZ - py*sinZ;
-  const y1 = px*sinZ + py*cosZ;
-  const z1 = pz;
-  // Rotate around X axis
-  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
-  const x2 = x1;
-  const y2 = y1*cosX - z1*sinX;
-  const z2 = y1*sinX + z1*cosX;
-  // Simple perspective
-  const fov = 2.8;
-  const scale = fov / (fov + z2);
-  return { x: x2*scale, y: y2*scale, s: scale };
-}
-
-// Draw a circle in 3D by sampling points around it
-function draw3DArc(cx, cy, r, rotX, rotZ, startAng, endAng, steps) {
-  const pts = [];
-  const n = steps || 64;
-  for(let i=0; i<=n; i++){
-    const a = startAng + (endAng-startAng)*(i/n);
-    const p = project3D(Math.cos(a)*r, Math.sin(a)*r, 0, rotX, rotZ);
-    pts.push({x: cx+p.x, y: cy+p.y});
-  }
-  ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
-  ctx.stroke();
-}
-
-// Draw a 3D line from (ax,ay,0) to (bx,by,0)
-function draw3DLine(cx, cy, ax, ay, bx, by, rotX, rotZ) {
-  const pa = project3D(ax, ay, 0, rotX, rotZ);
-  const pb = project3D(bx, by, 0, rotX, rotZ);
-  ctx.beginPath();
-  ctx.moveTo(cx+pa.x, cy+pa.y);
-  ctx.lineTo(cx+pb.x, cy+pb.y);
-  ctx.stroke();
-}
 
 const geomDefs = [
   // Big compass wheels: visualiser only, hidden in normal site mode
@@ -1605,97 +1521,6 @@ const sparks = Array.from({length:80},()=>({x:Math.random(),y:0.85+Math.random()
 const floaters = Array.from({length:40},()=>({x:Math.random(),y:Math.random(),r:1.5+Math.random()*3,col:[TEAL,COPPER,GOLD,RUST][Math.floor(Math.random()*4)],vx:(Math.random()-0.5)*0.0002,vy:-(0.0001+Math.random()*0.0003),phase:Math.random()*Math.PI*2,speed:0.003+Math.random()*0.005}));
 const wisps = Array.from({length:4},()=>({x:Math.random(),y:0.3+Math.random()*0.6,w:0.35+Math.random()*0.45,h:0.04+Math.random()*0.07,col:Math.random()>0.5?TEAL:COPPER,vx:(Math.random()-0.5)*0.00005,phase:Math.random()*Math.PI*2,speed:0.0005+Math.random()*0.0006}));
 
-// Bouncing runes — rune-band style symbols (all 6 SVG rune bar types) drifting in the background (site mode only).
-// Small, crisp strokes that echo the rune bar rather than big bokeh blobs.
-const RUNE_FLOAT_COUNT = 0;
-const RUNE_BOUNCE_MARGIN = 0.028;
-const runeFloaters = Array.from({length:RUNE_FLOAT_COUNT}, () => ({
-  x: 0.08 + Math.random() * 0.84,
-  y: 0.08 + Math.random() * 0.84,
-  vx: (Math.random() - 0.5) * 0.00055,
-  vy: (Math.random() - 0.5) * 0.0005,
-  // Small so they read as rune glyphs, but large enough to actually notice
-  size: 0.004 + Math.random() * 0.008,
-  type: Math.floor(Math.random() * 6),
-  rot: Math.random() * Math.PI * 2
-}));
-function drawRuneShape(ctx, type, pxScale) {
-  const u = 0.5; // unit radius for shapes (match rune bar SVGs)
-  // Line width scales very gently with on-screen size so strokes stay crisp
-  ctx.lineWidth = 0.9 + (pxScale || 1) * 0.04;
-  ctx.lineCap = 'round';
-  if (type === 0) {
-    // Rune bar sym 0: target — 3 circles, cross, X
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.9, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.52, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.2, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, -u); ctx.lineTo(0, u); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-u, 0); ctx.lineTo(u, 0); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-u * 0.77, -u * 0.77); ctx.lineTo(u * 0.77, u * 0.77); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(u * 0.77, -u * 0.77); ctx.lineTo(-u * 0.77, u * 0.77); ctx.stroke();
-  } else if (type === 1) {
-    // Rune bar sym 1: circle + two arcs (left/right) + inner circle
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.85, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.13, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, -u);
-    ctx.bezierCurveTo(u * 0.22, -u, u * 0.65, 0, 0, u);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, -u);
-    ctx.bezierCurveTo(-u * 0.22, -u, -u * 0.65, 0, 0, u);
-    ctx.stroke();
-  } else if (type === 2) {
-    // Rune bar sym 2: diamond/eye + circle + dot
-    ctx.beginPath();
-    ctx.moveTo(0, -u); ctx.lineTo(u * 0.96, 0); ctx.lineTo(0, u); ctx.lineTo(-u * 0.96, 0); ctx.closePath();
-    ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.33, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.arc(0, 0, u * 0.12, 0, Math.PI * 2); ctx.fill();
-  } else if (type === 3) {
-    // Rune bar sym 3: spiral/comma + circle
-    ctx.beginPath();
-    ctx.moveTo(u * 0.48, -u * 0.32);
-    ctx.bezierCurveTo(u * 0.04, -u * 0.32, -u * 0.22, -u * 0.08, -u * 0.22, u * 0.17);
-    ctx.bezierCurveTo(-u * 0.22, u * 0.35, u * 0.04, u * 0.52, u * 0.22, u * 0.48);
-    ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.32, 0, Math.PI * 2); ctx.stroke();
-  } else if (type === 4) {
-    // Rune bar sym 4: circle + cross + small inner circle
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.9, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, -u); ctx.lineTo(0, u); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-u, 0); ctx.lineTo(u, 0); ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, 0, u * 0.18, 0, Math.PI * 2); ctx.stroke();
-  } else {
-    // Rune bar sym 5: two curves + centre dot
-    ctx.beginPath();
-    ctx.moveTo(u * 0.52, -u * 0.42);
-    ctx.bezierCurveTo(u * 0.13, -u * 0.42, -u * 0.13, -u * 0.15, -u * 0.13, u * 0.04);
-    ctx.bezierCurveTo(-u * 0.13, u * 0.25, u * 0.04, u * 0.35, u * 0.13, u * 0.31);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-u * 0.42, u * 0.35);
-    ctx.bezierCurveTo(-u * 0.13, u * 0.35, u * 0.13, u * 0.08, u * 0.13, -u * 0.1);
-    ctx.bezierCurveTo(u * 0.13, -u * 0.31, -u * 0.04, -u * 0.4, -u * 0.13, -u * 0.35);
-    ctx.stroke();
-    ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.arc(0, 0, u * 0.1, 0, Math.PI * 2); ctx.fill();
-  }
-}
-function drawBouncingRune(r) {
-  const px = r.x * W;
-  const py = r.y * H;
-  const s = r.size * Math.min(W, H);
-  ctx.save();
-  // Brighter so they are clearly visible over the tunnel, but still behind main geo
-  ctx.globalAlpha = 0.4;
-  ctx.strokeStyle = rgb(COPPER, 1);
-  ctx.translate(px, py);
-  ctx.rotate(r.rot);
-  ctx.scale(s, s);
-  drawRuneShape(ctx, r.type, s);
-  ctx.restore();
-}
-
 let t=0;
 let smoothScroll = 0; // lerped scroll fraction for tunnel drift
 
@@ -1764,21 +1589,6 @@ function draw(){
       ctx.fillStyle=g;ctx.beginPath();ctx.arc(m.x*W,m.y*H,m.r*6,0,Math.PI*2);ctx.fill();
     });
   }
-  // Bouncing runes — update position with bounce, then draw (site mode only; hide in fullscreen visualiser)
-  if (!inFullscreen) {
-    const margin = RUNE_BOUNCE_MARGIN;
-    runeFloaters.forEach(r => {
-      r.x += r.vx;
-      r.y += r.vy;
-      if (r.x < margin) { r.x = margin; r.vx = Math.abs(r.vx); }
-      if (r.x > 1 - margin) { r.x = 1 - margin; r.vx = -Math.abs(r.vx); }
-      if (r.y < margin) { r.y = margin; r.vy = Math.abs(r.vy); }
-      if (r.y > 1 - margin) { r.y = 1 - margin; r.vy = -Math.abs(r.vy); }
-      // Slow, gentle rotation so they feel like drifting symbols rather than blobs
-      r.rot += 0.00008;
-      drawBouncingRune(r);
-    });
-  }
   t+=0.016;
   requestAnimationFrame(draw);
 }
@@ -1813,29 +1623,8 @@ if (SCROLL_MULTIPLIER !== 1.0) {
   }, { passive: false });
 }
 
-// VIDEO — autoplay on scroll into view
-const videoWrap = document.getElementById('videoWrap');
-if(videoWrap) {
-  const iframe = videoWrap.querySelector('iframe');
-  if(iframe) {
-    const vidObs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if(e.isIntersecting) {
-          const src = iframe.src;
-          if(!src.includes('autoplay')) {
-            iframe.src = src + (src.includes('?') ? '&' : '?') + 'autoplay=1&muted=1&loop=1';
-          }
-          vidObs.unobserve(e.target);
-        }
-      });
-    }, {threshold: 0.3});
-    vidObs.observe(videoWrap);
-  }
-}
-
-
 // ── FREQ BAND PANEL (key 2) ──────────────────────────────────────────────────
-(function(){
+if(window.__debugMode) (function(){
   const fp = document.createElement('div');
   fp.id = 'freqPanel';
   fp.style.cssText = [
@@ -1984,7 +1773,7 @@ if(videoWrap) {
 })();
 
 // ── SITE TUNING PANEL (key 9) ────────────────────────────────────────────────
-(function(){
+if(window.__debugMode) (function(){
   const sp = document.createElement('div');
   sp.id = 'siteTunePanel';
   sp.style.cssText = [

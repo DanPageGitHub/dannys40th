@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" style="background:#0a0a0a">
+  <defs>
+    <style>
+      .line      { fill:none; stroke:#e8d48a; stroke-width:1.8; }
+      .line-thin { fill:none; stroke:#e8d48a; stroke-width:1.1; opacity:0.55; }
+      .line-bold { fill:none; stroke:#e8d48a; stroke-width:3; }
+      .dot       { fill:#e8d48a; }
+    </style>
+  </defs>
+
+  <!-- OUTER RING (single) -->
+  <circle cx="400" cy="400" r="330" class="line"/>
+
+  <!-- 8 SMALL OUTER CIRCLES evenly spaced at r=260 from centre -->
+  <!-- Cardinal: top, right, bottom, left -->
+  <circle cx="400" cy="140" r="28" class="line-bold"/>
+  <circle cx="660" cy="400" r="28" class="line-bold"/>
+  <circle cx="400" cy="660" r="28" class="line-bold"/>
+  <circle cx="140" cy="400" r="28" class="line-bold"/>
+  <!-- Diagonal: at 45° intervals -->
+  <circle cx="584" cy="216" r="28" class="line-bold"/>
+  <circle cx="584" cy="584" r="28" class="line-bold"/>
+  <circle cx="216" cy="584" r="28" class="line-bold"/>
+  <circle cx="216" cy="216" r="28" class="line-bold"/>
+
+  <!-- Centre dots on outer circles -->
+  <circle cx="400" cy="140" r="4" class="dot"/>
+  <circle cx="660" cy="400" r="4" class="dot"/>
+  <circle cx="400" cy="660" r="4" class="dot"/>
+  <circle cx="140" cy="400" r="4" class="dot"/>
+  <circle cx="584" cy="216" r="4" class="dot"/>
+  <circle cx="584" cy="584" r="4" class="dot"/>
+  <circle cx="216" cy="584" r="4" class="dot"/>
+  <circle cx="216" cy="216" r="4" class="dot"/>
+
+  <!-- SPOKES: from each outer circle centre down to the inner square corners/edges -->
+  <!-- Cardinal spokes hit the sides of the square (square goes 238,238 to 562,562) -->
+  <!-- Top circle (400,140) → top edge of square (400,238) -->
+  <line x1="400" y1="168" x2="400" y2="238" class="line-thin"/>
+  <!-- Right circle (660,400) → right edge of square (562,400) -->
+  <line x1="632" y1="400" x2="562" y2="400" class="line-thin"/>
+  <!-- Bottom circle (400,660) → bottom edge (400,562) -->
+  <line x1="400" y1="632" x2="400" y2="562" class="line-thin"/>
+  <!-- Left circle (140,400) → left edge (238,400) -->
+  <line x1="168" y1="400" x2="238" y2="400" class="line-thin"/>
+
+  <!-- Diagonal spokes hit the corners of the square -->
+  <!-- Top-right (584,216) → top-right corner (562,238) -->
+  <line x1="564" y1="236" x2="562" y2="238" class="line-thin"/>
+  <!-- Bottom-right (584,584) → bottom-right corner (562,562) -->
+  <line x1="564" y1="564" x2="562" y2="562" class="line-thin"/>
+  <!-- Bottom-left (216,584) → bottom-left corner (238,562) -->
+  <line x1="236" y1="564" x2="238" y2="562" class="line-thin"/>
+  <!-- Top-left (216,216) → top-left corner (238,238) -->
+  <line x1="236" y1="236" x2="238" y2="238" class="line-thin"/>
+
+  <!-- MIDDLE RING -->
+  <circle cx="400" cy="400" r="228" class="line"/>
+
+  <!-- DIAMOND (square rotated 45°) -->
+  <polygon points="400,178 622,400 400,622 178,400" class="line-thin"/>
+
+  <!-- STRAIGHT SQUARE aligned to axes -->
+  <polygon points="238,238 562,238 562,562 238,562" class="line-thin"/>
+
+  <!-- INNER BOLD RING -->
+  <circle cx="400" cy="400" r="130" class="line-bold"/>
+
+  <!-- 4 INNER SATELLITE CIRCLES on cardinal axes -->
+  <circle cx="400" cy="268" r="34" class="line-bold"/>
+  <circle cx="532" cy="400" r="34" class="line-bold"/>
+  <circle cx="400" cy="532" r="34" class="line-bold"/>
+  <circle cx="268" cy="400" r="34" class="line-bold"/>
+
+  <!-- Centre dots on inner satellites -->
+  <circle cx="400" cy="268" r="4" class="dot"/>
+  <circle cx="532" cy="400" r="4" class="dot"/>
+  <circle cx="400" cy="532" r="4" class="dot"/>
+  <circle cx="268" cy="400" r="4" class="dot"/>
+
+  <!-- INNER CROSS -->
+  <line x1="400" y1="268" x2="400" y2="532" class="line-thin"/>
+  <line x1="268" y1="400" x2="532" y2="400" class="line-thin"/>
+
+  <!-- SMALL CENTRAL RING -->
+  <circle cx="400" cy="400" r="52" class="line"/>
+
+  <!-- CENTRE DOT -->
+  <circle cx="400" cy="400" r="6" class="dot"/>
+
+</svg>

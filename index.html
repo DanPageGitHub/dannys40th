@@ -8,8 +8,8 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&family=Special+Elite&display=block" as="style">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&family=Special+Elite&display=block" rel="stylesheet">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" rel="stylesheet">
 <link href="styles.css" rel="stylesheet"/><script src="script.js" defer></script></head>
 <body class="fonts-loading">
 <script>
@@ -29,8 +29,6 @@
 <svg class="pagan-svg pagan-svg--3" viewBox="0 0 100 100" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="50" cy="50" r="45"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(0 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(120 50 50)"/></svg>
 <!-- Rune bar symbols: target (3 rings + cross + X) -->
 <svg class="pagan-svg pagan-svg--r1" viewBox="0 0 52 52" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="26" cy="26" r="22"/><circle cx="26" cy="26" r="13"/><circle cx="26" cy="26" r="5"/><line x1="26" y1="4" x2="26" y2="48"/><line x1="4" y1="26" x2="48" y2="26"/><line x1="10" y1="10" x2="42" y2="42"/><line x1="42" y1="10" x2="10" y2="42"/></svg>
-<!-- Rune bar symbols: eye / diamond + inner circle -->
-<svg class="pagan-svg pagan-svg--r2" viewBox="0 0 48 42" fill="none" stroke="#b87333" stroke-width="0.9"><path d="M2 21 C8 6 16 2 24 2 C32 2 40 6 46 21 C40 36 32 40 24 40 C16 40 8 36 2 21Z"/><circle cx="24" cy="21" r="7"/></svg>
 <!-- Rune bar symbols: circle + cross + inner dot -->
 <svg class="pagan-svg pagan-svg--r3" viewBox="0 0 44 44" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="22" cy="22" r="18"/><line x1="22" y1="4" x2="22" y2="40"/><line x1="4" y1="22" x2="40" y2="22"/><circle cx="22" cy="22" r="4"/></svg>
 <!-- Rune bar symbols: circle + double arc -->
@@ -56,7 +54,7 @@
 <!-- HERO. To show the wheel instead of the crop circle, remove class hero-symbol-crop from #hero. -->
 <section id="hero" class="hero-symbol-crop">
 <div class="hero-photo" id="heroBg">
-<video autoplay muted loop playsinline style="position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);pointer-events:none;">
+<video autoplay muted loop playsinline preload="none" style="position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);pointer-events:none;">
 <source src="Video/hero.mp4" type="video/mp4">
 </video>
 </div>
@@ -189,9 +187,9 @@
 <div class="slot evening">
 <div class="slot-time">Evening</div>
 <ul class="slot-items">
-<li>DJs and live music in the gig room</li>
-<li>Bar open late</li>
-<li>Arrive from whenever you like</li>
+<li>Arrive whenever</li>
+<li>Live band</li>
+<li>Fire pit, tunes, hang out, chat shit</li>
 </ul>
 </div>
 </div>
@@ -204,15 +202,16 @@
 <div class="slot day">
 <div class="slot-time">Daytime</div>
 <ul class="slot-items">
-<li>Barbecue on the campsite</li>
-<li>Silly games and outdoor chaos</li>
-<li>General Tomfoolery</li>
+<li>Barbecue</li>
+<li>Daft activities</li>
 </ul>
 </div>
 <div class="slot evening">
 <div class="slot-time">Evening</div>
 <ul class="slot-items">
-<li>More music, more dancing</li>
+<li>Massive feast</li>
+<li>Live bands</li>
+<li>DJs later on. You know what I like</li>
 </ul>
 </div>
 </div>
@@ -225,14 +224,16 @@
 <div class="slot day">
 <div class="slot-time">Midday-ish</div>
 <ul class="slot-items">
-<li>Pub lunch, Avebury excursion, no rush! No obligations!</li>
+<li>Roast at the Barge</li>
+<li>Avebury excursion</li>
+<li>Stare at the ceiling</li>
 </ul>
 </div>
 <div class="slot evening">
 <div class="slot-time">Evening</div>
 <ul class="slot-items">
-<li>Cinema night</li>
-<li>Camp on Sunday night. Book the Monday off</li>
+<li>Cinema night: cult films, comedy and weird shit</li>
+<li>Camp on Sunday, why not? Book the Monday off!</li>
 </ul>
 </div>
 </div>
@@ -448,7 +449,7 @@
 <h2 class="rsvp-title"><em>Form</em> a rabble</h2>
 <p class="rsvp-note">And I'll be in touch with more details</p>
 <div class="rsvp-form-wrap">
-<iframe src="https://tally.so/embed/RG4oBv?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Danny's 40th RSVP" loading="eager"></iframe>
+<iframe src="https://tally.so/embed/RG4oBv?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Danny's 40th RSVP" loading="lazy"></iframe>
 </div>
  </section>
 </div>
