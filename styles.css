@@ -736,6 +736,7 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
 .rune-band--top{padding-top:var(--rune-band-pad-y, 6px);overflow:visible;}
 .rune-band--top .rune-track{overflow:hidden;}
 .rune-band--mobile-footer{display:none;}
+.rune-band--desktop-footer{display:block;}
 .rune-band::before{
   content:'';
   position:absolute;
@@ -1300,7 +1301,8 @@ footer a:hover{color:var(--teal-l);}
 /* Mobile: show only a single rune band at the very bottom (above footer) */
 @media(max-width:700px){
   .rune-band--top,
-  .rune-band--mid{
+  .rune-band--mid,
+  .rune-band--desktop-footer{
     display:none;
   }
   .rune-band--mobile-footer{
