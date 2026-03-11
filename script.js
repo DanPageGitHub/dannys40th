@@ -58,6 +58,8 @@ const I = {
   caeden_mask:      'images/caedenmask.png',
   pixel_bw:         'images/pixel_bw.png',
   mask2:            'images/Doctor.png',
+  rhani:            'images/rhani_bw8.png',
+  maya:             'images/Maya.png',
 };
 
 // Photo filter tuning (must be before setPhoto calls)
@@ -174,7 +176,7 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
 
 // SPECTER APPARITIONS — B&W ghost images that fade in/out in the viewport margins
 (function(){
-  const ghosts = [I.caeden_mask, I.pixel_bw, I.mask2];
+  const ghosts = [I.caeden_mask, I.pixel_bw, I.mask2, I.rhani, I.maya];
 
   // One effect chosen at random per appearance — no cycling while visible
   const effects = [
@@ -191,20 +193,27 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
 
     const el = document.createElement('img');
     el.className = 'specter';
-    el.src = ghosts[Math.floor(Math.random() * ghosts.length)];
+    const src = ghosts[Math.floor(Math.random() * ghosts.length)];
+    el.src = src;
     el.setAttribute('aria-hidden', 'true');
     el.style.mixBlendMode = 'screen';
-    el.style.filter = effects[Math.floor(Math.random() * effects.length)];
+    el.style.filter = src === I.rhani
+      ? 'invert(1) brightness(0.38) contrast(2.2)'
+      : effects[Math.floor(Math.random() * effects.length)];
 
     const side = Math.random() < 0.5 ? 'left' : 'right';
     el.style[side] = '0';
-    el.style.top = (5 + Math.floor(Math.random() * 20)) + 'vh';
+    if (src === I.rhani) {
+      el.style.bottom = '-20vh';
+    } else {
+      el.style.top = (5 + Math.floor(Math.random() * 20)) + 'vh';
+    }
 
     const narrow = window.innerWidth < 768;
     document.body.appendChild(el);
 
     requestAnimationFrame(function(){ requestAnimationFrame(function(){
-      el.style.opacity = narrow ? '0.06' : '0.17';
+      el.style.opacity = (src === I.rhani) ? (narrow ? '0.1' : '0.26') : (narrow ? '0.06' : '0.17');
     }); });
 
     const holdMs = 17000; // fixed 17 s
@@ -214,11 +223,47 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
     }, holdMs);
   }
 
+  function showSpecific(src) {
+    if (cooldown) return;
+    cooldown = true;
+    const el = document.createElement('img');
+    el.className = 'specter';
+    el.src = src;
+    el.setAttribute('aria-hidden', 'true');
+    el.style.mixBlendMode = 'screen';
+    el.style.filter = src === I.rhani
+      ? 'invert(1) brightness(0.38) contrast(2.2)'
+      : effects[Math.floor(Math.random() * effects.length)];
+    const side = Math.random() < 0.5 ? 'left' : 'right';
+    el.style[side] = '0';
+    if (src === I.rhani) {
+      el.style.bottom = '-20vh';
+    } else {
+      el.style.top = (5 + Math.floor(Math.random() * 20)) + 'vh';
+    }
+    document.body.appendChild(el);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      const narrow = window.innerWidth < 768;
+      el.style.opacity = (src === I.rhani) ? (window.innerWidth < 768 ? '0.1' : '0.26') : (window.innerWidth < 768 ? '0.06' : '0.17');
+    }); });
+    setTimeout(function(){
+      el.style.opacity = '0';
+      setTimeout(function(){ el.remove(); cooldown = false; }, 2200);
+    }, 17000);
+  }
+
   function scheduleNext() {
     setTimeout(showGhost, 20000 + Math.random() * 15000); // 20–35 s gap
   }
 
   setTimeout(showGhost, 60000); // first appearance after 60 s
+
+  // Keyboard preview shortcuts (bypass scroll check and timer)
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === 'r' || e.key === 'R') showSpecific(I.rhani);
+    if (e.key === 'm' || e.key === 'M') showSpecific(I.maya);
+  });
 })();
 
 // RUNE BAND — scrolling rows (populate all .rune-scroll). Config is read by tick and by rune debug panel. Defaults match 4K rune-tune.
@@ -1455,6 +1500,22 @@ if(window.__debugMode) (function(){
   }
 
   setInterval(tick, 120);
+})();
+
+// Narrowboat animation: press K to trigger (repeatable), or auto every 5 min
+(function() {
+  var boatEl = document.getElementById('boatAnim');
+  function startBoatAnim() {
+    if (!boatEl) return;
+    boatEl.classList.remove('boat-anim-go');
+    boatEl.offsetHeight; // reflow so animation restarts on re-add
+    boatEl.classList.add('boat-anim-go');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'k' && e.key !== 'K') return;
+    startBoatAnim();
+  });
+  setInterval(startBoatAnim, 5 * 60 * 1000);
 })();
 
 });

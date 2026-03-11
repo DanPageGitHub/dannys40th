@@ -65,6 +65,38 @@ body::before{
 @keyframes pagan-float-a{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(28px,-24px) rotate(calc(var(--base-rot,0deg) + 3deg))}50%{transform:translate(-32px,20px) rotate(calc(var(--base-rot,0deg) - 2deg))}75%{transform:translate(24px,28px) rotate(calc(var(--base-rot,0deg) + 1.5deg))}}
 @keyframes pagan-float-b{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(-26px,22px) rotate(calc(var(--base-rot,0deg) - 3deg))}50%{transform:translate(30px,-20px) rotate(calc(var(--base-rot,0deg) + 2deg))}75%{transform:translate(-22px,-26px) rotate(calc(var(--base-rot,0deg) - 1.5deg))}}
 @keyframes pagan-float-c{0%,100%{transform:translate(0,0) rotate(var(--base-rot,0deg))}25%{transform:translate(20px,26px) rotate(calc(var(--base-rot,0deg) - 2deg))}50%{transform:translate(-28px,-22px) rotate(calc(var(--base-rot,0deg) + 3deg))}75%{transform:translate(26px,20px) rotate(calc(var(--base-rot,0deg) - 2.5deg))}}
+#boatAnim {
+  position: fixed;
+  bottom: 18vh;
+  right: 0;
+  width: 500px;
+  z-index: 1;
+  transform-origin: right bottom;
+  pointer-events: none;
+  opacity: 0;
+  backface-visibility: hidden;
+  contain: paint;
+}
+#boatAnim.boat-anim-go {
+  will-change: transform;
+  animation: boatApproach 13.8s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+@keyframes boatApproach {
+  0% {
+    transform: translate3d(0, -895px, 0) scale(0.12);
+    opacity: 0;
+    filter: brightness(0.55) drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+  }
+  2% {
+    opacity: 0.35;
+    filter: brightness(0.55) drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+  }
+  100% {
+    transform: translate3d(-4200px, 2600px, 0) scale(7.2);
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 30px 70px rgba(0,0,0,0.9));
+  }
+}
 .vignette{position:fixed;inset:0;z-index:12;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(8,7,5,0.55) 100%);}
 
 /* NAV */
