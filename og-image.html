@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, height=630">
+  <title>Danny's 40th | The Barge Inn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+  <style>
+    /* Force exact OG card size; no video, no nav. Override main-site margin that would add a black bar. */
+    html, body { width: 1200px; height: 630px; margin: 0; padding: 0; overflow: hidden; background: #0e0d0b; }
+    #hero { margin-top: 0 !important; min-height: 100%; height: 630px; display: flex; align-items: center; justify-content: center; }
+    .hero-content { max-width: 720px; transform: scale(1.22); transform-origin: center center; }
+    /* Zoom background a bit; bigger crop circle and text but keep inside safe zone */
+    .hero-photo { background-size: 125% auto; background-position: center 50%; }
+    #hero { --hero-sun-scale: 1.75; }
+  </style>
+</head>
+<body>
+  <section id="hero" class="hero-symbol-crop">
+    <div class="hero-photo"></div>
+    <div class="hero-fog"></div>
+    <svg class="hero-sun hero-sun--wheel" fill="none" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="90" stroke="#b87333" stroke-width="1.5"></circle>
+      <circle cx="100" cy="100" r="60" stroke="#b87333" stroke-width="1"></circle>
+      <circle cx="100" cy="100" r="30" stroke="#b87333" stroke-width="1"></circle>
+      <line stroke="#b87333" stroke-width="1" x1="100" x2="100" y1="10" y2="190"></line>
+      <line stroke="#b87333" stroke-width="1" x1="10" x2="190" y1="100" y2="100"></line>
+      <line stroke="#b87333" stroke-width="0.8" x1="27" x2="173" y1="27" y2="173"></line>
+      <line stroke="#b87333" stroke-width="0.8" x1="173" x2="27" y1="27" y2="173"></line>
+      <circle cx="100" cy="10" fill="#b87333" r="3"></circle><circle cx="100" cy="190" fill="#b87333" r="3"></circle>
+      <circle cx="10" cy="100" fill="#b87333" r="3"></circle><circle cx="190" cy="100" fill="#b87333" r="3"></circle>
+      <circle cx="27" cy="27" fill="#b87333" r="2.5"></circle><circle cx="173" cy="173" fill="#b87333" r="2.5"></circle>
+      <circle cx="173" cy="27" fill="#b87333" r="2.5"></circle><circle cx="27" cy="173" fill="#b87333" r="2.5"></circle>
+      <line stroke="#b87333" stroke-width="2.5" x1="100" x2="100" y1="2" y2="12"></line>
+      <line stroke="#b87333" stroke-width="2.5" x1="100" x2="100" y1="188" y2="198"></line>
+      <line stroke="#b87333" stroke-width="2.5" x1="2" x2="12" y1="100" y2="100"></line>
+      <line stroke="#b87333" stroke-width="2.5" x1="188" x2="198" y1="100" y2="100"></line>
+      <line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="20" y2="28"></line>
+      <line stroke="#b87333" stroke-width="2" x1="172" x2="180" y1="172" y2="180"></line>
+      <line stroke="#b87333" stroke-width="2" x1="180" x2="172" y1="20" y2="28"></line>
+      <line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="180" y2="172"></line>
+    </svg>
+    <img class="hero-sun hero-sun--crop" src="images/CropCircle2.svg" alt="">
+    <div class="hero-content">
+      <div class="badge"><img class="badge-wheel badge-wheel--l" src="images/wheel_exact.svg" alt="" aria-hidden="true">Fri 24 - Mon 27 Jul&nbsp;<span class="badge-year">2026</span><img class="badge-wheel badge-wheel--r" src="images/wheel_exact.svg" alt="" aria-hidden="true"></div>
+      <h1>
+        <span class="title-main">Danny's 40th</span>
+        <span class="title-hand">
+          <span class="title-hand-line1">A weird weekend</span>
+          <span class="title-hand-line2">in the Vale</span>
+        </span>
+      </h1>
+      <div class="hero-venue">
+        <span class="hero-venue-line1">The Barge Inn,</span>
+        <span class="hero-venue-line2">Honey Street,</span>
+        <span class="hero-venue-line3">Pewsey, Wiltshire</span>
+      </div>
+      <a class="hero-cta" href="#rsvp">RSVP</a>
+    </div>
+  </section>
+</body>
+</html>
