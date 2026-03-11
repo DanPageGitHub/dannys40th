@@ -1,6 +1,6 @@
 // Debug mode: set to true when you want debug panel keyboard shortcuts (1, 2, 3, 9, R, arrows).
 // In Cursor: change to true and save, or in console: window.__debugMode = true
-window.__debugMode = false;
+window.__debugMode = true;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -48,11 +48,9 @@ const I = {
   pub_exterior:     'images/pub_exterior.jpg',
   pub_canal_side:   'images/the-barge-crop-circle-mecca.jpg',
   barge_sunny_canal:'images/bargeinnpubgallery.jpg',
-  kenver_40th_1:    'images/kenver40th1.jpg',
   kenver_40th_2:    'images/Kenver40th2.jpg',
   canal_narrowboat: 'images/canal_narrowboat.jpg',
   white_horse:      'images/white_horse.jpg',
-  rusty_crop_circle:'images/rustycropcircle.jpg',
   sunset_hero:      'images/Barge-Danny-Hero.jpg',
   // High-res B&B bedroom image (WebP) for the B&B section photo slot
   bnb_room:         'images/BnbBedroom.webp',
@@ -90,22 +88,21 @@ function setPhoto(id, key, pos, bf, fit, sepiaOverride) {
 
 setPhoto('pBnbRoom','bnb_room','center 40%');
 
-// Venue carousel (Where We're Going) — rotate through key images without stretching
+// Venue carousel (Where We're Going) — fixed order, no random (avoids repetitions)
 (function(){
   const heroId = 'pHero';
   const heroEl = document.getElementById(heroId);
   if(!heroEl) return;
+  // Fixed sequence: each image shown once per cycle, in this order (no shuffle)
   const sequence = [
-    // Start on the pub exterior, then rotate through canal, crop-circle mecca, sunny canal day, Kenver portrait, Danny, Kenver landscape, and a DJ shot
-    ['pub_exterior','center center'],
-    ['pub_canal_side','center center'],
-    ['crop_circle','center 45%'],
-    ['barge_sunny_canal','center 55%'],
-    ['kenver_40th_1','center 50%'],
-    ['rusty_crop_circle','center 50%'],
-    ['danny_sign','center 40%'],
-    ['kenver_40th_2','center 50%'],
-    ['dj_shot','center 50%'],
+    ['pub_exterior','center center'],      // 1
+    ['kenver_40th_2','center 50%'],       // 7
+    ['dj_shot','center 50%'],             // 8
+    ['pub_canal_side','center center'],   // 2
+    ['sunset_hero','center 40%'],         // 6
+    ['crop_circle','center 45%'],         // 3
+    ['barge_sunny_canal','center 55%'],   // 4
+    ['danny_sign','center 40%'],          // 5
   ];
   let idx = 0;
 
@@ -114,7 +111,7 @@ setPhoto('pBnbRoom','bnb_room','center 40%');
     img.src = I[key];
     img.alt = '';
     // New slide starts transparent; both slides cross-fade via opacity.
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.75) sepia(0.18) brightness(0.94);transition:opacity 1.2s ease,filter 0.6s,transform 0.7s;opacity:0;';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:none;transition:opacity 1.2s ease,transform 0.7s;opacity:0;';
     if(pos) img.style.objectPosition = pos;
     return img;
   }
