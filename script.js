@@ -4,6 +4,13 @@ window.__debugMode = false;
 
 document.addEventListener('DOMContentLoaded', function() {
 
+// Hero background video: half speed for ambient effect
+(function() {
+  var heroBg = document.getElementById('heroBg');
+  var video = heroBg && heroBg.querySelector('video');
+  if (video) video.playbackRate = 0.5;
+})();
+
 // In-page links: scroll without showing hash in URL
 (function() {
   function cleanUrl() { history.replaceState(null, '', window.location.pathname + window.location.search); }
