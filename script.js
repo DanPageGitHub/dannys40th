@@ -829,7 +829,7 @@ if(window.__debugMode) (function(){
 
 })();
 
-// HERO TUNING PANEL archived to _archive/hero-debug-panel.js
+// HERO TUNING PANEL: hero-debug-panel.js (Key 3 toggles when __debugMode)
 
 // RUNE BAR DEBUG PANEL archived to _archive/rune-debug-panel.js
 
