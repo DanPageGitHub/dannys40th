@@ -77,6 +77,33 @@
 .col-photo--landscape { aspect-ratio: 4/3; }
 .col-photo--hover:hover { filter: saturate(0.88) sepia(0.08) brightness(1.04); }
 
+/* Tickets: crop to show mainly the ticket, compact layout */
+.two-col__media--ticket {
+  max-width: 300px;
+  margin-left: auto;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+}
+.two-col__media--ticket .col-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+}
+.two-col--tickets {
+  grid-template-columns: 1fr auto;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .two-col__media--ticket {
+    max-width: 100%;
+    margin-left: 0;
+  }
+  .two-col--tickets { grid-template-columns: 1fr; }
+}
+
 .involve-grid--3col {
   grid-template-columns: repeat(3, 1fr);
 }
@@ -119,18 +146,31 @@
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 2rem;
-  align-items: start;
+  align-items: stretch;
   margin-top: 28px;
 }
 .schedule-with-photo__img {
   width: 220px;
+  min-height: 0;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+  overflow: hidden;
+  position: relative;
+}
+.schedule-with-photo__img .col-photo--schedule {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
 }
 .col-photo--schedule {
   width: 100%;
   height: 100%;
   aspect-ratio: unset;
   object-fit: cover;
-  object-position: center top;
+  object-position: center center;
   border-radius: 3px;
   border: 1px solid rgba(184,115,51,0.25);
   display: block;
@@ -143,9 +183,22 @@
 @media (max-width: 900px) {
   .schedule-with-photo {
     grid-template-columns: 1fr;
+    align-items: start;
   }
   .schedule-with-photo__img {
     width: 100%;
+    position: relative;
+    height: auto;
+    min-height: auto;
+    aspect-ratio: 16/9;
+  }
+  .schedule-with-photo__img .col-photo--schedule {
+    position: static;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    object-position: center 35%;
   }
   .col-photo--schedule {
     aspect-ratio: 16/9;
@@ -408,7 +461,7 @@
 <div class="sec-aura sec-aura--tickets"></div>
 <h2>Tickets?</h2>
 <div class="sec-inner">
-<div class="two-col">
+<div class="two-col two-col--tickets">
   <div class="two-col__text">
     <p>I'm still figuring out how tickets or contributions will work. It'll be very cheap or even free with an ask for a contribution to cover costs. I don't want a lack of funds stopping anyone from coming.</p>
     <p>Save the date, RSVP, and book your camping if you're an eager beaver. I'll be in touch with more details soon.</p>
@@ -421,8 +474,8 @@
       </div>
     </div>
   </div>
-  <div class="two-col__media">
-    <img src="images/Tickets.jpg" alt="" class="col-photo col-photo--portrait grain-overlay reveal" style="object-position: center bottom;">
+  <div class="two-col__media two-col__media--ticket">
+    <img src="images/Tickets.jpg" alt="Save the date" class="col-photo grain-overlay reveal">
   </div>
 </div>
 </div>
