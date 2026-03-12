@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 (function() {
   var heroBg = document.getElementById('heroBg');
   var video = heroBg && heroBg.querySelector('video');
-  if (video) video.playbackRate = 0.5;
+  if (video) video.playbackRate = 0.8;
 })();
 
 // In-page links: scroll without showing hash in URL
