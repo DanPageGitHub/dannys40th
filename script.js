@@ -1,6 +1,5 @@
-// Debug mode: enable debug panel keyboard shortcuts (1, 2, 3, 9, R, arrows).
-// To disable in prod, set this back to false.
-window.__debugMode = true;
+// Debug mode: set to false for guests. Turn on via console when needed.
+window.__debugMode = false;
 
 document.addEventListener('DOMContentLoaded', function() {
 
