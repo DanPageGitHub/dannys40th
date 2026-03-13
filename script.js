@@ -1,6 +1,6 @@
-// Debug mode: set to true when you want debug panel keyboard shortcuts (1, 2, 3, 9, R, arrows).
-// In Cursor: change to true and save, or in console: window.__debugMode = true
-window.__debugMode = false;
+// Debug mode: enable debug panel keyboard shortcuts (1, 2, 3, 9, R, arrows).
+// To disable in prod, set this back to false.
+window.__debugMode = true;
 
 document.addEventListener('DOMContentLoaded', function() {
 
