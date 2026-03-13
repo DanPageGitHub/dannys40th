@@ -100,8 +100,8 @@
   function getVisibleSun(hero) {
     if (!hero) return null;
     return hero.classList.contains('hero-symbol-crop')
-      ? hero.querySelector('.hero-sun--crop')
-      : hero.querySelector('.hero-sun--wheel');
+      ? hero.querySelector('.hero-symbol--crop')
+      : hero.querySelector('.hero-symbol--wheel');
   }
 
   function loadStored(key, def) {
@@ -331,12 +331,12 @@
   function applyToggles() {
     const hero = document.getElementById('hero');
     const sun = getVisibleSun(hero);
-    const heroBg = document.getElementById('heroBg');
-    const video = heroBg && heroBg.querySelector('video');
+    const heroBackdrop = document.getElementById('heroBackdrop');
+    const video = heroBackdrop && heroBackdrop.querySelector('video');
 
     document.body.classList.toggle('hdp-outlines', toggles.outlines);
     if (sun) sun.style.visibility = toggles.hideCrop ? 'hidden' : '';
-    if (heroBg) heroBg.style.visibility = toggles.hideBg ? 'hidden' : '';
+    if (heroBackdrop) heroBackdrop.style.visibility = toggles.hideBg ? 'hidden' : '';
     if (video) {
       if (toggles.freezeVideo) video.pause();
       else if (video.paused && video.readyState >= 2) video.play();
@@ -348,14 +348,14 @@
   const outlineStyles = `
     body.hdp-outlines #hero{outline:2px solid #c44}
     body.hdp-outlines .hero-content{outline:2px solid #2e7b7a}
-    body.hdp-outlines .hero-sun{outline:2px solid #c8a96e}
+    body.hdp-outlines .hero-symbol{outline:2px solid #c8a96e}
     body.hdp-outlines .badge{outline:2px solid #b87333}
     body.hdp-outlines #hero h1{outline:2px solid #a0462a}
     body.hdp-outlines .hero-venue{outline:2px solid #4aadab}
     body.hdp-outlines .hero-cta{outline:2px solid #d4954a}
     body.hdp-outlines nav{outline:2px solid #5ecfcd}
     body.hdp-dim .hero-fog{opacity:0.3}
-    body.hdp-dim .hero-photo::after{opacity:0.5}
+    body.hdp-dim .hero-backdrop::after{opacity:0.5}
   `;
 
   const crosshairStyles = `
@@ -404,9 +404,9 @@
       hero.style.paddingBottom = padBottom ? (padBottom + 'px') : '';
     }
     if (cropScale === 100) {
-      root.style.removeProperty('--hero-sun-scale');
+      root.style.removeProperty('--hero-symbol-scale');
     } else {
-      root.style.setProperty('--hero-sun-scale', String(CROP_BASE_SCALE * cropScale / 100), 'important');
+      root.style.setProperty('--hero-symbol-scale', String(CROP_BASE_SCALE * cropScale / 100), 'important');
     }
     if (content) {
       content.style.maxWidth = contentMax ? (contentMax + 'px') : '';

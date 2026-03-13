@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Hero background video: half speed for ambient effect
 (function() {
-  var heroBg = document.getElementById('heroBg');
-  var video = heroBg && heroBg.querySelector('video');
+  var heroBackdrop = document.getElementById('heroBackdrop');
+  var video = heroBackdrop && heroBackdrop.querySelector('video');
   if (video) video.playbackRate = 0.8;
 })();
 
@@ -1343,8 +1343,6 @@ if(window.__debugMode) (function(){
     ${row9('Saturate', 'dj_sat', 0, 1.5, 0.72, 0.01)}
     ${row9('Sepia',    'dj_sep', 0, 1.0, 0.18, 0.01)}
     ${row9('Bright',   'dj_brt', 0, 1.5, 0.92, 0.01)}
-    <div style="font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(184,115,51,0.85);margin:8px 0 6px">Hero Video</div>
-    ${row9('Brightness', 'hero_brt', 0.05, 0.8, 0.25, 0.01)}
   `;
   document.body.appendChild(sp);
 
@@ -1383,11 +1381,6 @@ if(window.__debugMode) (function(){
   document.getElementById('s9_dj_brt').addEventListener('input', function(){
     djBrt=parseFloat(this.value); slbl('dj_brt', djBrt.toFixed(2)); updateDJFilter();
   });
-  document.getElementById('s9_hero_brt').addEventListener('input', function(){
-    const v=parseFloat(this.value); slbl('hero_brt', v.toFixed(2));
-    const hb=document.getElementById('heroBg');
-    if(hb) hb.style.filter=`brightness(${v}) saturate(0.5) sepia(0.5) blur(1.5px)`;
-  });
 
   document.getElementById('s9_copy').addEventListener('click', function(){
     const vals = [
@@ -1402,7 +1395,6 @@ if(window.__debugMode) (function(){
       `djSat:${djSat.toFixed(2)}`,
       `djSep:${djSep.toFixed(2)}`,
       `djBrt:${djBrt.toFixed(2)}`,
-      `heroBrt:${document.getElementById('s9_hero_brt').value}`,
     ].join('  ');
     navigator.clipboard.writeText(vals).then(()=>{
       this.textContent='✓ Copied';

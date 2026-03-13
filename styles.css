@@ -50,7 +50,6 @@ body::before{
 .pagan-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .pagan-svg{position:absolute;width:min(28vmin,220px);height:min(28vmin,220px);opacity:0.055;will-change:transform;}
 /* Staggered directions and timings so nearby symbols don’t move in unison */
-.pagan-svg--1{top:12%;left:8%;--base-rot:13deg;animation:pagan-float-a 14s ease-in-out -5s infinite;}
 .pagan-svg--3{bottom:25%;left:15%;--base-rot:-9deg;animation:pagan-float-c 16s ease-in-out -9s infinite;}
 /* Rune bar symbols — smaller, slightly more visible than original pagan SVGs */
 .pagan-svg--r1,.pagan-svg--r2,.pagan-svg--r3,.pagan-svg--r4{width:min(18vmin,140px);height:min(18vmin,140px);opacity:0.072;}
@@ -843,16 +842,6 @@ strong.pale{color:var(--parchment);}
 .qa-icon svg{width:48px;height:48px;}
 .qa-title{font-family:'IM Fell English',serif;font-size:1.3rem;color:var(--parchment);margin-bottom:8px;}
 .qa-desc{font-family:'Libre Baskerville',Georgia,serif;font-size:0.95rem;color:var(--parch-dim);line-height:1.6;}
-
-/* PARALLAX STRIP */
-.parallax-strip{position:relative;z-index:2;height:300px;overflow:hidden;max-width:1400px;margin:0 auto 20px;border-radius:3px;border:1px solid rgba(184,115,51,0.14);}
-.parallax-strip .p-img{position:absolute;inset:-20%;background-size:cover;background-position:center bottom;filter:brightness(0.72) saturate(0.75) sepia(0.2);will-change:transform;transition:filter 0.4s;}
-.parallax-strip:hover .p-img{filter:brightness(0.88) saturate(0.85) sepia(0.12);}
-.parallax-strip .p-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(14,13,11,0.3),rgba(14,13,11,0.05),rgba(14,13,11,0.3));}
-.parallax-strip .p-text{text-align:center;}
-.parallax-strip .p-text h3{font-family:'IM Fell English',serif;font-size:clamp(1.3rem,3vw,2rem);color:var(--parchment);font-weight:400;margin-bottom:6px;text-shadow:0 0 40px rgba(200,169,110,0.4);}
-.parallax-strip .p-text p{font-family:'Libre Baskerville',Georgia,serif;font-size:1rem;letter-spacing:0.06em;color:var(--teal-l);margin:0;}
-.p-compass{position:absolute;right:40px;top:50%;transform:translateY(-50%);opacity:0.1;}
 
 /* MANUSCRIPT */
 .manuscript{background:rgba(14,13,11,0.45);border:1px solid rgba(184,115,51,0.16);border-radius:2px;padding:var(--space-inner-y) var(--space-inner-x);position:relative;box-shadow:inset 0 0 60px rgba(0,0,0,0.3),0 0 40px rgba(0,0,0,0.4);}
