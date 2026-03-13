@@ -77,11 +77,11 @@
 .col-photo--landscape { aspect-ratio: 4/3; }
 .col-photo--hover:hover { filter: saturate(0.88) sepia(0.08) brightness(1.04); }
 
-/* Tickets: crop to show mainly the ticket, compact layout */
+/* Tickets: Tickets3.jpg is 1024×1536 (2:3 portrait) */
 .two-col__media--ticket {
-  max-width: 300px;
+  max-width: 320px;
   margin-left: auto;
-  aspect-ratio: 3/4;
+  aspect-ratio: 2 / 3;
   overflow: hidden;
   border-radius: 3px;
   border: 1px solid rgba(184,115,51,0.25);
@@ -90,18 +90,21 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 48%;
+  object-position: center 45%;
 }
 .two-col--tickets {
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1.4fr) auto;
   align-items: start;
+  column-gap: 2.25rem;
 }
-@media (max-width: 768px) {
-  .two-col__media--ticket {
-    max-width: 100%;
-    margin-left: 0;
+@media (max-width: 900px) {
+  .two-col--tickets {
+    grid-template-columns: 1fr;
   }
-  .two-col--tickets { grid-template-columns: 1fr; }
+  .two-col__media--ticket {
+    max-width: 260px;
+    margin: 1.75rem auto 0;
+  }
 }
 
 .involve-grid--3col {
@@ -487,7 +490,7 @@
     </div>
   </div>
   <div class="two-col__media two-col__media--ticket">
-    <img src="images/Tickets.jpg" alt="Save the date" class="col-photo grain-overlay reveal">
+    <img src="images/Tickets3.jpg" alt="Save the date" class="col-photo grain-overlay reveal col-photo--hover">
   </div>
 </div>
 </div>
