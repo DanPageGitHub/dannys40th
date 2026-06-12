@@ -803,6 +803,16 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
 .lineup-item{background:none;border:none;padding:4px 0;border-radius:0;color:var(--parchment);font-family:'IM Fell English',serif;font-size:1.05rem;width:auto;max-width:100%;text-align:left;display:block}
 .lineup-item.duo{padding-left:0}
 
+/* Restore a single star ornament for the duo entry only (Gizmode & Breakwhore) */
+.lineup-item.duo::before{
+  content:'✦';
+  color:var(--gold-l);
+  margin-right:8px;
+  display:inline-block;
+  vertical-align:middle;
+  text-shadow:0 0 6px rgba(227,201,138,0.5);
+}
+
 @media(min-width:900px){
   .lineup-list{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start}
   .lineup-item{width:auto;margin-right:18px}
