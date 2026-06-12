@@ -1360,41 +1360,51 @@ nav a.active::after{left:15px;right:15px;}
       els.submitBtn.disabled = true;
       els.submitStatus.textContent = "Submitting…";
 
-      const response = await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify(collectPayload())
-      });
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(collectPayload())
+        });
 
-      const data = await response.json();
+        if (!response.ok) throw new Error('Network response was not ok');
 
-      if (!data.ok) {
-        els.submitStatus.textContent = data.error || "Something went wrong.";
-        validateForm();
-        return;
-      }
+        const data = await response.json();
 
-      const totalDue = Number(data.totalPayableToDanny || 0);
-      const totalText = money(totalDue);
-      const nextUrl = totalDue > 0 ? PAYMENT_URL : RETURN_URL;
-      const nextLabel = totalDue > 0 ? "Starling payment page" : "Danny’s 40th site";
+        if (!data.ok) {
+          els.submitStatus.textContent = data.error || "Something went wrong.";
+          validateForm();
+          els.submitBtn.disabled = false;
+          return;
+        }
 
-      els.submitStatus.innerHTML = `
-        <div class="payment-box">
-          <p><strong>Booking received.</strong></p>
-          <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
-          <p>Attendee number(s): <strong>${data.attendeeNumbers.join(", ")}</strong>.</p>
-          <p>A ticket email has been sent. Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
-          <p>Total to pay Danny now: <strong>${totalText}</strong>.</p>
-          <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
-        </div>
-      `;
+        const totalDue = Number(data.totalPayableToDanny || 0);
+        const totalText = money(totalDue);
+        const nextUrl = totalDue > 0 ? PAYMENT_URL : RETURN_URL;
+        const nextLabel = totalDue > 0 ? "Starling payment page" : "Danny’s 40th site";
 
-      await loadSummary().catch(() => {});
+        els.submitStatus.innerHTML = `
+          <div class="payment-box">
+            <p><strong>Booking received.</strong></p>
+            <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
+            <p>Attendee number(s): <strong>${data.attendeeNumbers.join(", ")}</strong>.</p>
+            <p>A ticket email has been sent. Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
+            <p>Total to pay Danny now: <strong>${totalText}</strong>.</p>
+            <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
+          </div>
+        `;
 
-      if (REDIRECT_TO_PAYMENT_AFTER_SUBMIT) {
-        setTimeout(() => {
-          window.location.href = nextUrl;
-        }, PAYMENT_REDIRECT_DELAY_MS);
+        await loadSummary().catch(() => {});
+
+        if (REDIRECT_TO_PAYMENT_AFTER_SUBMIT) {
+          setTimeout(() => {
+            window.location.href = nextUrl;
+          }, PAYMENT_REDIRECT_DELAY_MS);
+        }
+      } catch (err) {
+        console.error('submitBooking failed', err);
+        els.submitStatus.textContent = "Submission failed — please try again.";
+        els.submitBtn.disabled = false;
       }
     }
 
