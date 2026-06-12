@@ -811,7 +811,12 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
   display:inline-block;
   vertical-align:middle;
   text-shadow:0 0 6px rgba(227,201,138,0.5);
+  font-size:0.9rem;
+  line-height:1;
+  transform:translateY(-1px);
 }
+
+.lineup-item.duo{white-space:nowrap}
 
 @media(min-width:900px){
   .lineup-list{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start}
