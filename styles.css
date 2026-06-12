@@ -798,6 +798,12 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
 .rune-scroll--mobile-footer svg{width:220px;height:auto;}
 @keyframes scroll-left{from{transform:translateX(0)}to{transform:translateX(-33.33%)}}
 
+/* Lineup chips */
+.lineup-list{display:flex;flex-wrap:wrap;gap:12px;list-style:none;padding:0;margin:10px 0 0;justify-content:center}
+.lineup-item{background:rgba(18,12,6,0.7);border:1px solid rgba(184,115,51,0.22);padding:10px 18px;border-radius:4px;color:var(--parchment);font-family:'IM Fell English',serif;font-size:1.1rem;box-shadow:0 0 20px rgba(184,115,51,0.06)}
+.lineup-item.duo{border-left:3px solid var(--teal);}
+
+
 /* DIVIDERS */
 .sun-div{position:relative;z-index:2;display:flex;align-items:center;padding:8px 40px;gap:16px;margin:0 auto;}
 .sun-div::before{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(184,115,51,0.55),transparent);}
