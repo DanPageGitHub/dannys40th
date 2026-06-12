@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Danny's 40th — Tickets & Camping</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 32px auto; padding: 0 16px; line-height: 1.45; }
+    fieldset { margin: 24px 0; padding: 16px; border: 1px solid #bbb; }
+    label { display: block; margin: 12px 0; }
+    input[type="number"], input[type="text"], input[type="email"], input[type="tel"], textarea, select {
+      width: 100%; max-width: 540px; padding: 8px; box-sizing: border-box;
+    }
+    textarea { min-height: 82px; }
+    .summary, .debug-panel, .important-note, .payment-box { border: 1px solid #ccc; padding: 16px; margin: 24px 0; }
+    .important-note { border-width: 2px; }
+    .payment-box { border-width: 2px; }
+    .attendee-card { border: 1px solid #ddd; padding: 14px; margin: 14px 0; }
+    .muted { opacity: .75; }
+    .warning { font-weight: 700; }
+    .error { color: #9b111e; font-weight: 700; }
+    .ok { color: #116611; font-weight: 700; }
+    .required-note { font-weight: 700; }
+    .required-star { font-weight: 700; }
+    progress { width: 100%; height: 24px; }
+    button, .button-link { padding: 10px 16px; cursor: pointer; display: inline-block; }
+    button:disabled { cursor: not-allowed; opacity: .5; }
+    .button-link { border: 1px solid #222; text-decoration: none; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #f5f5f5; padding: 12px; }
+    table { border-collapse: collapse; width: 100%; max-width: 780px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: top; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Danny's 40th — tickets, camping & food</h1>
+
+    <section class="important-note" aria-labelledby="before-title">
+      <h2 id="before-title">Please read this before you start</h2>
+      <p class="required-note">Fields marked <span class="required-star">*</span> are required.</p>
+      <p class="warning">
+        Please fill out this form even if you've already paid the venue for camping, or if you're booking glamping,
+        a van, campervan or motorhome separately.
+      </p>
+      <p>
+        Glamping, vans, campervans, motorhomes and electric hookup are not booked through this form.
+        Book those directly through the Barge Inn Honey Street camping page.
+      </p>
+      <p>
+        This form is still useful because it gives Danny a headcount, shows who's staying when, records ticket/event-fund money,
+        and separates tent camping money from everything else.
+      </p>
+    </section>
+
+    <section aria-labelledby="break-even-title">
+      <h2 id="break-even-title">Event fund target</h2>
+      <p>
+        Event fund raised so far:
+        <strong id="raisedSoFar">Loading…</strong>
+        of <strong id="eventTarget">Loading…</strong>.
+      </p>
+      <progress id="breakEvenBar" value="0" max="1500"></progress>
+      <p class="muted">
+        Only confirmed ticket/event-fund money counts toward this. Tent camping money is a separate venue pot.
+      </p>
+      <p class="muted">
+        The total spend is still a rough guess. Once the main event costs are covered, any extra event-fund money will go toward
+        helper expenses, food and drink for the campsite, joint meals, or a shared bar tab for us.
+      </p>
+    </section>
+
+    <form id="ticketForm" novalidate>
+      <fieldset>
+        <legend>Lead booker details</legend>
+
+        <label>
+          Lead booker first name <span class="required-star">*</span>
+          <input id="leadFirstName" name="leadFirstName" type="text" required autocomplete="given-name">
+        </label>
+
+        <label>
+          Lead booker last name <span class="required-star">*</span>
+          <input id="leadLastName" name="leadLastName" type="text" required autocomplete="family-name">
+        </label>
+
+        <label>
+          Nickname
+          <input id="leadNickname" name="leadNickname" type="text">
+        </label>
+
+        <label>
+          Lead booker email <span class="required-star">*</span>
+          <input id="leadEmail" name="leadEmail" type="email" required autocomplete="email">
+        </label>
+
+        <label>
+          Lead booker phone number <span class="required-star">*</span>
+          <input id="leadPhone" name="leadPhone" type="tel" required autocomplete="tel">
+        </label>
+
+        <p class="muted">
+          Please use real first and last names so the ticket list is clear. Nicknames are welcome too.
+        </p>
+
+        <button type="button" id="checkTallyBtn">Check whether I've already filled out the RSVP/helper form</button>
+        <p id="tallyStatus" class="muted" aria-live="polite"></p>
+      </fieldset>
+
+      <fieldset id="tallyFallbackSection" hidden>
+        <legend>Optional helper questions</legend>
+        <p class="muted">
+          I didn’t find your email on the earlier RSVP/helper form. No problem — you can carry on with this booking.
+          If you’re up for helping with anything, you can also let me know here.
+        </p>
+
+        <label>
+          Are you up for getting involved in any way?
+          <select id="rsvpInvolved" name="rsvpInvolved">
+            <option value="">Choose one, or leave blank</option>
+            <option>Yes</option>
+            <option>Maybe</option>
+            <option>No, sorry</option>
+          </select>
+        </label>
+
+        <label>
+          If you'd like to be involved, let me know how below
+          <textarea id="rsvpInvolvementText" name="rsvpInvolvementText"></textarea>
+        </label>
+
+        <p>Tick any that apply:</p>
+        <label><input id="helpEventPlanning" type="checkbox"> Event planning</label>
+        <label><input id="helpDj" type="checkbox"> DJing / live sets</label>
+        <label><input id="helpBand" type="checkbox"> Playing in a band</label>
+        <label><input id="helpSolo" type="checkbox"> Playing solo</label>
+        <label><input id="helpJam" type="checkbox"> Up for playing in a jam-type thing</label>
+        <label><input id="helpDecor" type="checkbox"> Decor</label>
+        <label><input id="helpLighting" type="checkbox"> Lighting</label>
+        <label><input id="helpBbq" type="checkbox"> BBQ chef</label>
+        <label><input id="helpCinema" type="checkbox"> Cinema helper / curator</label>
+        <label><input id="helpGeneral" type="checkbox"> General help over the weekend</label>
+        <label><input id="helpCelebrate" type="checkbox"> I want to celebrate something there too</label>
+        <label><input id="helpOther" type="checkbox"> Other</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>How many people are you booking for?</legend>
+
+        <label>
+          Adults <span class="required-star">*</span>
+          <input id="adultCount" name="adultCount" type="number" min="1" step="1" value="1" required>
+        </label>
+
+        <label>
+          Children aged 5+ <span class="required-star">*</span>
+          <input id="childCount" name="childCount" type="number" min="0" step="1" value="0" required>
+        </label>
+
+        <label>
+          Under-5s <span class="required-star">*</span>
+          <input id="under5Count" name="under5Count" type="number" min="0" step="1" value="0" required>
+        </label>
+
+        <p class="muted">
+          After you set the numbers, this form creates separate name fields for every person. Adult 1 is filled from the lead booker details automatically.
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Attendee details</legend>
+        <p class="muted">
+          Names are separate so the ticket list, camping headcount and dashboard are easy to check.
+        </p>
+        <div id="attendeesContainer"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Staying over</legend>
+
+        <p>
+          Let me know how you’re planning to stay so I can keep a rough headcount.
+        </p>
+
+        <p>
+          If you’re tent camping, this form can work out the camping cost for the nights you choose.
+          You can either add that camping money to what you pay me, and I’ll pass it on to the venue,
+          or you can sort camping directly with the venue yourself — before the event, when you arrive,
+          or later if your plans change.
+        </p>
+
+        <p>
+          If you want <strong>glamping, a van pitch, campervan/motorhome space, or electric hookup</strong>,
+          you need to book that directly with the Barge Inn Honey Street. This form doesn’t reserve those for you.
+        </p>
+
+        <p class="warning">
+          If you want glamping or a vehicle pitch, don’t leave it too late. Those spaces are more limited than tent camping,
+          so it’s worth booking with the venue sooner rather than later.
+        </p>
+
+        <p>
+          Please still fill out this form either way, even if you’ve already booked or paid the venue,
+          so I know who’s coming and when people are staying.
+        </p>
+
+        <label>
+          Accommodation type <span class="required-star">*</span>
+          <select id="accommodationType" name="accommodationType" required>
+            <option value="">Choose one</option>
+            <option value="tent">Tent camping</option>
+            <option value="glamping">Glamping — I will book direct with the venue</option>
+            <option value="van">Van / campervan / motorhome — I will book direct with the venue</option>
+            <option value="not_staying">Not staying overnight</option>
+            <option value="not_sure">Not sure yet</option>
+          </select>
+        </label>
+
+        <div id="tentCampingPaymentSection">
+          <h3>Tent camping payment</h3>
+
+          <p>
+            Tent camping is calculated separately from the ticket/event-fund donation:
+            <strong>£15 per adult per night</strong>,
+            <strong>£7.50 per child aged 5+ per night</strong>,
+            and <strong>free for under-5s</strong>.
+          </p>
+
+          <label>
+            How do you want to handle tent camping payment? <span class="required-star">*</span>
+            <select id="tentCampingPaymentRoute">
+              <option value="">Choose one</option>
+              <option value="pay_through_danny">Pay camping through this form — Danny will forward it to the venue</option>
+              <option value="pay_venue_before">I'll pay the venue directly before the event</option>
+              <option value="pay_venue_arrival">I'll pay the venue directly when I arrive</option>
+              <option value="already_paid_venue">I've already paid the venue for camping</option>
+              <option value="decide_later">I'll decide later</option>
+            </select>
+          </label>
+
+          <p class="muted">
+            If you choose to pay tent camping through this form, I’ll collect that camping money and send it on to the venue.
+            If you’d rather pay the venue yourself, that’s fine too — I’ll still use your answers here for the group headcount.
+          </p>
+        </div>
+
+        <div id="venueDirectConfirmWrap" hidden>
+          <label>
+            <input id="venueDirectConfirm" type="checkbox">
+            I understand this form does not book my glamping, van, campervan, motorhome or electric hookup. I need to book those directly with the venue.
+            <span class="required-star">*</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Expected nights</legend>
+
+        <p class="muted">
+          Please answer each night, even if you're not sure. This is for headcount and camping maths.
+          “Not sure” is logged but not charged as camping now.
+        </p>
+
+        <label>
+          Friday night <span class="required-star">*</span>
+          <select id="fridayNight" required>
+            <option value="">Choose one</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="not_sure">Not sure</option>
+          </select>
+        </label>
+
+        <label>
+          Saturday night <span class="required-star">*</span>
+          <select id="saturdayNight" required>
+            <option value="">Choose one</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="not_sure">Not sure</option>
+          </select>
+        </label>
+
+        <label>
+          Sunday night <span class="required-star">*</span>
+          <select id="sundayNight" required>
+            <option value="">Choose one</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="not_sure">Not sure</option>
+          </select>
+        </label>
+
+        <p class="muted">
+          You’re welcome to come earlier, stay longer, or decide about extra nights when you’re there.
+          Just be honest about what you end up doing so Danny doesn’t undercount the group.
+        </p>
+
+        <label>
+          Optional note about extra nights or uncertainty
+          <textarea id="extraNightsNote"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ticket / event fund</legend>
+
+        <label>
+          Suggested ticket/event-fund donation per adult <span class="required-star">*</span>
+          <input id="donationPerAdult" name="donationPerAdult" type="number" min="0" step="1" value="20" required>
+        </label>
+
+        <p class="muted">
+          £20 per adult is suggested to help cover event costs. More is massively appreciated, but less — or £0 —
+          is completely fine if you can't afford it. You can change the amount above.
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Food plan</legend>
+
+        <p>
+          Friday evening is <strong>bring a dish</strong> for a shared campsite meal.
+        </p>
+
+        <p>
+          Saturday afternoon is barbecue time. Bring BBQ food, but Danny will try to cover some costs if the event fund allows,
+          and will update people nearer the time.
+        </p>
+
+        <p>
+          Sunday plan is a roast at The Barge. They have a carvery.
+        </p>
+
+        <p class="muted">
+          Breakfast can be bought onsite or at the nearby affordable cafe. If enough money is raised, Danny will try to cover
+          making breakfast for at least one morning.
+        </p>
+      </fieldset>
+
+      <section class="summary" aria-labelledby="summary-title">
+        <h2 id="summary-title">Money breakdown</h2>
+
+        <p>Adults: <strong id="summaryAdults">1</strong></p>
+        <p>Children aged 5+: <strong id="summaryChildren">0</strong></p>
+        <p>Under-5s: <strong id="summaryUnder5s">0</strong></p>
+        <p>Total people: <strong id="summaryPeople">1</strong></p>
+
+        <h3>Maths</h3>
+        <table>
+          <tbody>
+            <tr><th>Ticket/event fund</th><td id="ticketMath">1 adult × £20.00 = £20.00</td></tr>
+            <tr><th>Adult tent camping</th><td id="adultCampingMath">1 adult × 0 nights × £15.00 = £0.00</td></tr>
+            <tr><th>Child tent camping</th><td id="childCampingMath">0 children × 0 nights × £7.50 = £0.00</td></tr>
+            <tr><th>Under-5 camping</th><td>Free</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Where your money is going</h3>
+        <p>Ticket/event fund donation: <strong id="summaryDonation">£20.00</strong></p>
+        <p>Tent camping cost calculated: <strong id="summaryCampingCost">£0.00</strong></p>
+        <p>Tent camping payable to Danny now: <strong id="summaryCampingPayable">£0.00</strong></p>
+        <p>Total to pay Danny now: <strong id="summaryTotal">£20.00</strong></p>
+
+        <div class="payment-box">
+          <h3>Payment is separate</h3>
+          <p class="warning">
+            Submitting this form does not take payment. After submitting, you’ll be sent to the Starling payment link.
+          </p>
+          <p>
+            Please pay the total shown above as soon as you submit. Danny will manually match your payment against your booking reference.
+          </p>
+          <p>
+            <a id="paymentLink" class="button-link" href="https://settleup.starlingbank.com/daniel-page-e74b5b" target="_blank" rel="noopener">
+              Pay via Starling
+            </a>
+          </p>
+        </div>
+
+        <p>
+          <a href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">
+            Barge Inn Honey Street camping, vans, motorhomes, electric hookup and glamping info
+          </a>
+        </p>
+      </section>
+
+      <fieldset>
+        <legend>Final check</legend>
+
+        <label>
+          <input id="trustConfirm" name="trustConfirm" type="checkbox" required>
+          I understand this is on trust: I will pay the total shown, and Danny can check this booking against the payment records.
+          <span class="required-star">*</span>
+        </label>
+
+        <label>
+          <input id="detailsConfirm" name="detailsConfirm" type="checkbox" required>
+          I have checked the names, contact details, accommodation choice, nights and total.
+          <span class="required-star">*</span>
+        </label>
+
+        <label>
+          <input id="manualPaymentConfirm" name="manualPaymentConfirm" type="checkbox" required>
+          I understand that after submitting I need to pay separately via Starling, and payment is not taken automatically by this form.
+          <span class="required-star">*</span>
+        </label>
+
+        <p id="validationMessage" class="error" aria-live="polite"></p>
+      </fieldset>
+
+      <details id="debugDetails" class="debug-panel">
+        <summary>Debug mode / booking payload preview</summary>
+        <p class="muted">
+          Add <code>?debug=1</code> to the page URL to open this automatically. In debug mode, live submission is blocked unless
+          <code>ALLOW_DEBUG_SUBMIT</code> is set to <code>true</code> in the page script.
+        </p>
+        <label>
+          <input id="debugMode" type="checkbox">
+          Debug mode
+        </label>
+        <pre id="debugOutput"></pre>
+      </details>
+
+      <button id="submitBtn" type="submit" disabled>Submit booking, then pay via Starling</button>
+      <p id="submitStatus" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxD13uXpcX1WJox2wZvDhPxG7qQu67MkuFY9f0AbrPrTXOzwwMjZuknVgaaBp6XtiiA7g/exec";
+    const PAYMENT_URL = "https://settleup.starlingbank.com/daniel-page-e74b5b";
+    const ALLOW_DEBUG_SUBMIT = false;
+    const REDIRECT_TO_PAYMENT_AFTER_SUBMIT = true;
+    const PAYMENT_REDIRECT_DELAY_MS = 3500;
+
+    const ADULT_CAMPING_PER_NIGHT = 15;
+    const CHILD_CAMPING_PER_NIGHT = 7.5;
+
+    const money = (n) => new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: "GBP"
+    }).format(Number.isFinite(n) ? n : 0);
+
+    const ids = [
+      "ticketForm", "leadFirstName", "leadLastName", "leadNickname", "leadEmail", "leadPhone", "checkTallyBtn", "tallyStatus",
+      "tallyFallbackSection", "rsvpInvolved", "rsvpInvolvementText",
+      "helpEventPlanning", "helpDj", "helpBand", "helpSolo", "helpJam", "helpDecor", "helpLighting",
+      "helpBbq", "helpCinema", "helpGeneral", "helpCelebrate", "helpOther",
+      "adultCount", "childCount", "under5Count", "attendeesContainer",
+      "accommodationType", "venueDirectConfirmWrap", "venueDirectConfirm",
+      "fridayNight", "saturdayNight", "sundayNight", "extraNightsNote",
+      "tentCampingPaymentSection", "tentCampingPaymentRoute", "donationPerAdult",
+      "summaryAdults", "summaryChildren", "summaryUnder5s", "summaryPeople",
+      "ticketMath", "adultCampingMath", "childCampingMath",
+      "summaryDonation", "summaryCampingCost", "summaryCampingPayable", "summaryTotal",
+      "raisedSoFar", "eventTarget", "breakEvenBar",
+      "trustConfirm", "detailsConfirm", "manualPaymentConfirm", "validationMessage", "submitBtn", "submitStatus",
+      "debugDetails", "debugMode", "debugOutput"
+    ];
+    const els = {};
+    ids.forEach((id) => els[id] = document.querySelector("#" + id));
+
+    let tallyLookupDone = false;
+    let tallyFound = false;
+    let tallyRowNumber = "";
+    let previousTallyName = "";
+    let lastTallyEmailChecked = "";
+
+    function cleanInteger(value, minimum = 0) {
+      return Math.max(minimum, parseInt(value || String(minimum), 10) || minimum);
+    }
+
+    function cleanMoney(value) {
+      return Math.max(0, Number(value || 0));
+    }
+
+    function isTentCampingRelevant() {
+      return els.accommodationType.value === "tent";
+    }
+
+    function getCounts() {
+      const adults = cleanInteger(els.adultCount.value, 1);
+      const children = cleanInteger(els.childCount.value, 0);
+      const under5s = cleanInteger(els.under5Count.value, 0);
+      return { adults, children, under5s, totalPeople: adults + children + under5s };
+    }
+
+    function getLeadFullName() {
+      return [els.leadFirstName.value.trim(), els.leadLastName.value.trim()].filter(Boolean).join(" ");
+    }
+
+    function autoFillAdultOneFromLead() {
+      const first = document.querySelector("#attendeeFirstName_adult_1");
+      const last = document.querySelector("#attendeeLastName_adult_1");
+      const nick = document.querySelector("#attendeeNickname_adult_1");
+
+      if (first && (!first.dataset.userEdited || first.dataset.autoFromLead === "true")) {
+        first.value = els.leadFirstName.value;
+        first.dataset.autoFromLead = "true";
+      }
+      if (last && (!last.dataset.userEdited || last.dataset.autoFromLead === "true")) {
+        last.value = els.leadLastName.value;
+        last.dataset.autoFromLead = "true";
+      }
+      if (nick && (!nick.dataset.userEdited || nick.dataset.autoFromLead === "true")) {
+        nick.value = els.leadNickname.value;
+        nick.dataset.autoFromLead = "true";
+      }
+    }
+
+    function syncAttendeeFields() {
+      const counts = getCounts();
+      const existingValues = {};
+      [...els.attendeesContainer.querySelectorAll("input, textarea")].forEach(input => {
+        existingValues[input.id] = input.value;
+        existingValues[input.id + "__edited"] = input.dataset.userEdited || "";
+      });
+
+      let html = "";
+      function card(type, i, label, ageBand) {
+        const safeId = `${type}_${i}`;
+        const firstValue = existingValues[`attendeeFirstName_${safeId}`] || "";
+        const lastValue = existingValues[`attendeeLastName_${safeId}`] || "";
+        const nickValue = existingValues[`attendeeNickname_${safeId}`] || "";
+        const dietaryValue = existingValues[`attendeeDietary_${safeId}`] || "";
+        const firstEdited = existingValues[`attendeeFirstName_${safeId}__edited`] || "";
+        const lastEdited = existingValues[`attendeeLastName_${safeId}__edited`] || "";
+        const nickEdited = existingValues[`attendeeNickname_${safeId}__edited`] || "";
+        html += `
+          <div class="attendee-card" data-attendee-type="${type}" data-attendee-index="${i}">
+            <h3>${label}</h3>
+            <input type="hidden" data-attendee-field="type" value="${type}">
+            <input type="hidden" data-attendee-field="ageBand" value="${ageBand}">
+            <label>
+              First name <span class="required-star">*</span>
+              <input id="attendeeFirstName_${safeId}" data-attendee-field="firstName" type="text" value="${escapeHtml(firstValue)}" data-user-edited="${escapeHtml(firstEdited)}" required>
+            </label>
+            <label>
+              Last name <span class="required-star">*</span>
+              <input id="attendeeLastName_${safeId}" data-attendee-field="lastName" type="text" value="${escapeHtml(lastValue)}" data-user-edited="${escapeHtml(lastEdited)}" required>
+            </label>
+            <label>
+              Nickname
+              <input id="attendeeNickname_${safeId}" data-attendee-field="nickname" type="text" value="${escapeHtml(nickValue)}" data-user-edited="${escapeHtml(nickEdited)}">
+            </label>
+            <label>
+              Allergies or dietary preferences
+              <textarea id="attendeeDietary_${safeId}" data-attendee-field="dietary">${escapeHtml(dietaryValue)}</textarea>
+            </label>
+          </div>
+        `;
+      }
+
+      for (let i = 1; i <= counts.adults; i++) card("adult", i, `Adult ${i}`, "Adult");
+      for (let i = 1; i <= counts.children; i++) card("child", i, `Child aged 5+ ${i}`, "Child 5+");
+      for (let i = 1; i <= counts.under5s; i++) card("under5", i, `Under-5 ${i}`, "Under 5");
+
+      els.attendeesContainer.innerHTML = html;
+      [...els.attendeesContainer.querySelectorAll("input, textarea")].forEach(el => {
+        el.addEventListener("input", () => {
+          el.dataset.userEdited = "true";
+          el.dataset.autoFromLead = "false";
+          updateAll();
+        });
+      });
+
+      autoFillAdultOneFromLead();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function collectAttendees() {
+      const cards = [...els.attendeesContainer.querySelectorAll(".attendee-card")];
+      return cards.map((card, idx) => {
+        const get = (field) => card.querySelector(`[data-attendee-field="${field}"]`);
+        const firstName = get("firstName").value.trim();
+        const lastName = get("lastName").value.trim();
+        const nickname = get("nickname").value.trim();
+        return {
+          attendeeIndex: idx + 1,
+          attendeeType: get("type").value,
+          ageBand: get("ageBand").value,
+          firstName,
+          lastName,
+          nickname,
+          fullName: [firstName, lastName].filter(Boolean).join(" "),
+          dietary: get("dietary").value.trim(),
+          accommodationType: els.accommodationType.value,
+          fridayNight: els.fridayNight.value,
+          saturdayNight: els.saturdayNight.value,
+          sundayNight: els.sundayNight.value,
+          extraNightsNote: els.extraNightsNote.value.trim()
+        };
+      });
+    }
+
+    function getTallyFallbackPayload() {
+      return {
+        rsvpFree: "Booking form completed",
+        rsvpInvolved: els.rsvpInvolved.value,
+        rsvpInvolvementText: els.rsvpInvolvementText.value.trim(),
+        helpEventPlanning: els.helpEventPlanning.checked,
+        helpDj: els.helpDj.checked,
+        helpBand: els.helpBand.checked,
+        helpSolo: els.helpSolo.checked,
+        helpJam: els.helpJam.checked,
+        helpDecor: els.helpDecor.checked,
+        helpLighting: els.helpLighting.checked,
+        helpBbq: els.helpBbq.checked,
+        helpCinema: els.helpCinema.checked,
+        helpGeneral: els.helpGeneral.checked,
+        helpCelebrate: els.helpCelebrate.checked,
+        helpOther: els.helpOther.checked
+      };
+    }
+
+    function selectedCampingNightsForCharging() {
+      return [els.fridayNight.value, els.saturdayNight.value, els.sundayNight.value].filter(v => v === "yes").length;
+    }
+
+    function getMaths() {
+      const counts = getCounts();
+      const donationPerAdult = cleanMoney(els.donationPerAdult.value);
+      const selectedNights = selectedCampingNightsForCharging();
+      const donationTotal = counts.adults * donationPerAdult;
+
+      const tentCampingCost = isTentCampingRelevant()
+        ? (counts.adults * selectedNights * ADULT_CAMPING_PER_NIGHT) + (counts.children * selectedNights * CHILD_CAMPING_PER_NIGHT)
+        : 0;
+
+      const tentCampingPayableToDanny = (
+        isTentCampingRelevant() && els.tentCampingPaymentRoute.value === "pay_through_danny"
+      ) ? tentCampingCost : 0;
+
+      const totalPayableToDanny = donationTotal + tentCampingPayableToDanny;
+
+      return {
+        ...counts,
+        donationPerAdult,
+        selectedCampingNights: selectedNights,
+        donationTotal,
+        adultCampingTotal: isTentCampingRelevant() ? counts.adults * selectedNights * ADULT_CAMPING_PER_NIGHT : 0,
+        childCampingTotal: isTentCampingRelevant() ? counts.children * selectedNights * CHILD_CAMPING_PER_NIGHT : 0,
+        tentCampingCost,
+        tentCampingPayableToDanny,
+        totalPayableToDanny
+      };
+    }
+
+    function collectPayload() {
+      const maths = getMaths();
+      const leadName = getLeadFullName();
+
+      return {
+        submittedAt: new Date().toISOString(),
+
+        leadFirstName: els.leadFirstName.value.trim(),
+        leadLastName: els.leadLastName.value.trim(),
+        leadNickname: els.leadNickname.value.trim(),
+        leadName,
+        name: leadName,
+
+        leadEmail: els.leadEmail.value.trim().toLowerCase(),
+        email: els.leadEmail.value.trim().toLowerCase(),
+
+        leadPhone: els.leadPhone.value.trim(),
+        phone: els.leadPhone.value.trim(),
+
+        ...maths,
+        accommodationType: els.accommodationType.value,
+        venueDirectConfirm: els.venueDirectConfirm.checked,
+        fridayNight: els.fridayNight.value,
+        saturdayNight: els.saturdayNight.value,
+        sundayNight: els.sundayNight.value,
+        extraNightsNote: els.extraNightsNote.value.trim(),
+        tentCampingPaymentRoute: isTentCampingRelevant() ? els.tentCampingPaymentRoute.value : "not_applicable",
+        trustConfirm: els.trustConfirm.checked,
+        detailsConfirm: els.detailsConfirm.checked,
+        manualPaymentConfirm: els.manualPaymentConfirm.checked,
+        tallyLookupDone,
+        tallyFound,
+        tallyRowNumber,
+        previousTallyName,
+        tallyFallback: getTallyFallbackPayload(),
+        attendees: collectAttendees(),
+        debugMode: els.debugMode.checked,
+        userAgent: navigator.userAgent,
+        pageUrl: location.href,
+        paymentLink: PAYMENT_URL,
+        paymentStatus: "Payment pending manual confirmation"
+      };
+    }
+
+    function validateForm() {
+      const errors = [];
+      const maths = getMaths();
+      const attendees = collectAttendees();
+
+      if (!els.leadFirstName.value.trim()) errors.push("Add the lead booker's first name.");
+      if (!els.leadLastName.value.trim()) errors.push("Add the lead booker's last name.");
+      if (!els.leadEmail.validity.valid || !els.leadEmail.value.trim()) errors.push("Add a valid lead booker email.");
+      if (!els.leadPhone.value.trim()) errors.push("Add the lead booker phone number.");
+      if (!tallyLookupDone) errors.push("Check whether you've already filled out the RSVP/helper form.");
+
+      // Helper fallback questions are optional at this stage.
+
+      if (maths.adults < 1) errors.push("At least one adult is required.");
+
+      attendees.forEach((a, idx) => {
+        const label = `${capitalize(a.attendeeType)} ${getTypeIndex(attendees, idx)}`;
+        if (!a.firstName) errors.push(`${label} is missing a first name.`);
+        if (!a.lastName) errors.push(`${label} is missing a last name.`);
+      });
+
+      if (!els.accommodationType.value) errors.push("Choose how you are staying.");
+
+      if ((els.accommodationType.value === "glamping" || els.accommodationType.value === "van") && !els.venueDirectConfirm.checked) {
+        errors.push("Confirm you understand glamping/van/campervan/motorhome bookings are direct with the venue.");
+      }
+
+      if (!els.fridayNight.value) errors.push("Answer Friday night.");
+      if (!els.saturdayNight.value) errors.push("Answer Saturday night.");
+      if (!els.sundayNight.value) errors.push("Answer Sunday night.");
+
+      if (isTentCampingRelevant() && !els.tentCampingPaymentRoute.value) {
+        errors.push("Choose how you want to handle tent camping payment.");
+      }
+
+      if (!Number.isFinite(maths.donationPerAdult) || maths.donationPerAdult < 0) errors.push("Ticket/event-fund donation must be £0 or more.");
+      if (!els.trustConfirm.checked) errors.push("Tick the trust/payment confirmation.");
+      if (!els.detailsConfirm.checked) errors.push("Tick the details confirmation.");
+      if (!els.manualPaymentConfirm.checked) errors.push("Tick the separate Starling payment confirmation.");
+      if (els.debugMode.checked && !ALLOW_DEBUG_SUBMIT) errors.push("Debug mode is on, so live submission is blocked.");
+
+      els.validationMessage.textContent = errors[0] || "";
+      els.submitBtn.disabled = errors.length > 0;
+      return { ok: errors.length === 0, errors };
+    }
+
+    function capitalize(value) {
+      if (value === "under5") return "Under-5";
+      return String(value || "").charAt(0).toUpperCase() + String(value || "").slice(1);
+    }
+
+    function getTypeIndex(attendees, idx) {
+      const type = attendees[idx].attendeeType;
+      return attendees.slice(0, idx + 1).filter(a => a.attendeeType === type).length;
+    }
+
+    function updateConditionalSections() {
+      const accommodationType = els.accommodationType.value;
+      const venueDirect = accommodationType === "glamping" || accommodationType === "van";
+      els.venueDirectConfirmWrap.hidden = !venueDirect;
+      if (!venueDirect) els.venueDirectConfirm.checked = false;
+
+      els.tentCampingPaymentSection.hidden = accommodationType !== "tent";
+      if (accommodationType !== "tent") els.tentCampingPaymentRoute.value = "";
+    }
+
+    function updateSummary() {
+      const maths = getMaths();
+
+      els.summaryAdults.textContent = String(maths.adults);
+      els.summaryChildren.textContent = String(maths.children);
+      els.summaryUnder5s.textContent = String(maths.under5s);
+      els.summaryPeople.textContent = String(maths.totalPeople);
+
+      els.ticketMath.textContent = `${maths.adults} adult${maths.adults === 1 ? "" : "s"} × ${money(maths.donationPerAdult)} = ${money(maths.donationTotal)}`;
+      els.adultCampingMath.textContent = `${maths.adults} adult${maths.adults === 1 ? "" : "s"} × ${maths.selectedCampingNights} night${maths.selectedCampingNights === 1 ? "" : "s"} × ${money(ADULT_CAMPING_PER_NIGHT)} = ${money(maths.adultCampingTotal)}`;
+      els.childCampingMath.textContent = `${maths.children} child${maths.children === 1 ? "" : "ren"} × ${maths.selectedCampingNights} night${maths.selectedCampingNights === 1 ? "" : "s"} × ${money(CHILD_CAMPING_PER_NIGHT)} = ${money(maths.childCampingTotal)}`;
+
+      els.summaryDonation.textContent = money(maths.donationTotal);
+      els.summaryCampingCost.textContent = money(maths.tentCampingCost);
+      els.summaryCampingPayable.textContent = money(maths.tentCampingPayableToDanny);
+      els.summaryTotal.textContent = money(maths.totalPayableToDanny);
+    }
+
+    function updateDebug() {
+      els.debugOutput.textContent = JSON.stringify({
+        validation: validateForm(),
+        payload: collectPayload()
+      }, null, 2);
+    }
+
+    function updateAll() {
+      autoFillAdultOneFromLead();
+      updateConditionalSections();
+      updateSummary();
+      validateForm();
+      els.debugOutput.textContent = JSON.stringify({ payload: collectPayload() }, null, 2);
+    }
+
+    async function loadSummary() {
+      const response = await fetch(`${API_URL}?action=summary`);
+      const data = await response.json();
+      const donationRaised = Number(data.donationRaised || 0);
+      const target = Number(data.eventFundTarget || 1500);
+
+      els.raisedSoFar.textContent = money(donationRaised);
+      els.eventTarget.textContent = money(target);
+      els.breakEvenBar.max = target;
+      els.breakEvenBar.value = Math.min(donationRaised, target);
+    }
+
+    async function checkTallyByEmail() {
+      const email = els.leadEmail.value.trim().toLowerCase();
+      if (!email || !els.leadEmail.validity.valid) {
+        els.tallyStatus.textContent = "Enter a valid email first.";
+        return;
+      }
+
+      if (email === lastTallyEmailChecked && tallyLookupDone) {
+        updateAll();
+        return;
+      }
+
+      els.tallyStatus.textContent = "Checking previous RSVP/helper form…";
+      const response = await fetch(`${API_URL}?action=checkTally&email=${encodeURIComponent(email)}`);
+      const data = await response.json();
+
+      lastTallyEmailChecked = email;
+      tallyLookupDone = true;
+      tallyFound = Boolean(data.tallyFound);
+      tallyRowNumber = data.rowNumber || "";
+      previousTallyName = data.name || "";
+
+      els.tallyFallbackSection.hidden = tallyFound;
+
+      if (tallyFound) {
+        els.tallyStatus.className = "ok";
+        els.tallyStatus.textContent = `Found the earlier RSVP/helper form for ${data.name || email}. Continue below.`;
+      } else {
+        els.tallyStatus.className = "muted";
+        els.tallyStatus.textContent = "I cannot find this email on the earlier RSVP/helper form, so a few extra questions have opened below.";
+      }
+
+      updateAll();
+    }
+
+    function resetTallyLookupIfEmailChanges() {
+      const email = els.leadEmail.value.trim().toLowerCase();
+      if (email !== lastTallyEmailChecked) {
+        tallyLookupDone = false;
+        tallyFound = false;
+        tallyRowNumber = "";
+        previousTallyName = "";
+        els.tallyFallbackSection.hidden = true;
+        els.tallyStatus.className = "muted";
+        els.tallyStatus.textContent = "Email changed. Check the RSVP/helper form again.";
+      }
+    }
+
+    async function submitBooking(event) {
+      event.preventDefault();
+
+      const validation = validateForm();
+      if (!validation.ok) {
+        els.submitStatus.textContent = "Please finish the required checks before submitting.";
+        return;
+      }
+
+      els.submitBtn.disabled = true;
+      els.submitStatus.textContent = "Submitting…";
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(collectPayload())
+      });
+
+      const data = await response.json();
+
+      if (!data.ok) {
+        els.submitStatus.textContent = data.error || "Something went wrong.";
+        validateForm();
+        return;
+      }
+
+      const totalText = money(Number(data.totalPayableToDanny || 0));
+
+      els.submitStatus.innerHTML = `
+        <div class="payment-box">
+          <p><strong>Booking received.</strong></p>
+          <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
+          <p>Attendee number(s): <strong>${data.attendeeNumbers.join(", ")}</strong>.</p>
+          <p>A ticket email has been sent. Payment status is <strong>pending manual confirmation</strong>.</p>
+          <p>You now need to pay <strong>${totalText}</strong> via Starling.</p>
+          <p><a class="button-link" href="${PAYMENT_URL}" target="_blank" rel="noopener">Pay now via Starling</a></p>
+          <p class="muted">Redirecting to Starling in a few seconds. If it does not open, use the button above.</p>
+        </div>
+      `;
+
+      await loadSummary().catch(() => {});
+
+      if (REDIRECT_TO_PAYMENT_AFTER_SUBMIT) {
+        setTimeout(() => {
+          window.location.href = PAYMENT_URL;
+        }, PAYMENT_REDIRECT_DELAY_MS);
+      }
+    }
+
+    function attachListeners() {
+      [
+        els.leadFirstName, els.leadLastName, els.leadNickname, els.leadPhone,
+        els.rsvpInvolved, els.rsvpInvolvementText,
+        els.helpEventPlanning, els.helpDj, els.helpBand, els.helpSolo, els.helpJam, els.helpDecor, els.helpLighting,
+        els.helpBbq, els.helpCinema, els.helpGeneral, els.helpCelebrate, els.helpOther,
+        els.accommodationType, els.venueDirectConfirm,
+        els.fridayNight, els.saturdayNight, els.sundayNight, els.extraNightsNote,
+        els.tentCampingPaymentRoute, els.donationPerAdult,
+        els.trustConfirm, els.detailsConfirm, els.manualPaymentConfirm, els.debugMode
+      ].forEach((el) => {
+        el.addEventListener("input", updateAll);
+        el.addEventListener("change", updateAll);
+      });
+
+      els.leadEmail.addEventListener("input", () => {
+        resetTallyLookupIfEmailChanges();
+        updateAll();
+      });
+      els.leadEmail.addEventListener("blur", () => {
+        if (els.leadEmail.value.trim() && els.leadEmail.validity.valid) {
+          checkTallyByEmail().catch(() => {
+            els.tallyStatus.textContent = "Could not check the RSVP/helper form. Try the button.";
+          });
+        }
+      });
+
+      [els.adultCount, els.childCount, els.under5Count].forEach((el) => {
+        el.addEventListener("input", () => { syncAttendeeFields(); updateAll(); });
+        el.addEventListener("change", () => { syncAttendeeFields(); updateAll(); });
+      });
+
+      els.checkTallyBtn.addEventListener("click", () => checkTallyByEmail().catch(() => {
+        els.tallyStatus.textContent = "Could not check the RSVP/helper form. Try again.";
+      }));
+      els.ticketForm.addEventListener("submit", submitBooking);
+    }
+
+    const params = new URLSearchParams(location.search);
+    if (params.get("debug") === "1") {
+      els.debugDetails.open = true;
+      els.debugMode.checked = true;
+    }
+
+    syncAttendeeFields();
+    attachListeners();
+    updateAll();
+    loadSummary().catch(() => {
+      els.raisedSoFar.textContent = "Could not load";
+      els.eventTarget.textContent = "£1,500.00";
+    });
+  </script>
+</body>
+</html>

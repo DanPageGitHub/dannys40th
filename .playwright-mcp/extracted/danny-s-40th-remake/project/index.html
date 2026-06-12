@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danny's 40th Weekender | 24th - 27th July | The Barge Inn, Wiltshire</title>
+<meta name="description" content="Danny's 40th do at the Barge Inn, Honey Street. Save the date and RSVP: 24-27 July 2026. Camping, DJs, and a proper knees-up.">
+<!-- Canonical URL -->
+<link rel="canonical" href="https://dannys40th.com/">
+<!-- Open Graph (Facebook, WhatsApp, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dannys40th.com/">
+<meta property="og:title" content="Danny's 40th Weekender | 24th - 27th July | The Barge Inn, Wiltshire">
+<meta property="og:description" content="Danny's 40th do at the Barge Inn, Honey Street. Save the date and RSVP: 24-27 July 2026. Camping, DJs, and a proper knees-up.">
+<meta property="og:image" content="https://dannys40th.com/images/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:locale" content="en_GB">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="dannys40th.com">
+<meta property="twitter:url" content="https://dannys40th.com/">
+<meta name="twitter:title" content="Danny's 40th Weekender | 24th - 27th July | The Barge Inn, Wiltshire">
+<meta name="twitter:description" content="Danny's 40th do at the Barge Inn, Honey Street. Save the date and RSVP: 24-27 July 2026. Camping, DJs, and a proper knees-up.">
+<meta name="twitter:image" content="https://dannys40th.com/images/og-card.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" rel="stylesheet">
+<link href="styles.css" rel="stylesheet"/>
+<style>
+/* ── Two-column alternating layout ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.two-col--flip { direction: rtl; }
+.two-col--flip > * { direction: ltr; }
+
+/* Carousel div (venue pHero) fills the column */
+.two-col__carousel {
+  width: 100%;
+  aspect-ratio: 4/3;
+  height: auto !important;
+  min-height: unset !important;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+  overflow: hidden;
+  position: relative;
+}
+
+/* BnB photo div fills the column */
+.two-col__bnb {
+  width: 100%;
+  aspect-ratio: 4/3;
+  height: auto !important;
+  min-height: unset !important;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Backstory photo */
+.col-photo {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+  display: block;
+  filter: saturate(0.72) sepia(0.18) brightness(0.92);
+  transition: filter 0.6s;
+}
+.col-photo--square { aspect-ratio: 1/1; }
+.col-photo--landscape { aspect-ratio: 4/3; }
+.col-photo--no-sepia { filter: saturate(0.72) brightness(0.92); }
+.col-photo--hover:hover { filter: saturate(0.88) sepia(0.08) brightness(1.04); }
+
+/* Tickets: Tickets2.jpg is 1011×1229 (~0.82, portrait) */
+.two-col__media--ticket {
+  max-width: 300px;
+  margin-left: auto;
+  aspect-ratio: 1011 / 1229;
+  overflow: hidden;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+}
+.two-col__media--ticket .col-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+}
+.two-col--tickets {
+  grid-template-columns: minmax(0, 1.4fr) auto;
+  align-items: start;
+  column-gap: 2.25rem;
+}
+@media (max-width: 900px) {
+  .two-col--tickets {
+    grid-template-columns: 1fr;
+  }
+  .two-col__media--ticket {
+    max-width: 260px;
+    margin: 1.75rem auto 0;
+  }
+}
+
+.involve-grid--3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 768px) {
+  .two-col, .two-col--flip {
+    grid-template-columns: 1fr;
+    direction: ltr;
+  }
+  .two-col__media { order: -1; }
+  .two-col__carousel, .two-col__bnb { aspect-ratio: 16/9; }
+  .involve-grid--3col { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Getting There: at wide only, sit Google Maps under the image */
+@media (min-width: 769px) {
+  .two-col--getting-there {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    direction: ltr;
+    align-items: start;
+  }
+  .two-col--getting-there .two-col__text { grid-column: 2; grid-row: 1 / -1; }
+  .two-col--getting-there .two-col__media { grid-column: 1; grid-row: 1; }
+  .two-col--getting-there .getting-there-map-btn { grid-column: 1; grid-row: 2; justify-self: start; margin-top: 1rem; margin-left: 0; margin-right: 0; }
+}
+
+/* Involve carousel */
+.involve-carousel {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  border-top: 1px solid rgba(184,115,51,0.2);
+  border-bottom: 1px solid rgba(184,115,51,0.2);
+}
+.involve-carousel img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+@media (max-width: 768px) {
+  .involve-carousel { height: 35vh; }
+}
+
+/* Schedule with photo */
+.schedule-with-photo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: stretch;
+  margin-top: 28px;
+}
+.schedule-with-photo__img {
+  width: 220px;
+  min-height: 0;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+  overflow: hidden;
+  position: relative;
+}
+.schedule-with-photo__img .col-photo--schedule {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+.col-photo--schedule {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: unset;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 3px;
+  border: 1px solid rgba(184,115,51,0.25);
+  display: block;
+  filter: saturate(0.72) sepia(0.18) brightness(0.92);
+  transition: filter 0.6s;
+}
+.schedule-with-photo .schedule-dates {
+  margin-top: 0;
+}
+@media (max-width: 900px) {
+  .schedule-with-photo {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .schedule-with-photo__img {
+    width: 100%;
+    position: relative;
+    height: auto;
+    min-height: auto;
+    aspect-ratio: 16/9;
+  }
+  .schedule-with-photo__img .col-photo--schedule {
+    position: static;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+  .col-photo--schedule {
+    aspect-ratio: 16/9;
+    height: auto;
+  }
+}
+</style><script src="script.js" defer></script></head>
+<body class="fonts-loading">
+<script>
+(function(){
+  function show(){ document.body.classList.remove('fonts-loading'); }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(show);
+    setTimeout(show, 3500);
+  } else { show(); }
+})();
+</script>
+<canvas id="bgCanvas"></canvas>
+<div class="pagan-bg" aria-hidden="true">
+<!-- Vesica piscis / sciency overlapping ellipses -->
+<svg class="pagan-svg pagan-svg--3" viewBox="0 0 100 100" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="50" cy="50" r="45"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(0 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(120 50 50)"/></svg>
+<!-- Rune bar symbols: target (3 rings + cross + X) -->
+<svg class="pagan-svg pagan-svg--r1" viewBox="0 0 52 52" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="26" cy="26" r="22"/><circle cx="26" cy="26" r="13"/><circle cx="26" cy="26" r="5"/><line x1="26" y1="4" x2="26" y2="48"/><line x1="4" y1="26" x2="48" y2="26"/><line x1="10" y1="10" x2="42" y2="42"/><line x1="42" y1="10" x2="10" y2="42"/></svg>
+<!-- Rune bar symbols: circle + cross + inner dot -->
+<svg class="pagan-svg pagan-svg--r3" viewBox="0 0 44 44" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="22" cy="22" r="18"/><line x1="22" y1="4" x2="22" y2="40"/><line x1="4" y1="22" x2="40" y2="22"/><circle cx="22" cy="22" r="4"/></svg>
+<!-- Rune bar symbols: circle + double arc -->
+<svg class="pagan-svg pagan-svg--r4" viewBox="0 0 46 46" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="23" cy="23" r="19"/><path d="M23 4 C28 4 38 13 38 23 C38 33 28 42 23 42"/><path d="M23 4 C18 4 8 13 8 23 C8 33 18 42 23 42" stroke-dasharray="3 2"/><circle cx="23" cy="23" r="3"/></svg>
+<!-- Wheel — left and right -->
+<img class="pagan-wheel pagan-wheel--l" src="images/wheel_exact.svg" alt="">
+<img class="pagan-wheel pagan-wheel--r" src="images/wheel_exact.svg" alt="">
+<!-- Hexafoil (Seed of Life) -->
+<img class="pagan-svg pagan-svg--h2" src="images/hexafoil2.svg" alt="">
+</div>
+<img id="boatAnim" src="images/BoatCutOut.png" alt="" aria-hidden="true" decoding="async">
+<div class="vignette"></div>
+<nav>
+<div class="nav-inner">
+<a href="#venue">Venue</a>
+<a href="#involve">Pitch In</a>
+<a href="#schedule">The Plan</a>
+<a href="#tickets">Tickets</a>
+<a href="#costs">Stay</a>
+<a href="#getting-there">Travel</a>
+<a href="#faq">FAQ</a>
+<a href="#rsvp">RSVP</a>
+<!-- Viz link removed from nav per request -->
+</div>
+</nav>
+<!-- HERO. To show the wheel instead of the crop circle, remove class hero-symbol-crop from #hero. -->
+<section id="hero" class="hero-symbol-crop">
+<div class="hero-photo" id="heroBg">
+<video autoplay muted loop playsinline preload="none" style="position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);pointer-events:none;">
+<source src="Video/BargeProcessedSmaller.mp4" type="video/mp4">
+</video>
+<div class="vid-vignette" aria-hidden="true"></div>
+</div>
+<div class="hero-fog"></div>
+<svg class="hero-sun hero-sun--wheel" fill="none" viewBox="0 0 200 200" aria-hidden="true">
+<circle cx="100" cy="100" r="90" stroke="#b87333" stroke-width="1.5"></circle>
+<circle cx="100" cy="100" r="60" stroke="#b87333" stroke-width="1"></circle>
+<circle cx="100" cy="100" r="30" stroke="#b87333" stroke-width="1"></circle>
+<line stroke="#b87333" stroke-width="1" x1="100" x2="100" y1="10" y2="190"></line>
+<line stroke="#b87333" stroke-width="1" x1="10" x2="190" y1="100" y2="100"></line>
+<line stroke="#b87333" stroke-width="0.8" x1="27" x2="173" y1="27" y2="173"></line>
+<line stroke="#b87333" stroke-width="0.8" x1="173" x2="27" y1="27" y2="173"></line>
+<circle cx="100" cy="10" fill="#b87333" r="3"></circle><circle cx="100" cy="190" fill="#b87333" r="3"></circle>
+<circle cx="10" cy="100" fill="#b87333" r="3"></circle><circle cx="190" cy="100" fill="#b87333" r="3"></circle>
+<circle cx="27" cy="27" fill="#b87333" r="2.5"></circle><circle cx="173" cy="173" fill="#b87333" r="2.5"></circle>
+<circle cx="173" cy="27" fill="#b87333" r="2.5"></circle><circle cx="27" cy="173" fill="#b87333" r="2.5"></circle>
+<line stroke="#b87333" stroke-width="2.5" x1="100" x2="100" y1="2" y2="12"></line>
+<line stroke="#b87333" stroke-width="2.5" x1="100" x2="100" y1="188" y2="198"></line>
+<line stroke="#b87333" stroke-width="2.5" x1="2" x2="12" y1="100" y2="100"></line>
+<line stroke="#b87333" stroke-width="2.5" x1="188" x2="198" y1="100" y2="100"></line>
+<line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="20" y2="28"></line>
+<line stroke="#b87333" stroke-width="2" x1="172" x2="180" y1="172" y2="180"></line>
+<line stroke="#b87333" stroke-width="2" x1="180" x2="172" y1="20" y2="28"></line>
+<line stroke="#b87333" stroke-width="2" x1="20" x2="28" y1="180" y2="172"></line>
+</svg>
+<img class="hero-sun hero-sun--crop" src="images/CropCircle2.svg" alt="">
+<div class="hero-content">
+<div class="badge"><img class="badge-wheel badge-wheel--l" src="images/wheel_exact.svg" alt="" aria-hidden="true">Fri 24 - Mon 27 Jul&nbsp;<span class="badge-year">2026</span><img class="badge-wheel badge-wheel--r" src="images/wheel_exact.svg" alt="" aria-hidden="true"></div>
+<h1>
+<span class="title-main">Danny's 40th</span>
+<span class="title-hand">
+  <span class="title-hand-line1">A weird weekend</span>
+  <span class="title-hand-line2">in the Vale</span>
+</span>
+</h1>
+<div class="hero-venue">
+  <span class="hero-venue-line1">The Barge Inn,</span>
+  <span class="hero-venue-line2">Honey Street,</span>
+  <span class="hero-venue-line3">Pewsey, Wiltshire</span>
+</div>
+<a class="hero-cta" href="#rsvp">RSVP</a>
+</div>
+</section>
+<!-- RUNE BAND (below video) -->
+<div class="rune-band rune-band--top">
+<div class="rune-track">
+<div class="rune-scroll" id="runeScrollBelow"></div>
+</div>
+</div>
+<!-- BACKSTORY -->
+<div class="sw">
+<section class="sec" id="backstory">
+<div class="sec-aura sec-aura--backstory"></div>
+<h2>Yes, I know. I turned 40 in February...</h2>
+<div class="two-col">
+  <div class="two-col__text">
+    <div class="manuscript reveal">
+      <p class="drop-cap">Some of you will know there was already a do. It was an incredibly lovely surprise, and to all those that put it on: I cannot express my gratitude enough. But you know what I'm like - I love throwing parties. And I've always wanted to have a birthday thing where we might actually get some sunshine, with <em>camping</em>.</p>
+      <p>If you're unlucky enough to have a birthday in the deep of winter, you'll know exactly what I mean. Summer birthday lot: you don't know when you were born.</p>
+      <p>So I'm planning a shindig at the Barge Inn. It's a special place where I've celebrated a lot of very important moments with equally important people, so it feels only right to return for this one. Right now I'm largely getting a vague idea of numbers, seeing who's up for coming, helping me organise or playing some music etc., so please <a class="inline" href="#rsvp">fill in the form</a> to let me know.</p>
+    </div>
+  </div>
+  <div class="two-col__media">
+    <img src="images/DannySquareVietnam.jpg" alt="Danny" class="col-photo col-photo--square col-photo--hover grain-overlay reveal">
+  </div>
+</div>
+</section>
+</div>
+<!-- RUNE BAND -->
+<div class="rune-band rune-band--mid">
+<div class="rune-track">
+<div class="rune-scroll" id="runeScroll"></div>
+</div>
+</div>
+<!-- VENUE (Where We're Going) -->
+<div class="sw">
+<section class="sec sec-wide" id="venue">
+<div class="sec-aura sec-aura--venue"></div>
+<div class="sec-label">Where We're Going</div>
+<h2>The Barge Inn, Honey Street</h2>
+<div class="sec-inner">
+<div class="two-col two-col--flip">
+  <div class="two-col__text">
+    <p>A legendary canal-side pub built in 1810, tucked away in the beautiful Vale of Pewsey, The Barge Inn sits right on the Duke's Ley Line, an ancient alignment said to run between Avebury and Stonehenge.</p>
+    <p>With the Alton Barnes White Horse carved into the hillside directly opposite and the Crop Circle Museum nextdoor, it's hard not to feel like you've stumbled upon somewhere steeped in a touch of magic.</p>
+  </div>
+  <div class="two-col__media">
+    <div class="photo-hero-wrap grain-overlay reveal two-col__carousel" id="pHero"></div>
+  </div>
+</div>
+</div>
+</section>
+</div>
+<!-- LINEUP (Celebrating something) -->
+<div class="sw">
+<section class="sec" id="lineup">
+<div class="sec-aura sec-aura--lineup"></div>
+<div class="lineup-milestone reveal">
+<div class="lineup-milestone-head">Celebrating something? Birthday in July?</div>
+<div class="two-col">
+  <div class="two-col__text">
+    <div class="sec-inner">
+      <p>If you'd like to make this a joint do, let me know! I'm well up for joining forces. Let's have an awkward chat about changing the URL.</p>
+      <a class="involve-cta" href="#rsvp">Buddy up!</a>
+    </div>
+  </div>
+  <div class="two-col__media">
+    <img src="images/Kaleidoscake2.jpg" alt="" class="col-photo col-photo--square col-photo--no-sepia grain-overlay reveal">
+  </div>
+</div>
+</div>
+</section>
+</div>
+<!-- GET INVOLVED -->
+<div class="sw">
+<section class="sec" id="involve">
+<div class="sec-aura sec-aura--involve"></div>
+<h2>Get involved</h2>
+<div class="involve-carousel reveal" id="involveCarousel"></div>
+<div class="sec-inner">
+<p><strong>Got an idea for an interactive show, outdoor game, or live act? DJs, performers, musicians, circuit benders, all very welcome.</strong> If you’ve got <strong>decor, lighting, or kit</strong> to contribute, even better. We’ll also need people on the <strong>BBQ</strong>, help running the <strong>cinema night</strong>, and general <strong>mucking in</strong> across the weekend.</p>
+<p>All ideas welcome. This is an inclusive DIY event. Just add your name to the form.</p>
+<a class="involve-cta" href="#rsvp">Add your name</a>
+</div>
+</section>
+</div>
+<!-- SCHEDULE -->
+<div class="sw">
+<section class="sec" id="schedule">
+<div class="sec-aura sec-aura--schedule"></div>
+<h2>What's happening?</h2>
+<div class="sec-inner">
+<p>This is a very rough idea right now. Lots of fun stuff still to be planned.</p>
+<div class="schedule-with-photo">
+  <div class="schedule-with-photo__img">
+    <img src="images/whathappening.jpg" alt="" class="col-photo col-photo--schedule grain-overlay reveal">
+  </div>
+  <div class="schedule-dates">
+<div class="sdate fri reveal">
+<div class="sdate-header">
+<div class="sdate-day">Friday 24th July</div>
+</div>
+<div class="sdate-slots">
+<div class="slot evening">
+<div class="slot-time">Evening</div>
+<ul class="slot-items">
+<li>Arrive whenever</li>
+<li>Live band</li>
+<li>Fire pit, tunes, hang out, chat shit</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sdate sat reveal">
+<div class="sdate-header">
+<div class="sdate-day">Saturday 25th July</div>
+</div>
+<div class="sdate-slots">
+<div class="slot day">
+<div class="slot-time">Daytime</div>
+<ul class="slot-items">
+<li>Barbecue</li>
+<li>Daft activities</li>
+</ul>
+</div>
+<div class="slot evening">
+<div class="slot-time">Evening</div>
+<ul class="slot-items">
+<li>Massive feast</li>
+<li>Live bands</li>
+<li>DJs later on. You know what I like</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sdate sun reveal">
+<div class="sdate-header">
+<div class="sdate-day">Sunday 26th July</div>
+</div>
+<div class="sdate-slots">
+<div class="slot day">
+<div class="slot-time">Midday-ish</div>
+<ul class="slot-items">
+<li>Roast at the Barge</li>
+<li>Stare at the ceiling</li>
+<li>Avebury excursion</li>
+</ul>
+</div>
+<div class="slot evening">
+<div class="slot-time">Evening</div>
+<ul class="slot-items">
+<li>Cinema night: cult films, comedy and weird shit</li>
+<li>Camp on Sunday, why not? Book the Monday off!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- TICKETS -->
+<div class="sw">
+<section class="sec" id="tickets">
+<div class="sec-aura sec-aura--tickets"></div>
+<h2>Tickets?</h2>
+<div class="sec-inner">
+<div class="two-col two-col--tickets">
+  <div class="two-col__text">
+    <p>I'm still figuring out how tickets or contributions will work. It'll be very cheap or even free with an ask for a contribution to cover costs. I don't want a lack of funds stopping anyone from coming.</p>
+    <p>Save the date, RSVP, and book your camping if you're an eager beaver. I'll be in touch with more details soon.</p>
+    <div class="tickets-bar">
+      <h3 class="tickets-header">Save the date</h3>
+      <div class="tickets-actions">
+        <a class="tickets-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Danny%27s%2040th%20at%20The%20Barge%20Inn&amp;dates=20260724T170000Z/20260727T090000Z&amp;details=Danny%27s%2040th%20weekend%20at%20The%20Barge%20Inn%2C%20Honey%20Street%20Pewsey.&amp;location=https%3A%2F%2Fmaps.google.com%2F%3Fq%3DThe%2BBarge%2BInn%2BHoney%2BStreet%2BPewsey%2BSN9%2B5PS&amp;ctz=Europe%2FLondon" target="_blank" rel="noopener noreferrer">GCal</a>
+        <a class="tickets-btn" href="dannys-40th.ics">iCal</a>
+        <a class="tickets-btn" href="#rsvp">RSVP</a>
+      </div>
+    </div>
+  </div>
+  <div class="two-col__media two-col__media--ticket">
+    <img src="images/Tickets2.jpg" alt="Save the date" class="col-photo grain-overlay reveal col-photo--hover">
+  </div>
+</div>
+</div>
+</section>
+</div>
+<!-- CAMP OR VAN STAY -->
+<div class="sw">
+<section class="sec" id="costs">
+<div class="sec-aura sec-aura--costs"></div>
+<h2>Camping, glamping &amp; vanning</h2>
+<div class="sec-inner">
+<div class="two-col two-col--flip">
+  <div class="two-col__text">
+    <div class="costs-grid">
+<div class="ctier tent reveal">
+<div style="display:flex;gap:8px;margin-bottom:10px;"><img src="images/Tent.svg" width="49" height="49" alt="" style="opacity:0.85;"><img src="images/CamperVan.svg" width="49" height="49" alt="" style="opacity:0.85;"></div>
+<div class="ctier-lbl">Camp or van stay</div>
+<div class="ctier-price">£15<span style="font-size:0.95rem;font-weight:400;font-family:'Libre Baskerville',serif">/night</span></div>
+<div class="ctier-detail">Per adult, paid to the venue.<br/>£5 for under-16s · Free for under-5s. It's the same price for vans with an extra £6 per day for an electric hook-up. Limited van spots available so book early.</div>
+</div>
+<div class="ctier glamp reveal">
+<img src="images/Bell-tent.svg" width="49" height="49" alt="" style="display:block;margin-bottom:10px;opacity:0.85;">
+<div class="ctier-lbl">Glamping Bell Tents</div>
+<div class="ctier-price">£90<span style="font-size:0.95rem;font-weight:400;font-family:'Libre Baskerville',serif">/night</span></div>
+<div class="ctier-detail">Or £160 for the full weekend. Set in the Willow World area, with a double bed, duvet and fairy lights. Follow the link below to book.</div>
+</div>
+</div>
+<p style="text-align:center;margin-top:28px;"><a class="map-btn" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank">Camping at The Barge Inn</a></p>
+  </div>
+  <div class="two-col__media">
+    <img src="images/AliTent.jpg" alt="" class="col-photo col-photo--landscape grain-overlay reveal" style="object-position: center top;">
+  </div>
+</div>
+</div>
+</section>
+</div>
+<!-- BED & BREAKFAST -->
+<div class="sw">
+<section class="sec" id="bnb">
+<div class="sec-aura sec-aura--bnb"></div>
+<h2>Bed &amp; Breakfast (likely sold out, I’m checking)</h2>
+<div class="sec-inner">
+<div class="two-col">
+  <div class="two-col__media">
+    <div class="photo-sm grain-overlay reveal two-col__bnb" id="pBnbRoom"></div>
+  </div>
+  <div class="two-col__text">
+<div class="ctier bnb reveal">
+<div class="ctier-detail" style="margin-top:18px;">The pub itself has three en-suite double rooms available, from £90 per night including breakfast. They tend to get snapped up quickly, so if you’d like one it’s best to book sooner rather than later. Bookings are through <a class="inline" href="https://www.booking.com/searchresults.html?ss=The+Barge+Inn+Honey+Street+Pewsey&checkin=2026-07-24&checkout=2026-07-27" target="_blank">Booking.com</a> only. <em>The staff politely request you don't try to book by phone or email.</em></div>
+<p style="text-align:center;margin-top:24px;"><a class="map-btn" href="https://www.booking.com/searchresults.html?ss=The+Barge+Inn+Honey+Street+Pewsey&checkin=2026-07-24&checkout=2026-07-27" target="_blank">Find out more</a></p>
+</div>
+  </div>
+</div>
+</div>
+</section>
+</div>
+<!-- GETTING THERE -->
+<div class="sw">
+<section class="sec sec-wide" id="getting-there">
+<div class="sec-aura sec-aura--getting-there"></div>
+<h2>Getting There</h2>
+<div class="sec-inner">
+<div class="two-col two-col--flip two-col--getting-there">
+  <div class="two-col__text">
+    <p>The Barge Inn is at <strong class="pale">Honey Street, Pewsey, SN9 5PS</strong>, off the B3087. The lane down to the pub is single-track, so take it steady.</p>
+    <div class="travel-grid">
+      <div class="tcard reveal"><div class="tcard-lbl">By Car</div><p>Off the B3087, parking on site. <a class="inline" href="https://what3words.com/chapters.managed.spinners" target="_blank">///chapters.managed.spinners</a></p></div>
+      <div class="tcard reveal"><div class="tcard-lbl">By Train</div><p>Pewsey is the nearest station, about 10 minutes by taxi. Flag in the form if you need a lift coordinating.</p></div>
+      <div class="tcard reveal"><div class="tcard-lbl">By Narrowboat</div><p>It's right on the Kennet &amp; Avon. If you have access to a boat, this is your moment.</p></div>
+      <div class="tcard reveal"><div class="tcard-lbl">Lift Share</div><p>There'll be lots of crossover in where people are coming from. Flag it in the form.</p></div>
+    </div>
+  </div>
+  <a class="map-btn getting-there-map-btn" href="https://maps.google.com/?q=The+Barge+Inn+Honey+Street+Pewsey+SN9+5PS" target="_blank">Google Maps</a>
+  <div class="two-col__media">
+    <img src="images/GettingThere.jpg" alt="" class="col-photo col-photo--landscape grain-overlay reveal" style="object-position: center top;">
+  </div>
+</div>
+</div>
+</section>
+</div>
+<!-- FAQ -->
+<div class="sw">
+<section class="sec" id="faq">
+<div class="sec-aura sec-aura--costs"></div>
+<h2>FAQ</h2>
+<div class="sec-inner">
+<div class="faq-controls">
+<button type="button" class="faq-expand-all" id="faqExpandAll" aria-label="Expand all FAQ answers">Expand all</button>
+</div>
+<div class="faq-list">
+<div class="faq-item reveal" id="faq-0">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-0" id="faq-q-0">
+<span class="faq-q">Can I bring kids?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-0" role="region" aria-labelledby="faq-q-0">
+<p class="faq-a">Yes, if they can deal with reprobates. You may want to camp separately as we'll be noisy.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-1">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-1" id="faq-q-1">
+<span class="faq-q">What should I bring?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-1" role="region" aria-labelledby="faq-q-1">
+<p class="faq-a">Barbecue food and your shiniest clothes.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-2">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-2" id="faq-q-2">
+<span class="faq-q">Is there parking?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-2" role="region" aria-labelledby="faq-q-2">
+<p class="faq-a">Yes, there's parking.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-3">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-3" id="faq-q-3">
+<span class="faq-q">Can I come for just one night?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-3" role="region" aria-labelledby="faq-q-3">
+<p class="faq-a">People can come for one, two, three, or even four nights. The main activities will be Friday through Sunday, and we'll watch some films on Sunday night, but I expect many will do Friday to Sunday and that's all good. The pub's ace, there's lots to do round there and the people are very friendly. I'll be staying Thursday to Monday.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-4">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-4" id="faq-q-4">
+<span class="faq-q">What will it cost?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-4" role="region" aria-labelledby="faq-q-4">
+<p class="faq-a">I'm not sure just yet but it'll be a donation or won't break the bank.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-5">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-5" id="faq-q-5">
+<span class="faq-q">Can I bring my dog?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-5" role="region" aria-labelledby="faq-q-5">
+<p class="faq-a">Yes. Dogs are welcome but must be kept on leads at all times.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-6">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-6" id="faq-q-6">
+<span class="faq-q">What facilities does the venue have?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-6" role="region" aria-labelledby="faq-q-6">
+<p class="faq-a">You'll find showers, toilets, washing-up facilities, a washing machine and tumble dryer on site. Fire drums are available to hire and you can pick up firewood too. Elsan facilities are available for the boaties.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-7">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-7" id="faq-q-7">
+<span class="faq-q">How do I book and get put with the party?</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-7" role="region" aria-labelledby="faq-q-7">
+<p class="faq-a">Just <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank">book your stay</a> on the Barge Inn site and add a note saying you're with Danny's party.</p>
+</div>
+</div>
+<div class="faq-item reveal" id="faq-8">
+<button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-a-8" id="faq-q-8">
+<span class="faq-q">Camping cancellation policy</span>
+<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+<div class="faq-a-wrap" id="faq-a-8" role="region" aria-labelledby="faq-q-8">
+<p class="faq-a">Refunds are given only if you cancel at least 2 weeks before your booking; no refunds on the day of arrival. Glamping cancellations within 2 weeks may have 50% deducted from the refund.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- RSVP -->
+<div class="sw">
+<section class="sec" id="rsvp">
+<div class="sec-aura sec-aura--backstory"></div>
+<h2 class="rsvp-title"><em>Form</em> a rabble</h2>
+<p class="rsvp-note">And I'll be in touch with more details</p>
+<div class="rsvp-form-wrap">
+<iframe src="https://tally.so/embed/RG4oBv?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Danny's 40th RSVP" loading="lazy"></iframe>
+</div>
+ </section>
+</div>
+<!-- MOBILE-ONLY RUNE BAND NEAR FOOTER -->
+<div class="rune-band rune-band--mobile-footer">
+  <div class="rune-track">
+    <div class="rune-scroll" id="runeScrollMobileFooter"></div>
+  </div>
+</div>
+<!-- DESKTOP RUNE BAND NEAR FOOTER (hidden on mobile) -->
+<div class="rune-band rune-band--desktop-footer">
+  <div class="rune-track">
+    <div class="rune-scroll" id="runeScrollDesktopFooter"></div>
+  </div>
+</div>
+<script async src="https://tally.so/widgets/embed.js"></script>
+<footer>
+<span class="orn">✦</span>Danny's 40th · The Barge Inn, Honey Street, Pewsey SN9 5PS · 24–27 July 2026<span class="orn">☽</span>
+<br/><br/><a href="https://thebargeinnhoneystreet.uk" target="_blank">thebargeinnhoneystreet.uk</a>
+</footer>
+
+
+
+<script>
+(function(){
+  const el = document.getElementById('involveCarousel');
+  if (!el) return;
+
+  const sequence = [
+    'images/Activities/Hats.jpg',
+    'images/Activities/Tim-Stick.jpg',
+    'images/Activities/ArgumentBooth.jpg',
+    'images/Activities/TRex.jpg',
+    'images/Activities/NoodleWrestling.jpg',
+    'images/Activities/BDSMGardener.jpg',
+    'images/Activities/Obscene.jpg',
+    'images/Activities/Chillies.jpg',
+    'images/Activities/EmmaObscene.jpg',
+    'images/Activities/DanJoe2.jpg',
+    'images/Activities/DanJoe3.jpg',
+    'images/Activities/Peaches.jpg',
+    'images/Activities/ViveArt.jpg',
+    'images/Activities/Shitwife.jpg',
+    'images/Activities/GameBoy.jpg',
+    'images/Activities/JackBike.jpg',
+    'images/Activities/RickCrisps.jpg',
+    'images/Activities/bbq.jpg',
+    'images/Activities/bbq2.jpg',
+    'images/Activities/bbqbarge.jpg',
+    'images/Activities/bathtub.jpg'
+  ];
+
+  const FADE_MS = 1200;
+  const HOLD_MS = 3200;
+  let idx = 0;
+
+  const positionOverrides = {
+    'images/Activities/ArgumentBooth.jpg': 'center top',
+    'images/Activities/EmmaObscene.jpg': 'center top',
+    'images/Activities/GameBoy.jpg': 'center top',
+    'images/Activities/bbq2.jpg': 'center 32%',
+    'images/Activities/bbqbarge.jpg': 'center bottom'
+  };
+
+  function createImg(src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.72) sepia(0.18) brightness(0.92);transition:opacity 1.2s ease;opacity:0;';
+    if (positionOverrides[src]) img.style.objectPosition = positionOverrides[src];
+    return img;
+  }
+
+  // First image
+  const first = createImg(sequence[0]);
+  first.style.opacity = '1';
+  el.appendChild(first);
+
+  function advance() {
+    idx = (idx + 1) % sequence.length;
+    const current = el.querySelector('img');
+    const next = createImg(sequence[idx]);
+    el.appendChild(next);
+
+    const doCrossfade = () => {
+      void next.offsetWidth;
+      next.style.opacity = '1';
+      if (current) {
+        current.style.opacity = '0';
+        setTimeout(() => {
+          if (current.parentNode === el) el.removeChild(current);
+          setTimeout(advance, HOLD_MS);
+        }, FADE_MS + 50);
+      } else {
+        setTimeout(advance, HOLD_MS);
+      }
+    };
+
+    if (next.complete) { doCrossfade(); }
+    else { next.onload = doCrossfade; next.onerror = doCrossfade; }
+  }
+
+  setTimeout(advance, HOLD_MS);
+})();
+</script>
+</body>
+</html>

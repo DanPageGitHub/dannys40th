@@ -15,6 +15,16 @@
    TICKETS PAGE — booking form skinned in the Danny's 40th system
    ============================================================ */
 
+/* Visualiser2 canvas background */
+#bgCanvas{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
 /* Page header */
 .tk-head{
   position:relative;z-index:15;
@@ -70,7 +80,7 @@
 
 /* Each fieldset becomes a manuscript-style panel */
 .booking-main fieldset{
-  background:rgba(14,13,11,0.62);
+  background:rgba(14,13,11,0.88);
   border:1px solid rgba(184,115,51,0.2);
   border-radius:3px;
   padding:clamp(22px,3.4vw,42px);
@@ -84,10 +94,10 @@
 }
 .booking-main legend{
   float:left;width:100%;
-  font-family:'IM Fell English',serif;font-weight:400;
-  font-size:clamp(1.5rem,3vw,2.15rem);
+  font-family:'IM Fell English',serif;font-weight:700;
+  font-size:clamp(1.7rem,3.5vw,2.4rem);
   color:var(--parchment);
-  padding:0;margin:0 0 18px;letter-spacing:0.03em;
+  padding:0;margin:0 0 22px;letter-spacing:0.04em;
   text-shadow:0 0 60px rgba(200,169,110,0.24),0 2px 4px rgba(0,0,0,0.8);
 }
 .booking-main legend + *{clear:both;}
@@ -174,7 +184,7 @@
 /* Accent boxes */
 .booking-main .important-note,
 .booking-main .payment-box{
-  background:rgba(18,12,6,0.5);
+  background:rgba(18,12,6,0.85);
   border:1px solid rgba(184,115,51,0.4);
   border-left:3px solid var(--copper);
   border-radius:3px;padding:clamp(20px,3vw,34px);margin:26px 0;
@@ -186,7 +196,7 @@
   margin:24px 0 0;
 }
 .booking-main .summary{
-  background:rgba(14,13,11,0.62);
+  background:rgba(14,13,11,0.88);
   border:1px solid rgba(184,115,51,0.24);
   border-radius:3px;padding:clamp(22px,3.4vw,42px);margin:26px 0;
   box-shadow:inset 0 0 60px rgba(0,0,0,0.3),0 0 40px rgba(0,0,0,0.4);
@@ -249,7 +259,7 @@
 
 /* Debug panel */
 .booking-main .debug-panel{
-  background:rgba(8,7,5,0.5);
+  background:rgba(8,7,5,0.75);
   border:1px solid rgba(184,115,51,0.2);border-radius:3px;
   padding:18px 22px;margin:26px 0;
 }
@@ -816,6 +826,10 @@ nav a.active::after{left:15px;right:15px;}
         <pre id="debugOutput"></pre>
       </details>
 
+      <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
+        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+      </div>
+
       <button id="submitBtn" type="submit" disabled>Submit booking</button>
       <p id="submitStatus" aria-live="polite"></p>
     </form>
@@ -852,6 +866,7 @@ nav a.active::after{left:15px;right:15px;}
     const PAYMENT_URL = "https://settleup.starlingbank.com/daniel-page-e74b5b";
     const RETURN_URL = "https://dannys40th.com";
     const ALLOW_DEBUG_SUBMIT = false;
+    const FORM_LOAD_TIME = Date.now();
     const REDIRECT_TO_PAYMENT_AFTER_SUBMIT = true;
     const PAYMENT_REDIRECT_DELAY_MS = 3500;
 
@@ -1121,7 +1136,13 @@ nav a.active::after{left:15px;right:15px;}
         userAgent: navigator.userAgent,
         pageUrl: location.href,
         paymentLink: PAYMENT_URL,
-        paymentStatus: "Payment pending manual confirmation"
+        paymentStatus: maths.totalPayableToDanny > 0 ? "Assumed paid - check Starling" : "Nothing owed",
+        donationPaid: maths.donationTotal,
+        campingPaid: maths.tentCampingPayableToDanny,
+        amountPaidTotal: maths.totalPayableToDanny,
+        balanceRemaining: 0,
+        website: document.getElementById("website").value,
+        formLoadTime: FORM_LOAD_TIME
       };
     }
 
@@ -1350,7 +1371,7 @@ nav a.active::after{left:15px;right:15px;}
           <p><strong>Booking received.</strong></p>
           <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
           <p>Attendee number(s): <strong>${data.attendeeNumbers.join(", ")}</strong>.</p>
-          <p>A ticket email has been sent. Payment status is <strong>${totalDue > 0 ? "pending manual confirmation" : "nothing owed to Danny through this form"}</strong>.</p>
+          <p>A ticket email has been sent. Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
           <p>Total to pay Danny now: <strong>${totalText}</strong>.</p>
           <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
         </div>
@@ -1419,4 +1440,5 @@ nav a.active::after{left:15px;right:15px;}
     });
 })();
 </script>
+<script src="visualiser2.js" defer></script>
 </html>

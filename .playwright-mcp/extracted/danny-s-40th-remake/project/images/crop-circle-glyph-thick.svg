@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    
+  </defs>
+
+  
+  <circle cx="400" cy="400" r="330"></circle>
+
+  
+  <circle cx="400" cy="140" r="28"></circle>
+  <circle cx="660" cy="400" r="28"></circle>
+  <circle cx="400" cy="660" r="28"></circle>
+  <circle cx="140" cy="400" r="28"></circle>
+  <circle cx="584" cy="216" r="28"></circle>
+  <circle cx="584" cy="584" r="28"></circle>
+  <circle cx="216" cy="584" r="28"></circle>
+  <circle cx="216" cy="216" r="28"></circle>
+
+  
+  <circle cx="400" cy="140" r="6" class="dot"></circle>
+  <circle cx="660" cy="400" r="6" class="dot"></circle>
+  <circle cx="400" cy="660" r="6" class="dot"></circle>
+  <circle cx="140" cy="400" r="6" class="dot"></circle>
+  <circle cx="584" cy="216" r="6" class="dot"></circle>
+  <circle cx="584" cy="584" r="6" class="dot"></circle>
+  <circle cx="216" cy="584" r="6" class="dot"></circle>
+  <circle cx="216" cy="216" r="6" class="dot"></circle>
+
+  
+  <line x1="400" y1="168" x2="400" y2="238"></line>
+  <line x1="632" y1="400" x2="562" y2="400"></line>
+  <line x1="400" y1="632" x2="400" y2="562"></line>
+  <line x1="168" y1="400" x2="238" y2="400"></line>
+  <line x1="564" y1="236" x2="562" y2="238"></line>
+  <line x1="564" y1="564" x2="562" y2="562"></line>
+  <line x1="236" y1="564" x2="238" y2="562"></line>
+  <line x1="236" y1="236" x2="238" y2="238"></line>
+
+  
+  <circle cx="400" cy="400" r="228"></circle>
+
+  
+  <polygon points="400,178 622,400 400,622 178,400"></polygon>
+
+  
+  <polygon points="238,238 562,238 562,562 238,562"></polygon>
+
+  
+  <circle cx="400" cy="400" r="130"></circle>
+
+  
+  <circle cx="400" cy="268" r="34"></circle>
+  <circle cx="532" cy="400" r="34"></circle>
+  <circle cx="400" cy="532" r="34"></circle>
+  <circle cx="268" cy="400" r="34"></circle>
+
+  
+  <circle cx="400" cy="268" r="6" class="dot"></circle>
+  <circle cx="532" cy="400" r="6" class="dot"></circle>
+  <circle cx="400" cy="532" r="6" class="dot"></circle>
+  <circle cx="268" cy="400" r="6" class="dot"></circle>
+
+  
+  <line x1="400" y1="268" x2="400" y2="532"></line>
+  <line x1="268" y1="400" x2="532" y2="400"></line>
+
+  
+  <circle cx="400" cy="400" r="52"></circle>
+
+  
+  <circle cx="400" cy="400" r="9" class="dot"></circle>
+
+</svg>
