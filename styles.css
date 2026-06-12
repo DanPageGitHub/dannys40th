@@ -1009,7 +1009,7 @@ strong.pale{color:var(--parchment);}
 .slot-title{font-family:'IM Fell English',serif;font-size:1.1rem;color:var(--parchment);margin-bottom:4px;}
 .slot-items{list-style:none;}
 .slot-items li{font-family:'Libre Baskerville',Georgia,serif;font-size:1.15rem;color:rgba(232,223,200,0.85);line-height:1.7;padding-left:22px;padding-top:7px;padding-bottom:7px;position:relative;}
-.slot-items li::before{position:absolute;left:-3px;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);content:'✦';}
+.slot-items > li::before{position:absolute;left:-3px;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);content:'✦';}
 .slot-note{font-family:'Libre Baskerville',Georgia,serif;font-size:0.95rem;font-style:italic;color:rgba(184,115,51,0.65);border-top:1px solid rgba(184,115,51,0.15);margin:0;padding:12px 24px 16px;}
 .slot p{font-family:'Libre Baskerville',Georgia,serif;font-size:1.15rem;color:rgba(232,223,200,0.85);line-height:1.7;margin:0;}
 
