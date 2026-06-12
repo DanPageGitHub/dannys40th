@@ -407,7 +407,7 @@ nav a.active::after{left:15px;right:15px;}
 <a href="index.html#costs">Stay</a>
 <a href="index.html#getting-there">Travel</a>
 <a href="index.html#faq">FAQ</a>
-<a href="Tickets.html">Tickets</a>
+<!-- RSVP removed from nav -->
 </div>
 </nav>
 
@@ -1446,9 +1446,15 @@ nav a.active::after{left:15px;right:15px;}
     attachListeners();
     updateAll();
     loadSummary().catch(() => {
-      els.raisedSoFar.textContent = "Could not load";
-      els.eventTarget.textContent = "£1,500";
-      if (els.fundOf) els.fundOf.hidden = false;
+      // Defensive fallback: show £0 if the API can't be reached, keep UI usable
+      try {
+        if (els.raisedSoFar) els.raisedSoFar.textContent = wholePounds(0);
+        if (els.eventTarget) els.eventTarget.textContent = wholePounds(1500);
+        if (els.fundOf) els.fundOf.hidden = false;
+      } catch (e) {
+        // swallow any errors updating the fallback UI
+        console.error('Fund summary fallback failed', e);
+      }
     });
 })();
 </script>

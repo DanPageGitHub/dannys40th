@@ -147,7 +147,7 @@ nav a{
 nav a::after{content:'';position:absolute;bottom:8px;left:50%;right:50%;height:1px;background:var(--teal-l);transition:left 0.25s,right 0.25s;}
 nav a:hover{color:var(--gold-l);}
 nav a:hover::after{left:15px;right:15px;}
-nav a[href*="forms.gle"],nav a[href="#rsvp"],nav a[href$="Tickets.html"]{-webkit-text-stroke:0.5px var(--gold);paint-order:stroke fill;}
+nav a[href*="forms.gle"],nav a[href$="Tickets.html"]{-webkit-text-stroke:0.5px var(--gold);paint-order:stroke fill;}
 
 /* HERO */
 #hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:var(--hero-pad-top) var(--hero-pad-sides) var(--hero-pad-bottom);z-index:15;overflow:hidden;}
