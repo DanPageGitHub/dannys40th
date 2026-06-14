@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Danny's 40th - Costumes &amp; What to Wear</title>
+<meta name="description" content="What to wear for Danny's 40th: Saturday is costume day. Dress in something shiny or as one of the what3words near The Barge Inn." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" rel="stylesheet" />
+<link href="styles.css" rel="stylesheet" />
+<style>
+/* ============================================================
+   COSTUMES PAGE — same manuscript system as the Tickets page
+   ============================================================ */
+
+#bgCanvas{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Page header */
+.tk-head{
+  position:relative;z-index:15;
+  text-align:center;
+  padding:clamp(16px,2vw,28px) var(--space-sw) clamp(18px,2.4vw,32px);
+  max-width:1000px;margin:0 auto;
+}
+.rune-band--top{margin-top:calc(var(--nav-h,62px) + 14px);}
+.tk-head::before{
+  content:'';position:absolute;left:50%;top:-6%;transform:translateX(-50%);
+  width:135%;height:150%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 52% 62% at 50% 34%, rgba(46,123,122,0.16) 0%, transparent 68%),
+    radial-gradient(ellipse 70% 80% at 50% 30%, rgba(184,115,51,0.10) 0%, transparent 72%);
+}
+.tk-title{
+  font-family:'IM Fell English',serif;font-weight:400;line-height:1.0;
+  font-size:clamp(2.6rem,7vw,5.2rem);
+  color:var(--parchment);
+  text-shadow:0 0 60px rgba(200,169,110,0.3),0 2px 4px rgba(0,0,0,0.8);
+  margin-bottom:0;
+}
+.tk-sub{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:clamp(1.15rem,2.8vw,1.9rem);
+  color:var(--copper-l);letter-spacing:0.03em;
+  text-shadow:0 0 30px rgba(184,115,51,0.4);
+  margin:8px auto 0;max-width:32ch;
+  text-wrap:balance;
+}
+
+/* Content shell (shares the booking-main vocabulary) */
+.booking-main{
+  position:relative;z-index:15;
+  max-width:1000px;margin:0 auto clamp(60px,10vw,110px);
+  padding:0 var(--space-sw);
+}
+.booking-main h2{
+  font-family:'IM Fell English',serif;font-weight:400;
+  font-size:clamp(1.7rem,3.2vw,2.4rem);
+  color:var(--parchment);margin-bottom:18px;line-height:1.15;
+}
+.booking-main h3{
+  font-family:'IM Fell English',serif;font-weight:400;
+  font-size:clamp(1.25rem,2.2vw,1.6rem);
+  color:var(--gold-l);margin:22px 0 12px;
+}
+.booking-main p{
+  font-family:'Libre Baskerville',Georgia,serif;
+  font-size:1.05rem;line-height:1.8;
+  color:rgba(232,223,200,0.86);margin-bottom:14px;
+  text-wrap:pretty;
+}
+.booking-main p:last-child{margin-bottom:0;}
+.booking-main .warning{color:var(--gold-l);font-weight:700;}
+
+/* Manuscript accent box */
+.booking-main .important-note{
+  background:rgba(18,12,6,0.85);
+  border:1px solid rgba(184,115,51,0.4);
+  border-left:3px solid var(--copper);
+  border-radius:3px;padding:clamp(20px,3vw,34px);margin:26px 0;
+  position:relative;
+}
+.booking-main a.inline{color:var(--copper-l);text-decoration:none;border-bottom:1px solid rgba(212,149,74,0.3);}
+.booking-main a.inline:hover{border-bottom-color:var(--copper-l);}
+
+/* what3words costume grid — intrinsic responsive: auto-fill reflows
+   1->4 columns by available width, no breakpoints, stays short vertically */
+.w3w-grid{
+  list-style:none;margin:18px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,232px),1fr));
+  gap:10px clamp(16px,2.4vw,26px);
+}
+.w3w-grid li{margin:0;}
+.w3w-grid a{
+  display:inline-block;
+  font-family:'Libre Baskerville',Georgia,serif;font-size:0.98rem;
+  color:var(--copper-l);text-decoration:none;
+  border-bottom:1px solid rgba(212,149,74,0.28);
+  padding:3px 0;transition:color .2s,border-color .2s;
+}
+.w3w-grid a::before{content:'\2726';color:var(--gold-l);opacity:0;margin-right:6px;transition:opacity .2s;}
+.w3w-grid a:hover{color:var(--gold-l);border-bottom-color:var(--gold-l);}
+.w3w-grid a:hover::before{opacity:1;}
+
+/* Nav active state for this page */
+nav a.active{color:var(--gold-l);}
+nav a.active::after{left:15px;right:15px;}
+
+/* Back-to-site link */
+.tk-backlink{
+  display:block;text-align:center;position:relative;z-index:15;
+  font-family:'IM Fell English',serif;font-style:italic;
+  color:var(--copper-l);text-decoration:none;font-size:1.1rem;
+  padding:0 var(--space-sw) clamp(40px,8vw,80px);
+}
+.tk-backlink:hover{color:var(--gold-l);}
+</style>
+</head>
+<body class="fonts-loading">
+<script>
+(function(){
+  function show(){ document.body.classList.remove('fonts-loading'); }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(show);
+    setTimeout(show, 3500);
+  } else { show(); }
+})();
+</script>
+
+<canvas id="bgCanvas"></canvas>
+<div class="pagan-bg" aria-hidden="true">
+<svg class="pagan-svg pagan-svg--3" viewBox="0 0 100 100" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="50" cy="50" r="45"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(0 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(120 50 50)"/></svg>
+<svg class="pagan-svg pagan-svg--r1" viewBox="0 0 52 52" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="26" cy="26" r="22"/><circle cx="26" cy="26" r="13"/><circle cx="26" cy="26" r="5"/><line x1="26" y1="4" x2="26" y2="48"/><line x1="4" y1="26" x2="48" y2="26"/><line x1="10" y1="10" x2="42" y2="42"/><line x1="42" y1="10" x2="10" y2="42"/></svg>
+<svg class="pagan-svg pagan-svg--r3" viewBox="0 0 44 44" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="22" cy="22" r="18"/><line x1="22" y1="4" x2="22" y2="40"/><line x1="4" y1="22" x2="40" y2="22"/><circle cx="22" cy="22" r="4"/></svg>
+<svg class="pagan-svg pagan-svg--r4" viewBox="0 0 46 46" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="23" cy="23" r="19"/><path d="M23 4 C28 4 38 13 38 23 C38 33 28 42 23 42"/><path d="M23 4 C18 4 8 13 8 23 C8 33 18 42 23 42" stroke-dasharray="3 2"/><circle cx="23" cy="23" r="3"/></svg>
+<img class="pagan-wheel pagan-wheel--l" src="images/wheel_exact.svg" alt="">
+<img class="pagan-wheel pagan-wheel--r" src="images/wheel_exact.svg" alt="">
+<img class="pagan-svg pagan-svg--h2" src="images/hexafoil2.svg" alt="">
+</div>
+<img id="boatAnim" src="images/BoatCutOut.png" alt="" aria-hidden="true" decoding="async">
+<div class="vignette"></div>
+
+<nav>
+<div class="nav-inner">
+<a href="index.html">Home</a>
+<a href="index.html#venue">Venue</a>
+<a href="index.html#involve">Pitch In</a>
+<a href="index.html#schedule">The Plan</a>
+<a href="Tickets.html">Tickets</a>
+<a href="Costumes.html" class="active">Costumes</a>
+<a href="index.html#costs">Stay</a>
+<a href="index.html#getting-there">Travel</a>
+<a href="index.html#faq">FAQ</a>
+</div>
+</nav>
+
+<div class="rune-band rune-band--top">
+<div class="rune-track"><div class="rune-scroll" id="runeScrollBelow"></div></div>
+</div>
+
+<header class="tk-head" data-screen-label="Costumes header">
+<h1 class="tk-title">Costumes</h1>
+<p class="tk-sub">What to wear on Saturday</p>
+</header>
+
+<main class="booking-main">
+
+    <section class="important-note" aria-labelledby="what-to-wear-title">
+      <h2 id="what-to-wear-title">What to wear</h2>
+      <p>Saturday is costume day. Please come dressed in either:</p>
+      <p><strong class="warning">Something shiny</strong>, or<br>
+         <strong class="warning">one of the what3words from near the venue.</strong></p>
+      <p>The what3words costume list is below if you want a stupid prompt to work from.</p>
+    </section>
+
+    <section id="what3words-costumes" class="important-note" aria-labelledby="w3w-costumes-title">
+      <h2 id="w3w-costumes-title">Pick a what3words costume</h2>
+      <p>Dress as one of these what3words from near the venue. Tap one to see what you’re working with.</p>
+      <ul class="w3w-grid">
+        <li><a href="https://what3words.com/prawn.boats.commutes" target="_blank" rel="noopener">///prawn.boats.commutes</a></li>
+        <li><a href="https://what3words.com/laminated.living.party" target="_blank" rel="noopener">///laminated.living.party</a></li>
+        <li><a href="https://what3words.com/diamond.polygraph.curtains" target="_blank" rel="noopener">///diamond.polygraph.curtains</a></li>
+        <li><a href="https://what3words.com/lizard.splashes.webcams" target="_blank" rel="noopener">///lizard.splashes.webcams</a></li>
+        <li><a href="https://what3words.com/muffin.hats.pacifist" target="_blank" rel="noopener">///muffin.hats.pacifist</a></li>
+        <li><a href="https://what3words.com/sardine.daydreams.village" target="_blank" rel="noopener">///sardine.daydreams.village</a></li>
+        <li><a href="https://what3words.com/strongman.accented.banquets" target="_blank" rel="noopener">///strongman.accented.banquets</a></li>
+        <li><a href="https://what3words.com/absent.purple.horn" target="_blank" rel="noopener">///absent.purple.horn</a></li>
+        <li><a href="https://what3words.com/trapdoor.passport.sideburns" target="_blank" rel="noopener">///trapdoor.passport.sideburns</a></li>
+        <li><a href="https://what3words.com/jukebox.intruding.enormous" target="_blank" rel="noopener">///jukebox.intruding.enormous</a></li>
+        <li><a href="https://what3words.com/partied.fillings.unstable" target="_blank" rel="noopener">///partied.fillings.unstable</a></li>
+        <li><a href="https://what3words.com/popping.sleepless.warbler" target="_blank" rel="noopener">///popping.sleepless.warbler</a></li>
+        <li><a href="https://what3words.com/intensely.sounds.worm" target="_blank" rel="noopener">///intensely.sounds.worm</a></li>
+        <li><a href="https://what3words.com/pocket.constrain.cello" target="_blank" rel="noopener">///pocket.constrain.cello</a></li>
+        <li><a href="https://what3words.com/positive.blurred.expansion" target="_blank" rel="noopener">///positive.blurred.expansion</a></li>
+        <li><a href="https://what3words.com/shorthand.urban.beards" target="_blank" rel="noopener">///shorthand.urban.beards</a></li>
+        <li><a href="https://what3words.com/torso.cliff.eyebrows" target="_blank" rel="noopener">///torso.cliff.eyebrows</a></li>
+        <li><a href="https://what3words.com/clouds.venturing.bathtubs" target="_blank" rel="noopener">///clouds.venturing.bathtubs</a></li>
+        <li><a href="https://what3words.com/redefined.jazz.tiptoes" target="_blank" rel="noopener">///redefined.jazz.tiptoes</a></li>
+        <li><a href="https://what3words.com/wreck.shower.turntable" target="_blank" rel="noopener">///wreck.shower.turntable</a></li>
+        <li><a href="https://what3words.com/whizzed.goodnight.vibrating" target="_blank" rel="noopener">///whizzed.goodnight.vibrating</a></li>
+        <li><a href="https://what3words.com/condiment.quilt.started" target="_blank" rel="noopener">///condiment.quilt.started</a></li>
+        <li><a href="https://what3words.com/reporters.equipping.beauty" target="_blank" rel="noopener">///reporters.equipping.beauty</a></li>
+        <li><a href="https://what3words.com/yummy.flotation.jeep" target="_blank" rel="noopener">///yummy.flotation.jeep</a></li>
+        <li><a href="https://what3words.com/corkscrew.trample.serenade" target="_blank" rel="noopener">///corkscrew.trample.serenade</a></li>
+      </ul>
+    </section>
+
+</main>
+
+<div class="rune-band rune-band--desktop-footer">
+<div class="rune-track"><div class="rune-scroll" id="runeScrollDesktopFooter"></div></div>
+</div>
+<div class="rune-band rune-band--mobile-footer">
+<div class="rune-track"><div class="rune-scroll" id="runeScrollMobileFooter"></div></div>
+</div>
+
+<a class="tk-backlink" href="Tickets.html">&#10022;&nbsp; Back to tickets &nbsp;&#9789;</a>
+
+<footer>
+<span class="orn">&#10022;</span>Danny's 40th &middot; The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24&ndash;27 July 2026<span class="orn">&#9789;</span>
+</footer>
+
+<script src="script.js" defer></script>
+<script>
+(function(){
+  var nav=document.querySelector('nav');
+  function setNavH(){ if(nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px'); }
+  setNavH();
+  window.addEventListener('resize', setNavH);
+  window.addEventListener('load', setNavH);
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(setNavH); }
+})();
+</script>
+</body>
+</html>
