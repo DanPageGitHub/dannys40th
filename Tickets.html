@@ -1112,6 +1112,7 @@ nav a.active::after{left:15px;right:15px;}
       let html = "";
       function card(type, i, label, ageBand) {
         const safeId = `${type}_${i}`;
+        const askName = type === "adult";
         const firstValue = existingValues[`attendeeFirstName_${safeId}`] || "";
         const lastValue = existingValues[`attendeeLastName_${safeId}`] || "";
         const nickValue = existingValues[`attendeeNickname_${safeId}`] || "";
@@ -1119,11 +1120,8 @@ nav a.active::after{left:15px;right:15px;}
         const firstEdited = existingValues[`attendeeFirstName_${safeId}__edited`] || "";
         const lastEdited = existingValues[`attendeeLastName_${safeId}__edited`] || "";
         const nickEdited = existingValues[`attendeeNickname_${safeId}__edited`] || "";
-        html += `
-          <div class="attendee-card" data-attendee-type="${type}" data-attendee-index="${i}">
-            <h3>${label}</h3>
-            <input type="hidden" data-attendee-field="type" value="${type}">
-            <input type="hidden" data-attendee-field="ageBand" value="${ageBand}">
+        const nameFields = askName
+          ? `
             <label>
               First name <span class="required-star">*</span>
               <input id="attendeeFirstName_${safeId}" data-attendee-field="firstName" type="text" value="${escapeHtml(firstValue)}" data-user-edited="${escapeHtml(firstEdited)}" required>
@@ -1135,7 +1133,14 @@ nav a.active::after{left:15px;right:15px;}
             <label>
               Nickname
               <input id="attendeeNickname_${safeId}" data-attendee-field="nickname" type="text" value="${escapeHtml(nickValue)}" data-user-edited="${escapeHtml(nickEdited)}">
-            </label>
+            </label>`
+          : `<p class="muted">No name needed — just counted for headcount. Add any allergies below if relevant.</p>`;
+        html += `
+          <div class="attendee-card" data-attendee-type="${type}" data-attendee-index="${i}">
+            <h3>${label}</h3>
+            <input type="hidden" data-attendee-field="type" value="${type}">
+            <input type="hidden" data-attendee-field="ageBand" value="${ageBand}">
+            ${nameFields}
             <label>
               Allergies or dietary preferences
               <textarea id="attendeeDietary_${safeId}" data-attendee-field="dietary">${escapeHtml(dietaryValue)}</textarea>
@@ -1173,9 +1178,10 @@ nav a.active::after{left:15px;right:15px;}
       const cards = [...els.attendeesContainer.querySelectorAll(".attendee-card")];
       return cards.map((card, idx) => {
         const get = (field) => card.querySelector(`[data-attendee-field="${field}"]`);
-        const firstName = get("firstName").value.trim();
-        const lastName = get("lastName").value.trim();
-        const nickname = get("nickname").value.trim();
+        const getValue = (field) => { const el = get(field); return el ? el.value.trim() : ""; };
+        const firstName = getValue("firstName");
+        const lastName = getValue("lastName");
+        const nickname = getValue("nickname");
         return {
           attendeeIndex: idx + 1,
           attendeeType: get("type").value,
@@ -1316,6 +1322,7 @@ nav a.active::after{left:15px;right:15px;}
       if (maths.adults < 1) errors.push("At least one adult is required.");
 
       attendees.forEach((a, idx) => {
+        if (a.attendeeType !== "adult") return; // children/under-5s are logged by count only, no names asked
         const label = `${capitalize(a.attendeeType)} ${getTypeIndex(attendees, idx)}`;
         if (!a.firstName) errors.push(`${label} is missing a first name.`);
         if (!a.lastName) errors.push(`${label} is missing a last name.`);
@@ -1338,7 +1345,7 @@ nav a.active::after{left:15px;right:15px;}
       if (!Number.isFinite(maths.donationPerAdult) || maths.donationPerAdult < 0) errors.push("Ticket/event-fund donation must be £0 or more.");
       if (!els.trustConfirm.checked) errors.push("Tick the trust/payment confirmation.");
       if (!els.detailsConfirm.checked) errors.push("Tick the details confirmation.");
-      if (!els.manualPaymentConfirm.checked) errors.push("Tick the separate Starling payment confirmation.");
+      if (maths.totalPayableToDanny > 0 && !els.manualPaymentConfirm.checked) errors.push("Tick the separate Starling payment confirmation.");
       if (els.debugMode.checked && !ALLOW_DEBUG_SUBMIT) errors.push("Debug mode is on, so live submission is blocked.");
 
       els.validationMessage.textContent = errors[0] || "";

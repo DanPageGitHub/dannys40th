@@ -13,6 +13,8 @@ const SPREADSHEET_ID = "1gm092BqUFt9eI2Yy9whVMyGyXDzWTkNY4uoGoGl5SCU";
 const BOOKINGS_SHEET_NAME = "Bookings";
 const TALLY_SHEET_NAME = "Danny's 40th Summer Weekender - 24th - 27th July";
 const DASHBOARD_SHEET_NAME = "Dashboard";
+const DASHBOARD_TITLE = "Danny's 40th Dashboard (live)";
+const DASHBOARD_LAST_ROW = 2000;
 const FALLBACK_TALLY_SHEET_NAMES = [
   TALLY_SHEET_NAME,
   "Sheet1"
@@ -94,7 +96,7 @@ function doGet(e) {
   const action = String((e && e.parameter && e.parameter.action) || "summary");
 
   if (action === "summary") {
-    syncDashboardSheet();
+    ensureDashboardSetup();
     return json({
       donationRaised: getDonationRaised(),
       eventFundTarget: BREAK_EVEN_TARGET,
@@ -174,8 +176,6 @@ function doPost(e) {
     if (emailWarnings.length) {
       appendCellByHeader(sheet, rowNumber, "Notes", emailWarnings.join(" | "));
     }
-
-    syncDashboardSheet();
 
     return json({
       ok: true,
@@ -483,56 +483,76 @@ function getDonationRaised() {
   }, 0);
 }
 
-function syncDashboardSheet() {
+// Write the Dashboard once as live formulas that read straight from the Bookings
+// sheet. After this runs, Google Sheets keeps every figure up to date itself, so
+// the booking flow never writes numbers into the Dashboard again.
+function ensureDashboardSetup() {
+  const dashboardSheet = getDashboardSheet();
+  const a1 = String(dashboardSheet.getRange("A1").getValue() || "").trim();
+  if (a1 !== DASHBOARD_TITLE) setupDashboardSheet();
+}
+
+function setupDashboardSheet() {
   const bookingsSheet = getBookingsSheet();
   const dashboardSheet = getDashboardSheet();
-  const values = bookingsSheet.getDataRange().getValues();
+  const headers = getSheetHeaders(bookingsSheet);
 
-  let bookingsCount = 0;
-  let totalPeople = 0;
-  let donationRaised = 0;
-  let campingCommitted = 0;
-  let totalCommitted = 0;
-  let outstandingBalance = 0;
+  const sheetRef = "'" + BOOKINGS_SHEET_NAME + "'!";
 
-  if (values.length >= 2) {
-    const headers = values[0].map(h => String(h || "").trim());
-    const totalPeopleIndex = headers.indexOf("Total People");
-    const donationPaidIndex = headers.indexOf("Donation Paid");
-    const campingPaidIndex = headers.indexOf("Camping Paid");
-    const amountPaidTotalIndex = headers.indexOf("Amount Paid Total");
-    const balanceRemainingIndex = headers.indexOf("Balance Remaining");
-    const paymentStatusIndex = headers.indexOf("Payment Status");
-
-    values.slice(1).forEach(row => {
-      const status = paymentStatusIndex >= 0 ? String(row[paymentStatusIndex] || "").toLowerCase() : "";
-      if (status.includes("cancel") || status.includes("refund") || status.includes("void")) return;
-
-      bookingsCount++;
-      totalPeople += totalPeopleIndex >= 0 ? Number(row[totalPeopleIndex] || 0) : 0;
-      donationRaised += donationPaidIndex >= 0 ? Number(row[donationPaidIndex] || 0) : 0;
-      campingCommitted += campingPaidIndex >= 0 ? Number(row[campingPaidIndex] || 0) : 0;
-      totalCommitted += amountPaidTotalIndex >= 0 ? Number(row[amountPaidTotalIndex] || 0) : 0;
-      outstandingBalance += balanceRemainingIndex >= 0 ? Number(row[balanceRemainingIndex] || 0) : 0;
-    });
+  function colRange(header) {
+    const index = headers.indexOf(header);
+    if (index === -1) return null;
+    const letter = columnToLetter(index + 1);
+    return sheetRef + letter + 2 + ":" + letter + DASHBOARD_LAST_ROW;
   }
 
+  // Factor that zeroes out rows whose Payment Status mentions cancel/refund/void.
+  const statusRange = colRange("Payment Status");
+  const exclusion = statusRange
+    ? '*(ISNUMBER(SEARCH("cancel",' + statusRange + '))=FALSE)' +
+      '*(ISNUMBER(SEARCH("refund",' + statusRange + '))=FALSE)' +
+      '*(ISNUMBER(SEARCH("void",' + statusRange + '))=FALSE)'
+    : '';
+
+  function sumFormula(header) {
+    const range = colRange(header);
+    if (!range) return 0;
+    return '=SUMPRODUCT(N(' + range + ')' + exclusion + ')';
+  }
+
+  const bookingIdRange = colRange("Booking ID");
+  const bookingsCountFormula = bookingIdRange
+    ? '=SUMPRODUCT((' + bookingIdRange + '<>"")' + exclusion + ')'
+    : 0;
+
   const rows = [
-    ["Danny's 40th Dashboard", ""],
-    ["Updated At", new Date().toISOString()],
-    ["Bookings Count", bookingsCount],
-    ["Total People", totalPeople],
-    ["Donation Raised", donationRaised],
-    ["Camping Committed", campingCommitted],
-    ["Total Committed To Danny", totalCommitted],
-    ["Outstanding Balance", outstandingBalance],
+    [DASHBOARD_TITLE, ""],
+    ["Bookings Count", bookingsCountFormula],
+    ["Total People", sumFormula("Total People")],
+    ["Donation Raised", sumFormula("Donation Paid")],
+    ["Camping Committed", sumFormula("Camping Paid")],
+    ["Total Committed To Danny", sumFormula("Amount Paid Total")],
+    ["Outstanding Balance", sumFormula("Balance Remaining")],
     ["Event Fund Target", BREAK_EVEN_TARGET],
-    ["Remaining To Target", Math.max(0, BREAK_EVEN_TARGET - donationRaised)]
+    ["Remaining To Target", "=MAX(0,B8-B4)"]
   ];
 
   dashboardSheet.clear();
   dashboardSheet.getRange(1, 1, rows.length, 2).setValues(rows);
   dashboardSheet.setFrozenRows(1);
+  dashboardSheet.getRange("A11").setValue(
+    "Live — recalculates automatically from the Bookings sheet. Re-run setupDashboardSheet() only if Bookings columns are added or reordered."
+  );
+}
+
+function columnToLetter(column) {
+  let letter = "";
+  while (column > 0) {
+    const remainder = (column - 1) % 26;
+    letter = String.fromCharCode(remainder + 65) + letter;
+    column = Math.floor((column - remainder - 1) / 26);
+  }
+  return letter;
 }
 
 function getNextAttendeeNumbers(sheet, totalPeople) {
