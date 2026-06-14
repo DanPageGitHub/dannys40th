@@ -398,6 +398,8 @@ nav a.active::after{left:15px;right:15px;}
 .nc-list li::before{content:'\2726';position:absolute;left:0;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);}
 /* Lineup reads small because IM Fell English has a low x-height; bump it to match body copy */
 .booking-main .lineup-item{font-size:1.3rem;}
+/* Arrival map: show the whole image, manuscript-toned */
+.booking-main .weekend-map{display:block;width:100%;height:auto;margin:0 0 16px;border-radius:3px;border:1px solid rgba(184,115,51,0.25);filter:saturate(0.72) sepia(0.18) brightness(0.92);}
 </style>
 </head>
 <body class="fonts-loading">
@@ -467,6 +469,14 @@ nav a.active::after{left:15px;right:15px;}
 
     <section class="important-note" aria-labelledby="weekend-plan-title">
       <h2 id="weekend-plan-title">Weekend plan</h2>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Arrival</h3>
+        <img class="weekend-map" src="images/CampingMap.jpg" alt="Campsite map showing the check-in hut, the Naughty Corner and Family Camping">
+        <p>Check in at the check-in hut / site office when you arrive and they’ll point you in the right direction.</p>
+        <p>If you don’t mind a load of noise, camp in The Naughty Corner, but don’t complain if we keep you up.</p>
+        <p>Everyone else: head for Family Camping, or choose your own adventure and camp somewhere else that feels right.</p>
+      </article>
 
       <article class="weekend-day">
         <h3 class="weekend-day-title">Friday night</h3>
