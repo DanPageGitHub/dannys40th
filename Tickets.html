@@ -553,6 +553,78 @@ nav a.active::after{left:15px;right:15px;}
 
     <form id="ticketForm" novalidate>
       <fieldset>
+        <legend>Staying over</legend>
+
+        <p>
+          <strong>Campers:</strong> If you’re camping in your own tent you can book here and I’ll forward on your details
+          and the cash straight to the Barge Inn, or you can choose to pay later directly to the campsite.
+        </p>
+
+        <p>
+          <strong>Glamping:</strong> If you’d like to go for glamping, please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book that directly with the Barge Inn Honey Street</a>,
+          as this form doesn’t reserve those spots. Limited spots are available so book quickly if you wanna live it up in style.
+        </p>
+
+        <p>
+          <strong>Vans:</strong> If you’re bringing a van, campervan, or motorhome, and if you need an electric hookup,
+          please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book directly with the venue</a>. Those spaces are limited, so book quickly.
+        </p>
+
+        <p>
+          Please still fill out this form either way, even if you’ve already booked or paid the venue,
+          so I know who’s coming and when people are staying.
+        </p>
+
+        <label>
+          Accommodation type <span class="required-star">*</span>
+          <select id="accommodationType" name="accommodationType" required>
+            <option value="">Choose one</option>
+            <option value="tent">Tent camping</option>
+            <option value="glamping">Glamping (I will book direct with the venue)</option>
+            <option value="van">Van / campervan / motorhome (I will book direct with the venue)</option>
+            <option value="not_staying">Not staying overnight</option>
+            <option value="not_sure">Not sure yet</option>
+          </select>
+        </label>
+
+        <div id="tentCampingPaymentSection">
+          <h3>Tent camping payment</h3>
+
+          <p>
+            Tent camping is calculated separately from the ticket/event-fund donation:
+            <strong>£15 per adult per night</strong>,
+            <strong>£7.50 per child aged 5+ per night</strong>,
+            and <strong>free for under-5s</strong>.
+          </p>
+
+          <label>
+            How do you want to handle tent camping payment? <span class="required-star">*</span>
+            <select id="tentCampingPaymentRoute">
+              <option value="">Choose one</option>
+              <option value="pay_through_danny">Pay camping through this form (Danny will forward it to the venue)</option>
+              <option value="pay_venue_before">I'll pay the venue directly before the event</option>
+              <option value="pay_venue_arrival">I'll pay the venue directly when I arrive</option>
+              <option value="already_paid_venue">I've already paid the venue for camping</option>
+              <option value="decide_later">I'll decide later</option>
+            </select>
+          </label>
+
+          <p class="muted">
+            If you choose to pay tent camping through this form, I’ll collect that camping money and send it on to the venue.
+            If you’d rather pay the venue yourself, that’s fine too — I’ll still use your answers here for the group headcount.
+          </p>
+        </div>
+
+        <div id="venueDirectConfirmWrap" hidden>
+          <label>
+            <input id="venueDirectConfirm" type="checkbox">
+            I understand this form does not book my glamping, van, campervan, motorhome or electric hookup. I need to book those directly with the venue.
+            <span class="required-star">*</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
         <legend>Lead booker details</legend>
 
         <label>
@@ -642,90 +714,11 @@ nav a.active::after{left:15px;right:15px;}
           Under-5s <span class="required-star">*</span>
           <input id="under5Count" name="under5Count" type="number" min="0" step="1" value="0" required>
         </label>
-
-        <p class="muted">
-          After you set the numbers, this form creates separate name fields for every person. Adult 1 is filled from the lead booker details automatically.
-        </p>
       </fieldset>
 
       <fieldset>
         <legend>Attendee details</legend>
-        <p class="muted">
-          Add everyone who’s coming, one set of details per person. Adult 1 fills in from the lead booker automatically.
-        </p>
         <div id="attendeesContainer"></div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Staying over</legend>
-
-        <p>
-          <strong>Campers:</strong> If you’re camping in your own tent you can book here and I’ll forward on your details
-          and the cash straight to the Barge Inn, or you can choose to pay later directly to the campsite.
-        </p>
-
-        <p>
-          <strong>Glamping:</strong> If you’d like to go for glamping, please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book that directly with the Barge Inn Honey Street</a>,
-          as this form doesn’t reserve those spots. Limited spots are available so book quickly if you wanna live it up in style.
-        </p>
-
-        <p>
-          <strong>Vans:</strong> If you’re bringing a van, campervan, or motorhome, and if you need an electric hookup,
-          please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book directly with the venue</a>. Those spaces are limited, so book quickly.
-        </p>
-
-        <p>
-          Please still fill out this form either way, even if you’ve already booked or paid the venue,
-          so I know who’s coming and when people are staying.
-        </p>
-
-        <label>
-          Accommodation type <span class="required-star">*</span>
-          <select id="accommodationType" name="accommodationType" required>
-            <option value="">Choose one</option>
-            <option value="tent">Tent camping</option>
-            <option value="glamping">Glamping (I will book direct with the venue)</option>
-            <option value="van">Van / campervan / motorhome (I will book direct with the venue)</option>
-            <option value="not_staying">Not staying overnight</option>
-            <option value="not_sure">Not sure yet</option>
-          </select>
-        </label>
-
-        <div id="tentCampingPaymentSection">
-          <h3>Tent camping payment</h3>
-
-          <p>
-            Tent camping is calculated separately from the ticket/event-fund donation:
-            <strong>£15 per adult per night</strong>,
-            <strong>£7.50 per child aged 5+ per night</strong>,
-            and <strong>free for under-5s</strong>.
-          </p>
-
-          <label>
-            How do you want to handle tent camping payment? <span class="required-star">*</span>
-            <select id="tentCampingPaymentRoute">
-              <option value="">Choose one</option>
-              <option value="pay_through_danny">Pay camping through this form (Danny will forward it to the venue)</option>
-              <option value="pay_venue_before">I'll pay the venue directly before the event</option>
-              <option value="pay_venue_arrival">I'll pay the venue directly when I arrive</option>
-              <option value="already_paid_venue">I've already paid the venue for camping</option>
-              <option value="decide_later">I'll decide later</option>
-            </select>
-          </label>
-
-          <p class="muted">
-            If you choose to pay tent camping through this form, I’ll collect that camping money and send it on to the venue.
-            If you’d rather pay the venue yourself, that’s fine too — I’ll still use your answers here for the group headcount.
-          </p>
-        </div>
-
-        <div id="venueDirectConfirmWrap" hidden>
-          <label>
-            <input id="venueDirectConfirm" type="checkbox">
-            I understand this form does not book my glamping, van, campervan, motorhome or electric hookup. I need to book those directly with the venue.
-            <span class="required-star">*</span>
-          </label>
-        </div>
       </fieldset>
 
       <fieldset>
@@ -823,9 +816,6 @@ nav a.active::after{left:15px;right:15px;}
             You’ll be taken to Starling to pay the total shown above. Please pay that amount so it can be
             matched against your booking reference.
           </p>
-          <p class="muted">
-            (In the rare case your total comes to £0, you’ll just be sent back to the main Danny’s 40th site instead.)
-          </p>
         </div>
       </section>
 
@@ -853,7 +843,7 @@ nav a.active::after{left:15px;right:15px;}
         <p id="validationMessage" class="error" aria-live="polite"></p>
       </fieldset>
 
-      <details id="debugDetails" class="debug-panel">
+      <details id="debugDetails" class="debug-panel" hidden>
         <summary>Debug mode / booking payload preview</summary>
         <p class="muted">
           Add <code>?debug=1</code> to the page URL to open this automatically. In debug mode, live submission is blocked unless
@@ -1476,6 +1466,7 @@ nav a.active::after{left:15px;right:15px;}
 
     const params = new URLSearchParams(location.search);
     if (params.get("debug") === "1") {
+      els.debugDetails.hidden = false;
       els.debugDetails.open = true;
       els.debugMode.checked = true;
     }
