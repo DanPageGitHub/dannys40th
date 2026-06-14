@@ -162,19 +162,18 @@
 
 /* Schedule with photo */
 .schedule-with-photo {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2rem;
-  align-items: stretch;
+  display: block;
   margin-top: 28px;
 }
 .schedule-with-photo__img {
-  width: 220px;
+  width: 100%;
+  height: 280px;
   min-height: 0;
   border-radius: 3px;
   border: 1px solid rgba(184,115,51,0.25);
   overflow: hidden;
   position: relative;
+  margin-bottom: 2rem;
 }
 .schedule-with-photo__img .col-photo--schedule {
   position: absolute;
@@ -406,7 +405,7 @@
 <p>Tickets and camping details are on the <a href="Tickets.html">Tickets page</a>. Suggested contribution is £20 per adult towards the event fund. Glamping, vans and electric hookups must be booked directly with The Barge Inn, or select the 'Pay camping through this form' option on the Tickets page and Danny will forward payments.</p>
 <div class="schedule-with-photo">
   <div class="schedule-with-photo__img">
-    <img src="images/whathappening.jpg" alt="" class="col-photo col-photo--schedule grain-overlay reveal">
+    <img src="images/ScheduleBanner.jpg" alt="" class="col-photo col-photo--schedule grain-overlay reveal">
   </div>
   <div class="schedule-dates">
 <div class="sdate fri reveal">
@@ -418,7 +417,10 @@
 <div class="slot-time">Evening</div>
 <ul class="slot-items">
 <li>Arrive whenever</li>
+<li>8pm: Bring a dish meal in the campsite</li>
 <li>Fire pit, tunes, hang out, chat shit</li>
+<li>Drinks in the pub and check out the clubnight with DJ Sidetrakka
+<p class="dj-bio">A firm Barge favourite, DJ Sidetrakka is an experienced UK-based DJ known for her energetic mixes of house and bass music. She has been mixing records since 1997, with a style rooted in early rave culture, and enjoys playing a variety of venues, from intimate gatherings to larger festivals and even boat parties. She is recognised for her ability to create &ldquo;choonable&rdquo; sets that bring a smile to the dance floor, seriously good humoured house music and all things 4/4.</p></li>
 </ul>
 </div>
 </div>
@@ -447,7 +449,7 @@
     <li class="lineup-item">THE PANGER</li>
     <li class="lineup-item">ALGORITHMIC</li>
     <li class="lineup-item">MYR</li>
-    <li class="lineup-item duo">GIZMODE &amp; BREAKWHORE</li>
+    <li class="lineup-item">GIZMODE &amp; BREAKWHORE</li>
     <li class="lineup-item">THE MIGHTY RICK</li>
     <li class="lineup-item">GOLGOT</li>
   </ul>
