@@ -510,7 +510,7 @@ nav a.active::after{left:15px;right:15px;}
 
     <section class="important-note" aria-labelledby="costumes-link-title">
       <h2 id="costumes-link-title">Costumes</h2>
-      <p>Saturday is costume day. There’s a what3words costume list to work from on the <a class="inline" href="Costumes.html">Costumes page</a>.</p>
+      <p>Saturday is costume day. Either dress shiny or...there’s a what3words costume list to work from on the <a class="inline" href="Costumes.html">Costumes page</a>.</p>
     </section>
 
     <section class="important-note" aria-labelledby="lifts-title">
@@ -524,7 +524,7 @@ nav a.active::after{left:15px;right:15px;}
 
       <article class="weekend-day">
         <h3 class="weekend-day-title">Arrival</h3>
-        <img class="weekend-map" src="images/CampingMap.jpg" alt="Campsite map showing the check-in hut, the Naughty Corner and Family Camping">
+        <img class="weekend-map" loading="lazy" decoding="async" src="images/CampingMap.jpg" alt="Campsite map showing the check-in hut, the Naughty Corner and Family Camping">
         <p>Check in at the check-in hut / site office when you arrive and they’ll point you in the right direction.</p>
         <p>If you don’t mind a load of noise, camp in The Naughty Corner, but don’t complain if we keep you up.</p>
         <p>Everyone else: head for Family Camping, or choose your own adventure and camp wherever you want.</p>
@@ -607,9 +607,6 @@ nav a.active::after{left:15px;right:15px;}
       </div>
       <progress id="breakEvenBar" class="hidden" value="0" max="1500" aria-hidden="true"></progress>
       <div class="fund-cap">
-        <p>
-          Only confirmed ticket/event-fund money counts toward this. Tent camping money is a separate venue pot.
-        </p>
         <p>
           The total spend is still a rough guess. Once the main event costs are covered, any extra event-fund money will go toward
           helper expenses, food and drink for the campsite, joint meals, or a shared bar tab for us.
@@ -1566,7 +1563,7 @@ nav a.active::after{left:15px;right:15px;}
           <div class="payment-box">
             <p><strong>Booking received.</strong></p>
             <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
-            <p>${ticketEmailText} Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
+            <p>${ticketEmailText}</p>
             <p class="payment-box-total">Total to pay Danny now: <strong>${totalText}</strong>.</p>
             ${warningHtml}
             <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>

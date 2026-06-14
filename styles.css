@@ -1191,7 +1191,7 @@ footer a:hover{color:var(--teal-l);}
 
   /* Hero — extra top padding so fixed nav doesn’t overlap when it wraps */
   #heroBg video{display:none;}
-  .hero-photo{background-image:url('images/BargeSepia.png');}
+  .hero-photo{background-image:url('images/BargeSepia.jpg');}
   #hero{padding:120px 18px 28px;min-height:auto;}
   .hero-sun{width:clamp(240px,75vmin,300px);height:clamp(240px,75vmin,300px);}
   .badge{margin-top:12px;margin-bottom:18px;font-size:1.85rem;padding:14px 32px;}
