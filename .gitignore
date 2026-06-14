@@ -10,6 +10,8 @@ package.json
 
 # Cursor / AI / editor (not needed for site)
 .cursor/
+.claude/
+.playwright-mcp/
 CLAUDE.md
 *.plan.md
 agent-transcripts/

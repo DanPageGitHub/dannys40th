@@ -475,7 +475,7 @@ nav a.active::after{left:15px;right:15px;}
         <img class="weekend-map" src="images/CampingMap.jpg" alt="Campsite map showing the check-in hut, the Naughty Corner and Family Camping">
         <p>Check in at the check-in hut / site office when you arrive and they’ll point you in the right direction.</p>
         <p>If you don’t mind a load of noise, camp in The Naughty Corner, but don’t complain if we keep you up.</p>
-        <p>Everyone else: head for Family Camping, or choose your own adventure and camp somewhere else that feels right.</p>
+        <p>Everyone else: head for Family Camping, or choose your own adventure and camp wherever you want.</p>
       </article>
 
       <article class="weekend-day">
@@ -1389,19 +1389,22 @@ nav a.active::after{left:15px;right:15px;}
         return;
       }
 
-      els.submitBtn.disabled = true;
-      els.submitStatus.textContent = "Submitting…";
+        els.submitBtn.disabled = true;
+        els.submitStatus.textContent = "Submitting…";
 
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(collectPayload())
-        });
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(collectPayload())
+          });
 
-        if (!response.ok) throw new Error('Network response was not ok');
+          if (!response.ok) {
+            const responseText = await response.text().catch(() => "");
+            throw new Error(`HTTP ${response.status}${responseText ? `: ${responseText}` : ""}`);
+          }
 
-        const data = await response.json();
+          const data = await response.json();
 
         if (!data.ok) {
           els.submitStatus.textContent = data.error || "Something went wrong.";
@@ -1415,13 +1418,23 @@ nav a.active::after{left:15px;right:15px;}
         const nextUrl = totalDue > 0 ? PAYMENT_URL : RETURN_URL;
         const nextLabel = totalDue > 0 ? "Starling payment page" : "Danny’s 40th site";
 
+        const warnings = Array.isArray(data.warnings) ? data.warnings.filter(Boolean) : [];
+        const ticketEmailFailed = warnings.some((warning) => String(warning).toLowerCase().includes("ticket email failed"));
+        const warningHtml = warnings.length
+          ? `<p class="warning">Booking saved, but there was a follow-up issue: ${warnings.join(" ")}</p>`
+          : "";
+        const ticketEmailText = ticketEmailFailed
+          ? "Your booking is saved, but the ticket email did not send automatically."
+          : "A ticket email has been sent.";
+
         els.submitStatus.innerHTML = `
           <div class="payment-box">
             <p><strong>Booking received.</strong></p>
             <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
             <p>Attendee number(s): <strong>${data.attendeeNumbers.join(", ")}</strong>.</p>
-            <p>A ticket email has been sent. Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
+            <p>${ticketEmailText} Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
             <p>Total to pay Danny now: <strong>${totalText}</strong>.</p>
+            ${warningHtml}
             <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
           </div>
         `;
@@ -1435,7 +1448,8 @@ nav a.active::after{left:15px;right:15px;}
         }
       } catch (err) {
         console.error('submitBooking failed', err);
-        els.submitStatus.textContent = "Submission failed - please try again.";
+        const message = err && err.message ? err.message : "Please try again.";
+        els.submitStatus.textContent = `Submission failed - ${message}`;
         els.submitBtn.disabled = false;
       }
     }

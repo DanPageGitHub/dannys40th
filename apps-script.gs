@@ -1,6 +1,9 @@
 /**
  * Danny's 40th ticket backend.
  *
+ * Consolidated version: booking, attendee, payment audit, and fallback RSVP data
+ * are all stored on the single Bookings sheet.
+ *
  * Deploy as a Google Apps Script Web App:
  * - Execute as: Me
  * - Who has access: Anyone
@@ -9,6 +12,10 @@
 const SPREADSHEET_ID = "1gm092BqUFt9eI2Yy9whVMyGyXDzWTkNY4uoGoGl5SCU";
 const BOOKINGS_SHEET_NAME = "Bookings";
 const TALLY_SHEET_NAME = "Danny's 40th Summer Weekender - 24th - 27th July";
+const FALLBACK_TALLY_SHEET_NAMES = [
+  TALLY_SHEET_NAME,
+  "Sheet1"
+];
 const PROTECTED_SHEET_NAMES = [
   TALLY_SHEET_NAME,
   "Budget",
@@ -100,6 +107,7 @@ function doGet(e) {
       email,
       tallyFound: Boolean(result.tallyFound),
       rowNumber: result.rowNumber || "",
+      sheetName: result.sheetName || "",
       name: result.name || ""
     });
   }
@@ -108,6 +116,7 @@ function doGet(e) {
 }
 
 function doPost(e) {
+  let lock = null;
   try {
     const payload = JSON.parse((e && e.postData && e.postData.contents) || "{}");
 
@@ -117,34 +126,68 @@ function doPost(e) {
     if (elapsed < 3000) return json({ ok: false, error: "Submission too fast." });
 
     const clean = validateAndCleanPayload(payload);
-    const sheet = getBookingsSheet();
     const bookingId = createBookingId();
-    const attendeeNumbers = getNextAttendeeNumbers(sheet, clean.totalPeople);
     const tallyResult = findTallyByEmail(clean.email);
 
+    lock = LockService.getScriptLock();
+    lock.waitLock(30000);
+
+    const sheet = getBookingsSheet();
+    const attendeeNumbers = getNextAttendeeNumbers(sheet, clean.totalPeople);
     const row = buildBookingRow(clean, bookingId, attendeeNumbers, tallyResult);
     appendRowObject(sheet, row);
 
     const rowNumber = sheet.getLastRow();
-    sendTicketEmail(clean, bookingId, attendeeNumbers);
-    setCellByHeader(sheet, rowNumber, "Ticket Emailed At", new Date().toISOString());
+    lock.releaseLock();
+    lock = null;
 
-    sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult);
-    setCellByHeader(sheet, rowNumber, "Danny Emailed At", new Date().toISOString());
+    const emailWarnings = [];
+
+    try {
+      sendTicketEmail(clean, bookingId, attendeeNumbers);
+      setCellByHeader(sheet, rowNumber, "Ticket Emailed At", new Date().toISOString());
+    } catch (ticketErr) {
+      emailWarnings.push("Ticket email failed: " + ticketErr.message);
+    }
+
+    try {
+      sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult);
+      setCellByHeader(sheet, rowNumber, "Danny Emailed At", new Date().toISOString());
+    } catch (adminErr) {
+      emailWarnings.push("Admin email failed: " + adminErr.message);
+    }
+
+    if (emailWarnings.length) {
+      appendCellByHeader(sheet, rowNumber, "Notes", emailWarnings.join(" | "));
+    }
 
     return json({
       ok: true,
       bookingId,
       attendeeNumbers,
       donationTotal: clean.donationTotal,
+      ticketDonationOwed: clean.donationTotal,
       campingTotal: clean.campingTotal,
+      tentCampingCost: clean.campingTotal,
       campingPayableToDanny: clean.campingPayableToDanny,
+      tentCampingPayableToDanny: clean.campingPayableToDanny,
       totalPayableToDanny: clean.totalPayableToDanny,
       grandTotal: clean.totalPayableToDanny,
-      tallyFound: Boolean(tallyResult.tallyFound)
+      paymentStatus: clean.paymentStatus,
+      tallyFound: Boolean(tallyResult.tallyFound),
+      tallyCreatedByBookingForm: false,
+      warnings: emailWarnings
     });
   } catch (err) {
     return json({ ok: false, error: err.message });
+  } finally {
+    if (lock) {
+      try {
+        lock.releaseLock();
+      } catch (releaseErr) {
+        // Ignore release errors if the lock has already gone away.
+      }
+    }
   }
 }
 
@@ -178,7 +221,7 @@ function validateAndCleanPayload(payload) {
   const leadFirstName = String(payload.leadFirstName || "").trim();
   const leadLastName = String(payload.leadLastName || "").trim();
   const leadNickname = String(payload.leadNickname || "").trim();
-  const name = String(payload.name || [leadFirstName, leadLastName].filter(Boolean).join(" ")).trim();
+  const name = String(payload.name || payload.leadName || [leadFirstName, leadLastName].filter(Boolean).join(" ")).trim();
   const email = normalizeEmail(payload.email || payload.leadEmail || "");
   const phone = String(payload.phone || payload.leadPhone || "").trim();
 
@@ -213,8 +256,8 @@ function validateAndCleanPayload(payload) {
     adultCampingTotal,
     childCampingTotal,
     campingTotal,
-    tentCampingPaymentRoute,
     campingPayableToDanny,
+    tentCampingPaymentRoute,
     totalPayableToDanny,
     paymentStatus: totalPayableToDanny > 0 ? "Assumed paid - check Starling" : "Nothing owed",
     paymentReference: "",
@@ -377,6 +420,16 @@ function setCellByHeader(sheet, rowNumber, header, value) {
   sheet.getRange(rowNumber, index + 1).setValue(value);
 }
 
+function appendCellByHeader(sheet, rowNumber, header, value) {
+  const headers = getSheetHeaders(sheet);
+  const index = headers.indexOf(header);
+  if (index === -1) return;
+
+  const range = sheet.getRange(rowNumber, index + 1);
+  const existing = String(range.getValue() || "").trim();
+  range.setValue(existing ? existing + " | " + value : value);
+}
+
 function getSheetHeaders(sheet) {
   return sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(v => String(v || "").trim());
 }
@@ -424,24 +477,39 @@ function getNextAttendeeNumbers(sheet, totalPeople) {
 
 function findTallyByEmail(email) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const tallySheet = ss.getSheetByName(TALLY_SHEET_NAME);
-  if (!tallySheet) return { tallyFound: false };
+  const candidateSheets = [];
 
-  const values = tallySheet.getDataRange().getValues();
-  if (values.length < 2) return { tallyFound: false };
+  FALLBACK_TALLY_SHEET_NAMES.forEach(name => {
+    const sheet = ss.getSheetByName(name);
+    if (sheet && candidateSheets.indexOf(sheet) === -1) {
+      candidateSheets.push(sheet);
+    }
+  });
 
-  const headers = values[0].map(h => String(h || "").trim().toLowerCase());
-  const emailCol = headers.findIndex(h => h === "email" || h.includes("email"));
-  const nameCol = headers.findIndex(h => h === "name" || h.includes("name"));
-  if (emailCol === -1) return { tallyFound: false };
+  const firstSheet = ss.getSheets()[0];
+  if (firstSheet && candidateSheets.indexOf(firstSheet) === -1) {
+    candidateSheets.push(firstSheet);
+  }
 
-  for (let i = 1; i < values.length; i++) {
-    if (normalizeEmail(values[i][emailCol]) === email) {
-      return {
-        tallyFound: true,
-        rowNumber: i + 1,
-        name: nameCol >= 0 ? String(values[i][nameCol] || "") : ""
-      };
+  for (let s = 0; s < candidateSheets.length; s++) {
+    const tallySheet = candidateSheets[s];
+    const values = tallySheet.getDataRange().getValues();
+    if (values.length < 2) continue;
+
+    const headers = values[0].map(h => String(h || "").trim().toLowerCase());
+    const emailCol = headers.findIndex(h => h === "email" || h.includes("email"));
+    const nameCol = headers.findIndex(h => h === "name" || h.includes("name"));
+    if (emailCol === -1) continue;
+
+    for (let i = 1; i < values.length; i++) {
+      if (normalizeEmail(values[i][emailCol]) === email) {
+        return {
+          tallyFound: true,
+          rowNumber: i + 1,
+          sheetName: tallySheet.getName(),
+          name: nameCol >= 0 ? String(values[i][nameCol] || "") : ""
+        };
+      }
     }
   }
 
