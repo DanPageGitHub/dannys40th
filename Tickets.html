@@ -27,6 +27,7 @@
 
 /* Page header */
 .tk-head{
+  display:block !important;visibility:visible !important;opacity:1 !important;
   position:relative;z-index:15;
   text-align:center;
   padding:clamp(16px,2vw,28px) var(--space-sw) clamp(18px,2.4vw,32px);
@@ -55,11 +56,36 @@
   white-space:nowrap;
 }
 .tk-title{
+  display:block !important;visibility:visible !important;opacity:1 !important;
   font-family:'IM Fell English',serif;font-weight:400;line-height:1.0;
   font-size:clamp(2.6rem,7vw,5.2rem);
   color:var(--parchment);
   text-shadow:0 0 60px rgba(200,169,110,0.3),0 2px 4px rgba(0,0,0,0.8);
   margin-bottom:0;
+}
+
+.tickets-page-title-wrap{
+  position:relative;z-index:15;
+  text-align:center;
+  padding:clamp(18px,5vw,34px) var(--space-sw) clamp(16px,4vw,28px);
+  max-width:1000px;margin:0 auto;
+  display:block !important;visibility:visible !important;opacity:1 !important;
+  height:auto !important;max-height:none !important;overflow:visible !important;
+  transform:none !important;clip:auto !important;clip-path:none !important;
+}
+.tickets-page-title{
+  font-family:'IM Fell English',serif;font-weight:400;line-height:1.0;
+  font-size:clamp(2.6rem,7vw,5.2rem);
+  color:var(--parchment);
+  text-shadow:0 0 60px rgba(200,169,110,0.3),0 2px 4px rgba(0,0,0,0.8);
+  margin:0;
+  display:block !important;visibility:visible !important;opacity:1 !important;
+}
+
+@media (max-width: 820px){
+  .tickets-page-title-wrap{
+    margin-top:calc(var(--nav-h,62px) + 18px) !important;
+  }
 }
 .tk-sub{
   font-family:'IM Fell English',serif;font-style:italic;
@@ -141,7 +167,13 @@
   transition:border-color .25s,box-shadow .25s,background .25s;
 }
 .booking-main textarea{min-height:92px;resize:vertical;}
-.booking-main select{max-width:100%;}
+.booking-main select{
+  max-width:100%;
+  background:rgba(214, 161, 90, 0.92);
+  color:#140d07;
+  border-color:rgba(184,115,51,0.78);
+  font-weight:700;
+}
 .booking-main input:focus,
 .booking-main select:focus,
 .booking-main textarea:focus{
@@ -152,7 +184,12 @@
 }
 .booking-main input::placeholder,
 .booking-main textarea::placeholder{color:rgba(168,152,128,0.6);}
-.booking-main select option{color:#0e0d0b;background:#e8dfc8;}
+.booking-main select option{color:#140d07;background:#d6a15a;}
+.booking-main select:invalid{color:#140d07;}
+.booking-main select:focus{
+  background:rgba(214, 161, 90, 0.96);
+  color:#140d07;
+}
 
 /* Checkboxes inline within their label */
 .booking-main input[type="checkbox"]{
@@ -195,6 +232,13 @@
   background:rgba(46,123,122,0.06);
   margin:24px 0 0;
 }
+.booking-main .payment-box-total strong{
+  display:inline-block;
+  font-size:clamp(2rem,4.6vw,3.2rem);
+  line-height:1;
+  color:var(--parchment);
+  text-shadow:0 0 18px rgba(227,201,138,0.28);
+}
 .booking-main .summary{
   background:rgba(14,13,11,0.88);
   border:1px solid rgba(184,115,51,0.24);
@@ -227,6 +271,13 @@
   background:rgba(184,115,51,0.05);
 }
 .booking-main .summary p strong{color:var(--gold-l);}
+.booking-main #summaryTotal{
+  display:inline-block;
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  line-height:1;
+  color:var(--parchment);
+  text-shadow:0 0 18px rgba(227,201,138,0.28);
+}
 
 /* Buttons */
 .booking-main button{
@@ -435,7 +486,7 @@ nav a.active::after{left:15px;right:15px;}
 <a href="Tickets.html" class="active">Tickets</a>
 <a href="Costumes.html">Costumes</a>
 <a href="index.html#getting-there">Travel</a>
-<a href="https://www.groupcarpool.com/t/ep26w5" target="_blank" rel="noopener">Lift Pool</a>
+<a href="https://d40-lift-pool.jimmybreeze.workers.dev" target="_blank" rel="noopener">Lift Pool</a>
 <a href="index.html#faq">FAQ</a>
 <!-- RSVP removed from nav -->
 </div>
@@ -445,14 +496,14 @@ nav a.active::after{left:15px;right:15px;}
 <div class="rune-track"><div class="rune-scroll" id="runeScrollBelow"></div></div>
 </div>
 
-<header class="tk-head" data-screen-label="Tickets header">
-<h1 class="tk-title">Tickets</h1>
-</header>
-
 <main class="booking-main">
 
+    <header class="tickets-page-title-wrap" data-screen-label="Tickets header">
+      <h1 class="tickets-page-title">Tickets</h1>
+    </header>
+
     <section class="important-note" aria-labelledby="before-title">
-      <h2 id="before-title">First things first</h2>
+      <h2 id="before-title">Important Note</h2>
       <p>Please fill this form in even if you’ve already paid the venue for accommodation, talked to Danny about staying, or filled in the RSVP. It’s needed for final headcount confirmation and payments.</p>
       <p class="warning">Glamping, vans, campervans, motorhomes and electric hookups must be booked directly with <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">The Barge Inn</a>.</p>
     </section>
@@ -464,7 +515,8 @@ nav a.active::after{left:15px;right:15px;}
 
     <section class="important-note" aria-labelledby="lifts-title">
       <h2 id="lifts-title">Lifts</h2>
-      <p>Need a lift or offering one? Sort it in the <a class="inline" href="https://www.groupcarpool.com/t/ep26w5" target="_blank" rel="noopener">lift pool</a>.</p>
+      <p>Need a lift or offering one? Sort it in the <a class="inline" href="https://d40-lift-pool.jimmybreeze.workers.dev" target="_blank" rel="noopener">lift pool</a>.</p>
+      <p class="muted">Ask Danny for the password if you need it.</p>
     </section>
 
     <section class="important-note" aria-labelledby="weekend-plan-title">
@@ -497,15 +549,15 @@ nav a.active::after{left:15px;right:15px;}
         <p>DJs in the barn. Current lineup:</p>
         <ul class="lineup-list" aria-label="Saturday lineup">
           <li class="lineup-item">Open Decks B2B2B</li>
+          <li class="lineup-item">Algorithmic</li>
           <li class="lineup-item">Anorak</li>
+          <li class="lineup-item">Gizmode &amp; Breakwhore</li>
+          <li class="lineup-item">Golgot</li>
+          <li class="lineup-item">Myr</li>
           <li class="lineup-item">Salander</li>
           <li class="lineup-item">S.Murk</li>
-          <li class="lineup-item">The Panger</li>
-          <li class="lineup-item">Algorithmic</li>
-          <li class="lineup-item">Myr</li>
-          <li class="lineup-item">Gizmode &amp; Breakwhore</li>
           <li class="lineup-item">The Mighty Rick</li>
-          <li class="lineup-item">Golgot</li>
+          <li class="lineup-item">The Panger</li>
         </ul>
         <p>And maybe a few more if we can squeeze them in. If you think you should be on the list, pester Danny.</p>
         <p>Expect lights, nonsense and quite a lot of strange machinery.</p>
@@ -569,18 +621,24 @@ nav a.active::after{left:15px;right:15px;}
       <fieldset>
         <legend>Staying over</legend>
 
+        <h3>Campers:</h3>
+
         <p>
-          <strong>Campers:</strong> If you’re camping in your own tent you can book here and I’ll forward on your details
+          If you’re camping in your own tent you can book here and I’ll forward on your details
           and the cash straight to the Barge Inn, or you can choose to pay later directly to the campsite.
         </p>
 
+        <h3>Glamping:</h3>
+
         <p>
-          <strong>Glamping:</strong> If you’d like to go for glamping, please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book that directly with the Barge Inn Honey Street</a>,
+          If you’d like to go for glamping, please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book that directly with the Barge Inn Honey Street</a>,
           as this form doesn’t reserve those spots. Limited spots are available so book quickly if you wanna live it up in style.
         </p>
 
+        <h3>Vans:</h3>
+
         <p>
-          <strong>Vans:</strong> If you’re bringing a van, campervan, or motorhome, and if you need an electric hookup,
+          If you’re bringing a van, campervan, or motorhome, and if you need an electric hookup,
           please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book directly with the venue</a>. Those spaces are limited, so book quickly.
         </p>
 
@@ -672,6 +730,7 @@ nav a.active::after{left:15px;right:15px;}
 
         <button type="button" id="checkTallyBtn">Check whether I've already filled out the RSVP/helper form</button>
         <p id="tallyStatus" class="muted" aria-live="polite"></p>
+        <p id="bookingStatus" class="muted" aria-live="polite"></p>
       </fieldset>
 
       <fieldset id="tallyFallbackSection" hidden>
@@ -709,6 +768,15 @@ nav a.active::after{left:15px;right:15px;}
         <label><input id="helpGeneral" type="checkbox"> General help over the weekend</label>
         <label><input id="helpCelebrate" type="checkbox"> I want to celebrate something there too</label>
         <label><input id="helpOther" type="checkbox"> Other</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Lifts</legend>
+        <label>
+          <input id="offerLifts" name="offerLifts" type="checkbox">
+          I'm driving and can offer lifts.
+        </label>
+        <p class="muted">If that's you, please add yourself on the <a class="inline" href="https://d40-lift-pool.jimmybreeze.workers.dev" target="_blank" rel="noopener">Lift Pool page</a>. Ask Danny for the password if you need it.</p>
       </fieldset>
 
       <fieldset>
@@ -906,13 +974,14 @@ nav a.active::after{left:15px;right:15px;}
 </script>
 <script>
 (function(){
-    const API_URL = "https://script.google.com/macros/s/AKfycbwdvSVha6oJlwBaJM_lre4yuQ9zmhaGljHjzJI7LQ5nKQaKMEEMb1BesJnNn2O96YRGFA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx65QjtcuJv0sj2j_cC9J2I_chyIio7e-QvjH-dyOOnvCzIps9e3Y0hbPY0eox3tuc4lA/exec";
     const PAYMENT_URL = "https://settleup.starlingbank.com/daniel-page-e74b5b";
     const RETURN_URL = "https://dannys40th.com";
     const ALLOW_DEBUG_SUBMIT = false;
     const FORM_LOAD_TIME = Date.now();
     const REDIRECT_TO_PAYMENT_AFTER_SUBMIT = true;
-    const PAYMENT_REDIRECT_DELAY_MS = 3500;
+    const PAYMENT_REDIRECT_DELAY_MS = 13500;
+    const FORM_DRAFT_KEY = "d40_ticket_form_draft_v1";
 
     const ADULT_CAMPING_PER_NIGHT = 15;
     const CHILD_CAMPING_PER_NIGHT = 7.5;
@@ -929,11 +998,11 @@ nav a.active::after{left:15px;right:15px;}
     }).format(Math.round(Number.isFinite(n) ? n : 0));
 
     const ids = [
-      "ticketForm", "leadFirstName", "leadLastName", "leadNickname", "leadEmail", "leadPhone", "checkTallyBtn", "tallyStatus",
+      "ticketForm", "leadFirstName", "leadLastName", "leadNickname", "leadEmail", "leadPhone", "checkTallyBtn", "tallyStatus", "bookingStatus",
       "tallyFallbackSection", "rsvpInvolved", "rsvpInvolvementText",
       "helpEventPlanning", "helpDj", "helpBand", "helpSolo", "helpJam", "helpDecor", "helpLighting",
       "helpBbq", "helpCinema", "helpGeneral", "helpCelebrate", "helpOther",
-      "adultCount", "childCount", "under5Count", "attendeesContainer",
+      "adultCount", "childCount", "under5Count", "attendeesContainer", "offerLifts",
       "accommodationType", "venueDirectConfirmWrap", "venueDirectConfirm",
       "fridayNight", "saturdayNight", "sundayNight", "extraNightsNote",
       "tentCampingPaymentSection", "tentCampingPaymentRoute", "donationPerAdult",
@@ -952,6 +1021,43 @@ nav a.active::after{left:15px;right:15px;}
     let tallyRowNumber = "";
     let previousTallyName = "";
     let lastTallyEmailChecked = "";
+    let bookingAlreadySubmitted = false;
+
+    function getPersistedFieldMap() {
+      const controls = Array.from(els.ticketForm.querySelectorAll("input, select, textarea"));
+      return controls.filter((el) => el.id && el.type !== "hidden" && el.type !== "submit");
+    }
+
+    function saveFormDraft() {
+      const draft = {};
+      getPersistedFieldMap().forEach((el) => {
+        draft[el.id] = el.type === "checkbox" ? el.checked : el.value;
+      });
+      localStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(draft));
+    }
+
+    function applyFormDraft(draft) {
+      getPersistedFieldMap().forEach((el) => {
+        if (!Object.prototype.hasOwnProperty.call(draft, el.id)) return;
+        if (el.type === "checkbox") el.checked = Boolean(draft[el.id]);
+        else el.value = String(draft[el.id] || "");
+      });
+    }
+
+    function restoreFormDraft() {
+      const raw = localStorage.getItem(FORM_DRAFT_KEY);
+      if (!raw) return false;
+      try {
+        const draft = JSON.parse(raw);
+        applyFormDraft(draft);
+        syncAttendeeFields();
+        applyFormDraft(draft);
+        return true;
+      } catch (err) {
+        localStorage.removeItem(FORM_DRAFT_KEY);
+        return false;
+      }
+    }
 
     function cleanInteger(value, minimum = 0) {
       return Math.max(minimum, parseInt(value || String(minimum), 10) || minimum);
@@ -1048,6 +1154,7 @@ nav a.active::after{left:15px;right:15px;}
           el.dataset.userEdited = "true";
           el.dataset.autoFromLead = "false";
           updateAll();
+          saveFormDraft();
         });
       });
 
@@ -1318,6 +1425,7 @@ nav a.active::after{left:15px;right:15px;}
       countUpMoney(els.raisedSoFar, raised, 1200);
     }
 
+
     async function loadSummary() {
       const response = await fetch(`${API_URL}?action=summary`);
       const data = await response.json();
@@ -1336,6 +1444,7 @@ nav a.active::after{left:15px;right:15px;}
       const email = els.leadEmail.value.trim().toLowerCase();
       if (!email || !els.leadEmail.validity.valid) {
         els.tallyStatus.textContent = "Enter a valid email first.";
+        els.bookingStatus.textContent = "";
         return;
       }
 
@@ -1345,14 +1454,20 @@ nav a.active::after{left:15px;right:15px;}
       }
 
       els.tallyStatus.textContent = "Checking previous RSVP/helper form…";
-      const response = await fetch(`${API_URL}?action=checkTally&email=${encodeURIComponent(email)}`);
+      els.bookingStatus.textContent = "Checking existing booking…";
+      const [response, bookingResponse] = await Promise.all([
+        fetch(`${API_URL}?action=checkTally&email=${encodeURIComponent(email)}`),
+        fetch(`${API_URL}?action=checkBooking&email=${encodeURIComponent(email)}`)
+      ]);
       const data = await response.json();
+      const bookingData = await bookingResponse.json();
 
       lastTallyEmailChecked = email;
       tallyLookupDone = true;
       tallyFound = Boolean(data.tallyFound);
       tallyRowNumber = data.rowNumber || "";
       previousTallyName = data.name || "";
+      bookingAlreadySubmitted = Boolean(bookingData.bookingFound);
 
       els.tallyFallbackSection.hidden = tallyFound;
 
@@ -1362,6 +1477,14 @@ nav a.active::after{left:15px;right:15px;}
       } else {
         els.tallyStatus.className = "muted";
         els.tallyStatus.textContent = "I cannot find this email on the earlier RSVP/helper form, so a few extra questions have opened below.";
+      }
+
+      if (bookingAlreadySubmitted) {
+        els.bookingStatus.className = "warning";
+        els.bookingStatus.textContent = "Looks like you've already submitted, ask Danny if you need to amend anything.";
+      } else {
+        els.bookingStatus.className = "muted";
+        els.bookingStatus.textContent = "";
       }
 
       updateAll();
@@ -1374,9 +1497,12 @@ nav a.active::after{left:15px;right:15px;}
         tallyFound = false;
         tallyRowNumber = "";
         previousTallyName = "";
+        bookingAlreadySubmitted = false;
         els.tallyFallbackSection.hidden = true;
         els.tallyStatus.className = "muted";
         els.tallyStatus.textContent = "Email changed. Check the RSVP/helper form again.";
+        els.bookingStatus.className = "muted";
+        els.bookingStatus.textContent = "";
       }
     }
 
@@ -1395,7 +1521,6 @@ nav a.active::after{left:15px;right:15px;}
         try {
           const response = await fetch(API_URL, {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(collectPayload())
           });
 
@@ -1431,15 +1556,16 @@ nav a.active::after{left:15px;right:15px;}
           <div class="payment-box">
             <p><strong>Booking received.</strong></p>
             <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
-            <p>Attendee number(s): <strong>${data.attendeeNumbers.join(", ")}</strong>.</p>
             <p>${ticketEmailText} Payment status is <strong>${totalDue > 0 ? "assumed paid - check Starling" : "nothing owed to Danny through this form"}</strong>.</p>
-            <p>Total to pay Danny now: <strong>${totalText}</strong>.</p>
+            <p class="payment-box-total">Total to pay Danny now: <strong>${totalText}</strong>.</p>
             ${warningHtml}
             <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
           </div>
         `;
 
         await loadSummary().catch(() => {});
+
+        localStorage.removeItem(FORM_DRAFT_KEY);
 
         if (REDIRECT_TO_PAYMENT_AFTER_SUBMIT) {
           setTimeout(() => {
@@ -1467,6 +1593,8 @@ nav a.active::after{left:15px;right:15px;}
       ].forEach((el) => {
         el.addEventListener("input", updateAll);
         el.addEventListener("change", updateAll);
+        el.addEventListener("input", saveFormDraft);
+        el.addEventListener("change", saveFormDraft);
       });
 
       els.leadEmail.addEventListener("input", () => {
@@ -1482,8 +1610,8 @@ nav a.active::after{left:15px;right:15px;}
       });
 
       [els.adultCount, els.childCount, els.under5Count].forEach((el) => {
-        el.addEventListener("input", () => { syncAttendeeFields(); updateAll(); });
-        el.addEventListener("change", () => { syncAttendeeFields(); updateAll(); });
+        el.addEventListener("input", () => { syncAttendeeFields(); updateAll(); saveFormDraft(); });
+        el.addEventListener("change", () => { syncAttendeeFields(); updateAll(); saveFormDraft(); });
       });
 
       els.checkTallyBtn.addEventListener("click", () => checkTallyByEmail().catch(() => {
@@ -1499,7 +1627,7 @@ nav a.active::after{left:15px;right:15px;}
       els.debugMode.checked = true;
     }
 
-    syncAttendeeFields();
+    if (!restoreFormDraft()) syncAttendeeFields();
     attachListeners();
     updateAll();
     loadSummary().catch(() => {

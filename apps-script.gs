@@ -12,6 +12,7 @@
 const SPREADSHEET_ID = "1gm092BqUFt9eI2Yy9whVMyGyXDzWTkNY4uoGoGl5SCU";
 const BOOKINGS_SHEET_NAME = "Bookings";
 const TALLY_SHEET_NAME = "Danny's 40th Summer Weekender - 24th - 27th July";
+const DASHBOARD_SHEET_NAME = "Dashboard";
 const FALLBACK_TALLY_SHEET_NAMES = [
   TALLY_SHEET_NAME,
   "Sheet1"
@@ -19,7 +20,7 @@ const FALLBACK_TALLY_SHEET_NAMES = [
 const PROTECTED_SHEET_NAMES = [
   TALLY_SHEET_NAME,
   "Budget",
-  "Dashboard",
+  DASHBOARD_SHEET_NAME,
   BOOKINGS_SHEET_NAME
 ];
 const GENERATED_SHEETS_TO_REVIEW = [
@@ -93,6 +94,7 @@ function doGet(e) {
   const action = String((e && e.parameter && e.parameter.action) || "summary");
 
   if (action === "summary") {
+    syncDashboardSheet();
     return json({
       donationRaised: getDonationRaised(),
       eventFundTarget: BREAK_EVEN_TARGET,
@@ -108,6 +110,18 @@ function doGet(e) {
       tallyFound: Boolean(result.tallyFound),
       rowNumber: result.rowNumber || "",
       sheetName: result.sheetName || "",
+      name: result.name || ""
+    });
+  }
+
+  if (action === "checkBooking") {
+    const email = normalizeEmail((e && e.parameter && e.parameter.email) || "");
+    const result = email ? findBookingByEmail(email) : { bookingFound: false };
+    return json({
+      email,
+      bookingFound: Boolean(result.bookingFound),
+      bookingId: result.bookingId || "",
+      submittedAt: result.submittedAt || "",
       name: result.name || ""
     });
   }
@@ -160,6 +174,8 @@ function doPost(e) {
     if (emailWarnings.length) {
       appendCellByHeader(sheet, rowNumber, "Notes", emailWarnings.join(" | "));
     }
+
+    syncDashboardSheet();
 
     return json({
       ok: true,
@@ -350,6 +366,17 @@ function getBookingsSheet() {
   return sheet;
 }
 
+function getDashboardSheet() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName(DASHBOARD_SHEET_NAME);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(DASHBOARD_SHEET_NAME);
+  }
+
+  return sheet;
+}
+
 function listGeneratedSheetsForCleanup() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const protectedNames = new Set(PROTECTED_SHEET_NAMES);
@@ -456,6 +483,58 @@ function getDonationRaised() {
   }, 0);
 }
 
+function syncDashboardSheet() {
+  const bookingsSheet = getBookingsSheet();
+  const dashboardSheet = getDashboardSheet();
+  const values = bookingsSheet.getDataRange().getValues();
+
+  let bookingsCount = 0;
+  let totalPeople = 0;
+  let donationRaised = 0;
+  let campingCommitted = 0;
+  let totalCommitted = 0;
+  let outstandingBalance = 0;
+
+  if (values.length >= 2) {
+    const headers = values[0].map(h => String(h || "").trim());
+    const totalPeopleIndex = headers.indexOf("Total People");
+    const donationPaidIndex = headers.indexOf("Donation Paid");
+    const campingPaidIndex = headers.indexOf("Camping Paid");
+    const amountPaidTotalIndex = headers.indexOf("Amount Paid Total");
+    const balanceRemainingIndex = headers.indexOf("Balance Remaining");
+    const paymentStatusIndex = headers.indexOf("Payment Status");
+
+    values.slice(1).forEach(row => {
+      const status = paymentStatusIndex >= 0 ? String(row[paymentStatusIndex] || "").toLowerCase() : "";
+      if (status.includes("cancel") || status.includes("refund") || status.includes("void")) return;
+
+      bookingsCount++;
+      totalPeople += totalPeopleIndex >= 0 ? Number(row[totalPeopleIndex] || 0) : 0;
+      donationRaised += donationPaidIndex >= 0 ? Number(row[donationPaidIndex] || 0) : 0;
+      campingCommitted += campingPaidIndex >= 0 ? Number(row[campingPaidIndex] || 0) : 0;
+      totalCommitted += amountPaidTotalIndex >= 0 ? Number(row[amountPaidTotalIndex] || 0) : 0;
+      outstandingBalance += balanceRemainingIndex >= 0 ? Number(row[balanceRemainingIndex] || 0) : 0;
+    });
+  }
+
+  const rows = [
+    ["Danny's 40th Dashboard", ""],
+    ["Updated At", new Date().toISOString()],
+    ["Bookings Count", bookingsCount],
+    ["Total People", totalPeople],
+    ["Donation Raised", donationRaised],
+    ["Camping Committed", campingCommitted],
+    ["Total Committed To Danny", totalCommitted],
+    ["Outstanding Balance", outstandingBalance],
+    ["Event Fund Target", BREAK_EVEN_TARGET],
+    ["Remaining To Target", Math.max(0, BREAK_EVEN_TARGET - donationRaised)]
+  ];
+
+  dashboardSheet.clear();
+  dashboardSheet.getRange(1, 1, rows.length, 2).setValues(rows);
+  dashboardSheet.setFrozenRows(1);
+}
+
 function getNextAttendeeNumbers(sheet, totalPeople) {
   const values = sheet.getDataRange().getValues();
   const headers = values[0] || HEADERS;
@@ -514,6 +593,32 @@ function findTallyByEmail(email) {
   }
 
   return { tallyFound: false };
+}
+
+function findBookingByEmail(email) {
+  const sheet = getBookingsSheet();
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return { bookingFound: false };
+
+  const headers = values[0].map(h => String(h || "").trim());
+  const emailIndex = headers.indexOf("Email");
+  const bookingIdIndex = headers.indexOf("Booking ID");
+  const submittedAtIndex = headers.indexOf("Submitted At");
+  const nameIndex = headers.indexOf("Name");
+  if (emailIndex === -1) return { bookingFound: false };
+
+  for (let i = values.length - 1; i >= 1; i--) {
+    if (normalizeEmail(values[i][emailIndex]) === email) {
+      return {
+        bookingFound: true,
+        bookingId: bookingIdIndex >= 0 ? String(values[i][bookingIdIndex] || "") : "",
+        submittedAt: submittedAtIndex >= 0 ? String(values[i][submittedAtIndex] || "") : "",
+        name: nameIndex >= 0 ? String(values[i][nameIndex] || "") : ""
+      };
+    }
+  }
+
+  return { bookingFound: false };
 }
 
 function sendTicketEmail(clean, bookingId, attendeeNumbers) {
@@ -577,6 +682,18 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     clean.saturdayNight === "yes" ? "Saturday" : null,
     clean.sundayNight === "yes" ? "Sunday" : null
   ].filter(Boolean);
+  const attendeeSummary = [];
+  if (clean.adultCount) attendeeSummary.push(clean.adultCount + " adult" + (clean.adultCount === 1 ? "" : "s"));
+  if (clean.childCount) attendeeSummary.push(clean.childCount + " child" + (clean.childCount === 1 ? "" : "ren"));
+  if (clean.under5Count) attendeeSummary.push(clean.under5Count + " under-5" + (clean.under5Count === 1 ? "" : "s"));
+  const accommodationSummary = [];
+  if (clean.accommodationType === "tent") accommodationSummary.push("Tent camping");
+  else if (clean.accommodationType === "glamping") accommodationSummary.push("Glamping");
+  else if (clean.accommodationType === "van") accommodationSummary.push("Van / campervan / motorhome");
+  else if (clean.accommodationType === "not_staying") accommodationSummary.push("Not staying overnight");
+  else if (clean.accommodationType === "not_sure") accommodationSummary.push("Not sure yet");
+  else accommodationSummary.push(clean.accommodationType || "Not specified");
+  if (nights.length) accommodationSummary.push(nights.join(" and ") + " night" + (nights.length === 1 ? "" : "s"));
 
   return [
     "Hi " + clean.name + ",",
@@ -584,31 +701,28 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     "You're booked for Danny's 40th.",
     "",
     "Booking reference: " + bookingId,
-    "Attendee number(s): " + attendeeNumbers.join(", "),
+    "Attendees: " + attendeeSummary.join(", "),
+    "Accommodation: " + accommodationSummary.join(", "),
     "",
-    "Adults: " + clean.adultCount,
-    "Children aged 5+: " + clean.childCount,
-    "Under-5s: " + clean.under5Count,
-    "",
-    "Event fund donation: " + formatCurrency(clean.donationTotal),
-    "Tent camping cost: " + formatCurrency(clean.campingTotal),
-    "Camping payable to Danny now: " + formatCurrency(clean.campingPayableToDanny),
     "Total to pay Danny now: " + formatCurrency(clean.totalPayableToDanny),
+    "This includes:",
+    "- " + formatCurrency(clean.donationTotal) + " ticket / event-fund contribution",
+    "- " + formatCurrency(clean.campingPayableToDanny) + " tent camping",
     "",
-    "Tent camping nights through this form: " + (nights.length ? nights.join(", ") : "None"),
-    "",
-    "Payment link:",
+    "Please pay via Starling here:",
     clean.paymentLink,
     "",
-    "Where the money goes:",
-    "- Event fund donations go toward the event costs.",
-    "- Tent camping money is separate. If you included camping in this payment, Danny will forward that camping money to the venue.",
-    "- Glamping, vans, campervans, motorhomes, and electric hookups are not booked through Danny.",
+    "Danny will manually match your payment to this booking. The camping money will be forwarded to the venue.",
     "",
-    "Food and weekend plan:",
-    "- Friday night: pub option, outdoor games, and a bring-a-dish shared campsite meal at 8pm.",
-    "- Saturday: daytime games, installations, breakcore machines, audio electronics jam, then DJs later.",
-    "- Sunday: roast at The Barge, Avebury if people have the energy, and cinema time in the barn.",
+    "A few useful notes:",
+    "",
+    "Friday evening is a shared campsite meal, so bring a dish if you're coming then. Saturday afternoon is barbecue time, so bring BBQ food. Sunday plan is a roast at The Barge. Breakfast can be bought onsite or nearby, though Danny may cover some breakfast costs if the event fund allows.",
+    "",
+    "When you arrive, tell the venue you're with Danny's 40th and they'll point you in the right direction. There'll be quiet camping and a louder \"Naughty Corner\", both in the same field. No kids in the Naughty Corner.",
+    "",
+    "Vans, campervans, motorhomes, electric hookup and glamping aren't covered by this booking, so please arrange those separately with The Barge Inn Honey Street.",
+    "",
+    "Donations go towards event costs.",
     "",
     "See you there,",
     "Danny"
@@ -616,7 +730,12 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
 }
 
 function createBookingId() {
-  return "D40-" + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd-HHmmss") + "-" + Math.floor(Math.random() * 900 + 100);
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let token = "";
+  for (let i = 0; i < 6; i++) {
+    token += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  }
+  return "D40-" + token;
 }
 
 function normalizeEmail(value) {

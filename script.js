@@ -1516,4 +1516,71 @@ if(window.__debugMode) (function(){
   setInterval(startBoatAnim, 5 * 60 * 1000);
 })();
 
+// Password-protect Lift Pool links on public pages.
+(function() {
+  var links = document.querySelectorAll('.lift-pool-link');
+  if (!links.length) return;
+
+  var PASSWORD_HASH = '7e82a6037844e2e36e8741a533e760d74740eb255640e33ba23c16ee9f1f1733';
+  var SESSION_KEY = 'd40_lift_pool_unlocked';
+
+  async function sha256Hex(value) {
+    var bytes = new TextEncoder().encode(value);
+    var digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest)).map(function(b) {
+      return b.toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  async function openProtectedLiftPool(event) {
+    event.preventDefault();
+    var url = event.currentTarget && event.currentTarget.dataset ? event.currentTarget.dataset.liftPoolUrl : '';
+    if (!url) return;
+
+    if (sessionStorage.getItem(SESSION_KEY) === 'ok') {
+      var unlockedTab = window.open(url, '_blank', 'noopener');
+      if (!unlockedTab) {
+        window.alert('Please allow popups for this site, then try the Lift Pool link again.');
+      }
+      return;
+    }
+
+    var newTab = window.open('about:blank', '_blank', 'noopener');
+    if (!newTab) {
+      window.alert('Please allow popups for this site, then try the Lift Pool link again.');
+      return;
+    }
+    try {
+      newTab.document.title = 'Lift Pool';
+      newTab.document.body.innerHTML = '<p style="font-family: sans-serif; padding: 24px;">Checking password…</p>';
+    } catch (err) {
+      // Ignore if the browser won't let us write to the placeholder tab.
+    }
+
+    var password = window.prompt('Ask Danny for the Lift Pool password.');
+    if (!password) {
+      newTab.close();
+      return;
+    }
+
+    var hash = await sha256Hex(password);
+    if (hash !== PASSWORD_HASH) {
+      newTab.close();
+      window.alert('Wrong password. Ask Danny for the Lift Pool password.');
+      return;
+    }
+
+    sessionStorage.setItem(SESSION_KEY, 'ok');
+    newTab.location.href = url;
+  }
+
+  links.forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      openProtectedLiftPool(event).catch(function() {
+        window.alert('Could not open the Lift Pool right now. Ask Danny for the password and try again.');
+      });
+    });
+  });
+})();
+
 });
