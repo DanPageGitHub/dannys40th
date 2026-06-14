@@ -371,6 +371,31 @@ nav a.active::after{left:15px;right:15px;}
   padding:0 var(--space-sw) clamp(40px,8vw,80px);
 }
 .tk-backlink:hover{color:var(--gold-l);}
+
+/* what3words costume grid + Naughty Corner kit list.
+   Intrinsic responsive: auto-fill reflows 1->4 columns by available width,
+   no breakpoints, so 20+ entries stay short vertically on any screen. */
+.w3w-grid,.nc-list{
+  list-style:none;margin:18px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,232px),1fr));
+  gap:10px clamp(16px,2.4vw,26px);
+}
+.w3w-grid li,.nc-list li{margin:0;}
+.w3w-grid a{
+  display:inline-block;
+  font-family:'Libre Baskerville',Georgia,serif;font-size:0.98rem;
+  color:var(--copper-l);text-decoration:none;
+  border-bottom:1px solid rgba(212,149,74,0.28);
+  padding:3px 0;transition:color .2s,border-color .2s;
+}
+.w3w-grid a::before{content:'\2726';color:var(--gold-l);opacity:0;margin-right:6px;transition:opacity .2s;}
+.w3w-grid a:hover{color:var(--gold-l);border-bottom-color:var(--gold-l);}
+.w3w-grid a:hover::before{opacity:1;}
+.nc-list li{
+  font-family:'Libre Baskerville',Georgia,serif;font-size:1rem;
+  color:rgba(232,223,200,0.86);padding-left:20px;position:relative;line-height:1.6;
+}
+.nc-list li::before{content:'\2726';position:absolute;left:0;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);}
 </style>
 </head>
 <body class="fonts-loading">
@@ -421,63 +446,120 @@ nav a.active::after{left:15px;right:15px;}
 
 <main class="booking-main">
 
+    <section class="important-note" aria-labelledby="getting-there-title">
+      <h2 id="getting-there-title">Getting there</h2>
+      <p>Main what3words for arrival: <a class="inline" href="https://what3words.com/remake.adults.rave" target="_blank" rel="noopener">///remake.adults.rave</a></p>
+      <p>When you arrive, speak to the people in the check-in hut and they’ll point you to the right place.</p>
+    </section>
+
+    <section class="important-note" aria-labelledby="what-to-wear-title">
+      <h2 id="what-to-wear-title">What to wear</h2>
+      <p>Saturday is costume day. Please come dressed in either:</p>
+      <p><strong class="warning">Something shiny</strong>, or<br>
+         <strong class="warning">one of the what3words from near the venue.</strong></p>
+      <p>The what3words costume list is below if you want a stupid prompt to work from.</p>
+    </section>
+
+    <section id="what3words-costumes" class="important-note" aria-labelledby="w3w-costumes-title">
+      <h2 id="w3w-costumes-title">Pick a what3words costume</h2>
+      <p>Dress as one of these what3words from near the venue. Tap one to see what you’re working with.</p>
+      <ul class="w3w-grid">
+        <li><a href="https://what3words.com/prawn.boats.commutes" target="_blank" rel="noopener">///prawn.boats.commutes</a></li>
+        <li><a href="https://what3words.com/laminated.living.party" target="_blank" rel="noopener">///laminated.living.party</a></li>
+        <li><a href="https://what3words.com/diamond.polygraph.curtains" target="_blank" rel="noopener">///diamond.polygraph.curtains</a></li>
+        <li><a href="https://what3words.com/lizard.splashes.webcams" target="_blank" rel="noopener">///lizard.splashes.webcams</a></li>
+        <li><a href="https://what3words.com/muffin.hats.pacifist" target="_blank" rel="noopener">///muffin.hats.pacifist</a></li>
+        <li><a href="https://what3words.com/sardine.daydreams.village" target="_blank" rel="noopener">///sardine.daydreams.village</a></li>
+        <li><a href="https://what3words.com/strongman.accented.banquets" target="_blank" rel="noopener">///strongman.accented.banquets</a></li>
+        <li><a href="https://what3words.com/absent.purple.horn" target="_blank" rel="noopener">///absent.purple.horn</a></li>
+        <li><a href="https://what3words.com/trapdoor.passport.sideburns" target="_blank" rel="noopener">///trapdoor.passport.sideburns</a></li>
+        <li><a href="https://what3words.com/jukebox.intruding.enormous" target="_blank" rel="noopener">///jukebox.intruding.enormous</a></li>
+        <li><a href="https://what3words.com/partied.fillings.unstable" target="_blank" rel="noopener">///partied.fillings.unstable</a></li>
+        <li><a href="https://what3words.com/popping.sleepless.warbler" target="_blank" rel="noopener">///popping.sleepless.warbler</a></li>
+        <li><a href="https://what3words.com/intensely.sounds.worm" target="_blank" rel="noopener">///intensely.sounds.worm</a></li>
+        <li><a href="https://what3words.com/pocket.constrain.cello" target="_blank" rel="noopener">///pocket.constrain.cello</a></li>
+        <li><a href="https://what3words.com/positive.blurred.expansion" target="_blank" rel="noopener">///positive.blurred.expansion</a></li>
+        <li><a href="https://what3words.com/shorthand.urban.beards" target="_blank" rel="noopener">///shorthand.urban.beards</a></li>
+        <li><a href="https://what3words.com/torso.cliff.eyebrows" target="_blank" rel="noopener">///torso.cliff.eyebrows</a></li>
+        <li><a href="https://what3words.com/clouds.venturing.bathtubs" target="_blank" rel="noopener">///clouds.venturing.bathtubs</a></li>
+        <li><a href="https://what3words.com/redefined.jazz.tiptoes" target="_blank" rel="noopener">///redefined.jazz.tiptoes</a></li>
+        <li><a href="https://what3words.com/wreck.shower.turntable" target="_blank" rel="noopener">///wreck.shower.turntable</a></li>
+        <li><a href="https://what3words.com/whizzed.goodnight.vibrating" target="_blank" rel="noopener">///whizzed.goodnight.vibrating</a></li>
+        <li><a href="https://what3words.com/condiment.quilt.started" target="_blank" rel="noopener">///condiment.quilt.started</a></li>
+        <li><a href="https://what3words.com/reporters.equipping.beauty" target="_blank" rel="noopener">///reporters.equipping.beauty</a></li>
+        <li><a href="https://what3words.com/yummy.flotation.jeep" target="_blank" rel="noopener">///yummy.flotation.jeep</a></li>
+        <li><a href="https://what3words.com/corkscrew.trample.serenade" target="_blank" rel="noopener">///corkscrew.trample.serenade</a></li>
+      </ul>
+    </section>
+
     <section class="important-note" aria-labelledby="before-title">
       <h2 id="before-title">First things first</h2>
-      <p class="warning">Please fill this form in even if you’ve already paid the venue for accommodation, talked to Danny about staying or filled in the RSVP - it's needed for final headcount confirmation and payments.</p>
-      <p>Glamping, vans, campervans and electric hookups must be booked directly with The Barge Inn.</p>
+      <p>Please fill this form in even if you’ve already paid the venue for accommodation, talked to Danny about staying, or filled in the RSVP. It’s needed for final headcount confirmation and payments.</p>
+      <p class="warning">Glamping, vans, campervans, motorhomes and electric hookups must be booked directly with <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">The Barge Inn</a>.</p>
+      <p>Still fill this form in as well so Danny knows who’s coming, who’s staying, and what the weekend numbers look like.</p>
     </section>
 
     <section class="important-note" aria-labelledby="weekend-plan-title">
-      <h2 id="weekend-plan-title">Schedule Updates</h2>
+      <h2 id="weekend-plan-title">Weekend plan</h2>
 
       <article class="weekend-day">
         <h3 class="weekend-day-title">Friday night</h3>
-        <p>
-          There is a night on at the pub if people fancy it, which should be decent. Otherwise, we can settle in properly
-          with some bevvies, outdoor games with Greg and a general first-night-social sort of mood. We’ll be doing a
-          bring-a-dish shared campsite meal at 8pm.
-        </p>
+        <p>There’s a night on at The Barge on Friday if people fancy it, it should be a fun one to dip into, plus the pub is still open and we have the campsite as a place to hang out with drinks and a firepit.</p>
+        <p>We’ll be doing a bring-a-dish shared campsite meal at 8pm in the Naughty Corner.</p>
       </article>
 
       <article class="weekend-day">
         <h3 class="weekend-day-title">Saturday day</h3>
-        <p>
-          If you’re arriving on Saturday, get there nice and early. Duncan from Altogether Games will be running
-          easy-to-play silly fun stuff, there’ll be interactive installations from Danny and others in the barn, Aran has
-          built some wicked controller-based multiplayer interactive breakcore machines, and we’re planning an audio
-          electronics jam that anyone can get involved with.
-        </p>
+        <p>If you’re arriving on Saturday, get there nice and early.</p>
+        <p>Duncan will be doing his Altogether Games thing: easy-to-play silly games, daft challenges and low-stakes competitive nonsense.</p>
+        <p>There’ll be interactive installations from Danny and others in the barn and the campsite.</p>
+        <p>Aran has built some wicked controller-based multiplayer interactive breakcore machines, and we’re planning an audio electronics jam that anyone can get involved with in the late afternoon/early evening.</p>
       </article>
 
       <article class="weekend-day">
         <h3 class="weekend-day-title">Saturday night</h3>
-        <p>
-          DJs will play across the barn and campsite. Current lineup:
-        </p>
+        <p>DJs in the barn. Current lineup:</p>
         <ul class="lineup-list" aria-label="Saturday lineup">
+          <li class="lineup-item">Open Decks B2B</li>
           <li class="lineup-item">Anorak</li>
           <li class="lineup-item">Salander</li>
           <li class="lineup-item">S.Murk</li>
           <li class="lineup-item">The Panger</li>
           <li class="lineup-item">Algorithmic</li>
           <li class="lineup-item">Myr</li>
-          <li class="lineup-item duo">Gizmode &amp; Breakwhore</li>
+          <li class="lineup-item">Gizmode &amp; Breakwhore</li>
           <li class="lineup-item">The Mighty Rick</li>
           <li class="lineup-item">Golgot</li>
         </ul>
-        <p>
-          And maybe a few more if we can squeeze them in. If you think you should be on the list, pester Danny.
-        </p>
+        <p>And maybe a few more if we can squeeze them in. If you think you should be on the list, pester Danny.</p>
+        <p>Expect lights, nonsense and quite a lot of strange machinery.</p>
       </article>
 
       <article class="weekend-day">
         <h3 class="weekend-day-title">Sunday</h3>
-        <p>
-          Roast at the Barge, a trip to nearby beautiful Avebury for a wander round the stones for those who can find the
-          energy and recover from Saturday night. Sunday night: cinema time in the barn. Stoopid B-movies and BangFace
-          TV-style madness.
-        </p>
+        <p>Roast at The Barge, a trip to nearby beautiful Avebury for a wander round the stones for those who can find the energy, and recovery from Saturday night.</p>
+        <p>Sunday night: cinema time in the barn. Stoopid B-movies and BangFace TV-style madness.</p>
+        <p>The Barge’s head chef is vegan, so there should be loads of options at the carvery.</p>
+        <p>Breakfast can be bought onsite or at the nearby affordable cafe. If enough money is raised, Danny will try to cover making breakfast for at least one morning.</p>
       </article>
+    </section>
+
+    <section class="important-note" aria-labelledby="naughty-corner-title">
+      <h2 id="naughty-corner-title">Gazebos + help build the Naughty Corner</h2>
+      <p class="warning">I want to make our campsite bit, the Naughty Corner, a proper decent place to hang out.</p>
+      <p>Gazebos are the big one: if you have one you can bring, please do.</p>
+      <p>Also useful:</p>
+      <ul class="nc-list">
+        <li>Fairy lights / nice lighting</li>
+        <li>Rugs / blankets / cushions</li>
+        <li>Folding tables</li>
+        <li>Camping chairs</li>
+        <li>Bunting / fabric / decor</li>
+        <li>Battery lights</li>
+        <li>Tarps / ground sheets</li>
+        <li>Anything shiny, weird or useful</li>
+      </ul>
+      <p>One important thing: vans will probably need to stay in the main field rather than in the Naughty Corner, so we probably won’t be able to rely on van awnings for shelter there. Gazebos will be much more useful.</p>
     </section>
 
     <section class="fund" aria-labelledby="break-even-title">
@@ -607,7 +689,7 @@ nav a.active::after{left:15px;right:15px;}
       <fieldset>
         <legend>Attendee details</legend>
         <p class="muted">
-          Names are separate so the ticket list, camping headcount and dashboard are easy to check.
+          Add everyone who’s coming, one set of details per person. Adult 1 fills in from the lead booker automatically.
         </p>
         <div id="attendeesContainer"></div>
       </fieldset>
@@ -621,13 +703,13 @@ nav a.active::after{left:15px;right:15px;}
         </p>
 
         <p>
-          <strong>Glamping:</strong> If you’d like to go for glamping, please book that directly with the Barge Inn Honey Street,
+          <strong>Glamping:</strong> If you’d like to go for glamping, please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book that directly with the Barge Inn Honey Street</a>,
           as this form doesn’t reserve those spots. Limited spots are available so book quickly if you wanna live it up in style.
         </p>
 
         <p>
           <strong>Vans:</strong> If you’re bringing a van, campervan, or motorhome, and if you need an electric hookup,
-          please book directly with the venue. Those spaces are limited, so book quickly.
+          please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book directly with the venue</a>. Those spaces are limited, so book quickly.
         </p>
 
         <p>
@@ -743,32 +825,6 @@ nav a.active::after{left:15px;right:15px;}
 
         <p class="muted">
           £20 each is suggested to help cover event costs. More is massively appreciated, but less, or £0, is completely fine if you can't afford it.
-        </p>
-      </fieldset>
-
-      <fieldset>
-        <legend>Food plan</legend>
-
-        <p>
-          Friday evening is a <strong>bring a dish</strong> shared campsite meal at <strong>8pm</strong>. There is also a night on at
-          the pub if people fancy it, otherwise we can settle in with drinks, hang out around the campsite and the pub itself, and
-          get stuck into Greg’s outdoor games.
-        </p>
-
-        <p>
-          Saturday daytime matters too, not just the night. If you’re only coming for Saturday, get there nice and early for Duncan
-          from Altogether Games running easy-to-play silly games, interactive installations in the barn, Aran’s multiplayer
-          breakcore machines, and an audio electronics jam for anyone who wants to join in. DJs will kick off later on.
-        </p>
-
-        <p>
-          Sunday plan is a roast at The Barge, a wander over to Avebury to see the stones and have a proper mooch, and cinema night
-          later on. The Barge’s head chef is vegan, so there should be loads of options at the carvery.
-        </p>
-
-        <p class="muted">
-          Breakfast can be bought onsite or at the nearby affordable cafe. If enough money is raised, Danny will try to cover
-          making breakfast for at least one morning.
         </p>
       </fieldset>
 

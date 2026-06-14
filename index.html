@@ -160,68 +160,33 @@
   .involve-carousel { height: 35vh; }
 }
 
-/* Schedule with photo */
+/* Schedule with photo — banner always shows the whole image, never cropped */
 .schedule-with-photo {
   display: block;
   margin-top: 28px;
 }
 .schedule-with-photo__img {
   width: 100%;
-  height: 280px;
-  min-height: 0;
   border-radius: 3px;
   border: 1px solid rgba(184,115,51,0.25);
   overflow: hidden;
-  position: relative;
   margin-bottom: 2rem;
+  line-height: 0;
 }
-.schedule-with-photo__img .col-photo--schedule {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
+.schedule-with-photo__img .col-photo--schedule,
 .col-photo--schedule {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: unset;
-  object-fit: cover;
-  object-position: center center;
-  border-radius: 3px;
-  border: 1px solid rgba(184,115,51,0.25);
   display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
   filter: saturate(0.72) sepia(0.18) brightness(0.92);
   transition: filter 0.6s;
 }
 .schedule-with-photo .schedule-dates {
   margin-top: 0;
-}
-@media (max-width: 900px) {
-  .schedule-with-photo {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-  .schedule-with-photo__img {
-    width: 100%;
-    position: relative;
-    height: auto;
-    min-height: auto;
-    aspect-ratio: 16/9;
-  }
-  .schedule-with-photo__img .col-photo--schedule {
-    position: static;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    object-position: center 35%;
-  }
-  .col-photo--schedule {
-    aspect-ratio: 16/9;
-    height: auto;
-  }
 }
 </style><script src="script.js" defer></script><script src="hero-debug-panel.js" defer></script></head>
 <body class="fonts-loading">
@@ -419,7 +384,7 @@
 <li>Arrive whenever</li>
 <li>8pm: Bring a dish meal in the campsite</li>
 <li>Fire pit, tunes, hang out, chat shit</li>
-<li>Drinks in the pub and check out the clubnight with DJ Sidetrakka
+<li>Drinks in the pub and potentially check out the clubnight with DJ Sidetrakka
 <p class="dj-bio">A firm Barge favourite, DJ Sidetrakka is an experienced UK-based DJ known for her energetic mixes of house and bass music. She has been mixing records since 1997, with a style rooted in early rave culture, and enjoys playing a variety of venues, from intimate gatherings to larger festivals and even boat parties. She is recognised for her ability to create &ldquo;choonable&rdquo; sets that bring a smile to the dance floor, seriously good humoured house music and all things 4/4.</p></li>
 </ul>
 </div>
@@ -534,26 +499,6 @@
 </div>
 </section>
 </div>
-<!-- BED & BREAKFAST -->
-<div class="sw">
-<section class="sec" id="bnb">
-<div class="sec-aura sec-aura--bnb"></div>
-<h2>Bed &amp; Breakfast (likely sold out, I’m checking)</h2>
-<div class="sec-inner">
-<div class="two-col">
-  <div class="two-col__media">
-    <div class="photo-sm grain-overlay reveal two-col__bnb" id="pBnbRoom"></div>
-  </div>
-  <div class="two-col__text">
-<div class="ctier bnb reveal">
-<div class="ctier-detail" style="margin-top:18px;">The pub itself has three en-suite double rooms available, from £90 per night including breakfast. They tend to get snapped up quickly, so if you’d like one it’s best to book sooner rather than later. Bookings are through <a class="inline" href="https://www.booking.com/searchresults.html?ss=The+Barge+Inn+Honey+Street+Pewsey&checkin=2026-07-24&checkout=2026-07-27" target="_blank">Booking.com</a> only. <em>The staff politely request you don't try to book by phone or email.</em></div>
-<p style="text-align:center;margin-top:24px;"><a class="map-btn" href="https://www.booking.com/searchresults.html?ss=The+Barge+Inn+Honey+Street+Pewsey&checkin=2026-07-24&checkout=2026-07-27" target="_blank">Find out more</a></p>
-</div>
-  </div>
-</div>
-</div>
-</section>
-</div>
 <!-- GETTING THERE -->
 <div class="sw">
 <section class="sec sec-wide" id="getting-there">
@@ -562,9 +507,9 @@
 <div class="sec-inner">
 <div class="two-col two-col--flip two-col--getting-there">
   <div class="two-col__text">
-    <p>The Barge Inn is at <strong class="pale">Honey Street, Pewsey, SN9 5PS</strong>, off the B3087. The lane down to the pub is single-track, so take it steady.</p>
+    <p>The Barge Inn is at <strong class="pale">Honey Street, Pewsey, SN9 5PS</strong>, off the B3087. The lane down to the pub is single-track, so take it steady. When you arrive, speak to the people in the check-in hut and they’ll point you to the right place.</p>
     <div class="travel-grid">
-      <div class="tcard reveal"><div class="tcard-lbl">By Car</div><p>Off the B3087, parking on site. <a class="inline" href="https://what3words.com/chapters.managed.spinners" target="_blank">///chapters.managed.spinners</a></p></div>
+      <div class="tcard reveal"><div class="tcard-lbl">By Car</div><p>Off the B3087, parking on site. Main what3words for arrival: <a class="inline" href="Tickets.html#what3words-costumes">///remake.adults.rave</a></p></div>
       <div class="tcard reveal"><div class="tcard-lbl">By Train</div><p>Pewsey is the nearest station, about 10 minutes by taxi. Flag in the form if you need a lift coordinating.</p></div>
       <div class="tcard reveal"><div class="tcard-lbl">By Narrowboat</div><p>It's right on the Kennet &amp; Avon. If you have access to a boat, this is your moment.</p></div>
       <div class="tcard reveal"><div class="tcard-lbl">Lift Share</div><p>There'll be lots of crossover in where people are coming from. Flag it in the form.</p></div>
@@ -575,6 +520,18 @@
     <img src="images/GettingThere.jpg" alt="" class="col-photo col-photo--landscape grain-overlay reveal" style="object-position: center top;">
   </div>
 </div>
+</div>
+</section>
+</div>
+<!-- SATURDAY COSTUMES -->
+<div class="sw">
+<section class="sec" id="costumes">
+<div class="sec-aura sec-aura--lineup"></div>
+<h2>Saturday costumes</h2>
+<div class="sec-inner">
+<p>Saturday is costume day.</p>
+<p>Dress in either <strong class="pale">something shiny</strong> or <strong class="pale">one of the what3words from near the venue</strong>. Or both!</p>
+<p>There’s a list of what3words costume prompts on the <a class="inline" href="Tickets.html#what3words-costumes">Tickets page</a> if you want something stupid to work from.</p>
 </div>
 </section>
 </div>
