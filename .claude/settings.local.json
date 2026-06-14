@@ -7,7 +7,17 @@
       "Bash(git fetch *)",
       "Bash(git checkout *)",
       "Bash(git pull *)",
-      "Bash(dir /b)"
+      "Bash(dir /b)",
+      "Bash(python3 -m http.server 8080)",
+      "Bash(ls /home/jimmy/Projects/)",
+      "Read(///wsl$/Ubuntu//**)",
+      "Bash(ls /mnt/c/Users/jimmy/ 2>/dev/null; ls /mnt/wsl/ 2>/dev/null)",
+      "Bash(pkill -f \"python3 -m http.server\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080)",
+      "Bash(curl -s http://localhost:8080)",
+      "Bash(netstat -tlnp)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git check-ignore *)"
     ]
   }
 }
