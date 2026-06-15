@@ -489,10 +489,11 @@ function getDonationRaised() {
 function ensureDashboardSetup() {
   const dashboardSheet = getDashboardSheet();
   const a1 = String(dashboardSheet.getRange("A1").getValue() || "").trim();
-  // B2 (Bookings Count) must be a live formula. getFormula() returns "" for a
-  // static value, so an older dashboard that baked in dead numbers gets rebuilt
-  // into live formulas the next time the website asks for the summary.
-  const hasLiveFormulas = Boolean(dashboardSheet.getRange("B2").getFormula());
+  const requiredFormulaCells = ["B2", "B3", "B4", "B5", "B6", "B7", "B9"];
+  const hasLiveFormulas = requiredFormulaCells.every(cell => {
+    const formula = String(dashboardSheet.getRange(cell).getFormula() || "").trim();
+    return formula.charAt(0) === "=";
+  });
   if (a1 !== DASHBOARD_TITLE || !hasLiveFormulas) setupDashboardSheet();
 }
 
@@ -520,33 +521,48 @@ function setupDashboardSheet() {
 
   function sumFormula(header) {
     const range = colRange(header);
-    if (!range) return 0;
+    if (!range) return "";
     return '=SUMPRODUCT(N(' + range + ')' + exclusion + ')';
   }
 
   const bookingIdRange = colRange("Booking ID");
   const bookingsCountFormula = bookingIdRange
     ? '=SUMPRODUCT((' + bookingIdRange + '<>"")' + exclusion + ')'
-    : 0;
+    : "";
 
-  const rows = [
+  const labels = [
     [DASHBOARD_TITLE, ""],
-    ["Bookings Count", bookingsCountFormula],
-    ["Total People", sumFormula("Total People")],
-    ["Donation Raised", sumFormula("Donation Paid")],
-    ["Camping Committed", sumFormula("Camping Paid")],
-    ["Total Committed To Danny", sumFormula("Amount Paid Total")],
-    ["Outstanding Balance", sumFormula("Balance Remaining")],
+    ["Bookings Count", ""],
+    ["Total People", ""],
+    ["Donation Raised", ""],
+    ["Camping Committed", ""],
+    ["Total Committed To Danny", ""],
+    ["Outstanding Balance", ""],
     ["Event Fund Target", BREAK_EVEN_TARGET],
-    ["Remaining To Target", "=MAX(0,B8-B4)"]
+    ["Remaining To Target", ""]
   ];
 
   dashboardSheet.clear();
-  dashboardSheet.getRange(1, 1, rows.length, 2).setValues(rows);
+  dashboardSheet.getRange(1, 1, labels.length, 2).setValues(labels);
+  setDashboardFormulaOrValue(dashboardSheet, "B2", bookingsCountFormula);
+  setDashboardFormulaOrValue(dashboardSheet, "B3", sumFormula("Total People"));
+  setDashboardFormulaOrValue(dashboardSheet, "B4", sumFormula("Donation Paid"));
+  setDashboardFormulaOrValue(dashboardSheet, "B5", sumFormula("Camping Paid"));
+  setDashboardFormulaOrValue(dashboardSheet, "B6", sumFormula("Amount Paid Total"));
+  setDashboardFormulaOrValue(dashboardSheet, "B7", sumFormula("Balance Remaining"));
+  dashboardSheet.getRange("B9").setFormula("=MAX(0,B8-B4)");
   dashboardSheet.setFrozenRows(1);
   dashboardSheet.getRange("A11").setValue(
     "Live  -  recalculates automatically from the Bookings sheet. Re-run setupDashboardSheet() only if Bookings columns are added or reordered."
   );
+  SpreadsheetApp.setActiveSheet(dashboardSheet);
+  SpreadsheetApp.getActiveSpreadsheet().moveActiveSheet(1);
+}
+
+function setDashboardFormulaOrValue(sheet, cell, formula) {
+  const range = sheet.getRange(cell);
+  if (formula) range.setFormula(formula);
+  else range.setValue(0);
 }
 
 function columnToLetter(column) {
