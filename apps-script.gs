@@ -489,7 +489,11 @@ function getDonationRaised() {
 function ensureDashboardSetup() {
   const dashboardSheet = getDashboardSheet();
   const a1 = String(dashboardSheet.getRange("A1").getValue() || "").trim();
-  if (a1 !== DASHBOARD_TITLE) setupDashboardSheet();
+  // B2 (Bookings Count) must be a live formula. getFormula() returns "" for a
+  // static value, so an older dashboard that baked in dead numbers gets rebuilt
+  // into live formulas the next time the website asks for the summary.
+  const hasLiveFormulas = Boolean(dashboardSheet.getRange("B2").getFormula());
+  if (a1 !== DASHBOARD_TITLE || !hasLiveFormulas) setupDashboardSheet();
 }
 
 function setupDashboardSheet() {
