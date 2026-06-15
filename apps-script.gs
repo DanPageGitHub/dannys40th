@@ -207,6 +207,26 @@ function doPost(e) {
   }
 }
 
+function onEdit(e) {
+  syncDashboardAfterBookingsChange_(e);
+}
+
+function onChange(e) {
+  syncDashboardAfterBookingsChange_(e);
+}
+
+function installDashboardSyncTriggers() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  ScriptApp.getProjectTriggers().forEach(trigger => {
+    const handler = trigger.getHandlerFunction();
+    if (handler === "onEdit" || handler === "onChange") {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+  ScriptApp.newTrigger("onEdit").forSpreadsheet(ss).onEdit().create();
+  ScriptApp.newTrigger("onChange").forSpreadsheet(ss).onChange().create();
+}
+
 function validateAndCleanPayload(payload) {
   const adultCount = Math.max(1, parseInt(payload.adultCount, 10) || 1);
   const childCount = Math.max(0, parseInt(payload.childCount, 10) || 0);
@@ -495,6 +515,26 @@ function ensureDashboardSetup() {
     return formula.charAt(0) === "=";
   });
   if (a1 !== DASHBOARD_TITLE || !hasLiveFormulas) setupDashboardSheet();
+}
+
+function syncDashboardAfterBookingsChange_(e) {
+  if (!isBookingsChange_(e)) return;
+  ensureDashboardSetup();
+  SpreadsheetApp.flush();
+}
+
+function isBookingsChange_(e) {
+  if (!e) return true;
+  if (e.range && e.range.getSheet) {
+    return e.range.getSheet().getName() === BOOKINGS_SHEET_NAME;
+  }
+  const changeType = String(e.changeType || "");
+  return changeType === "EDIT" ||
+    changeType === "INSERT_ROW" ||
+    changeType === "REMOVE_ROW" ||
+    changeType === "INSERT_COLUMN" ||
+    changeType === "REMOVE_COLUMN" ||
+    changeType === "OTHER";
 }
 
 function setupDashboardSheet() {

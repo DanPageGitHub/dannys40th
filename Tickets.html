@@ -931,6 +931,7 @@ nav a.active::after{left:15px;right:15px;}
     const REDIRECT_TO_PAYMENT_AFTER_SUBMIT = true;
     const PAYMENT_REDIRECT_DELAY_MS = 13500;
     const FORM_DRAFT_KEY = "d40_ticket_form_draft_v1";
+    const FUND_REFRESH_INTERVAL_MS = 60000;
 
     const ADULT_CAMPING_PER_NIGHT = 15;
     const CHILD_CAMPING_PER_NIGHT = 7.5;
@@ -1623,6 +1624,12 @@ nav a.active::after{left:15px;right:15px;}
         // swallow any errors updating the fallback UI
         console.error('Fund summary fallback failed', e);
       }
+    });
+    setInterval(() => {
+      if (!document.hidden) loadSummary().catch(() => {});
+    }, FUND_REFRESH_INTERVAL_MS);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) loadSummary().catch(() => {});
     });
 })();
 </script>
