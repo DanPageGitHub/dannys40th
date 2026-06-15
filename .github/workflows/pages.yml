@@ -25,6 +25,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Strip non-site files from the deployed artifact
+        # Keep these tracked in the repo, but don't publish them to the live site.
+        run: rm -f apps-script.gs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

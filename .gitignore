@@ -37,5 +37,20 @@ Desktop.ini
 
 # Tally instructions (paste into Tally dashboard; not served)
 TALLY-CUSTOM-CSS.txt
-".playwright-mcp/" 
-Video/HeroVideo.mp4 
+Video/HeroVideo.mp4
+
+# Dev docs (not served to the live site)
+AGENTS.md
+GITHUB-DEPLOY-NOTES.md
+
+# Internal reference / generator pages (not linked, not served)
+svg-reference.html
+og-image.html
+images/vectoredwheel-old.svg
+
+# Design source files (not used by the site, kept locally only)
+images/suns.eps
+images/crop-circle-silhouette-design-collection.zip
+images/crop-circle-silhouette-design-collection/
+images/BargeSepia2.png
+images/wheel_final.png
