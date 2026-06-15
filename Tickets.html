@@ -313,6 +313,8 @@
 }
 .booking-main #submitStatus{text-align:center;margin-top:18px;}
 .booking-main #checkTallyBtn{font-size:1rem;font-style:normal;padding:12px 22px;}
+.booking-main #tallyStatus,
+.booking-main #bookingStatus{margin-top:14px;}
 
 /* Debug panel */
 .booking-main .debug-panel{
@@ -1438,7 +1440,7 @@ nav a.active::after{left:15px;right:15px;}
       } else {
         els.tallyStatus.className = "muted";
         els.tallyStatus.textContent = "Email not found, please let me know if you're up for helping out below, or ensure you're using the email address you entered on the RSVP.";
-        els.tallyStatus.style.paddingTop = "0.35rem";
+        els.tallyStatus.style.paddingTop = "0.75rem";
       }
 
       if (bookingAlreadySubmitted) {
