@@ -214,6 +214,13 @@
 .booking-main .muted{color:var(--parch-dim);}
 .booking-main .warning{color:var(--gold-l);font-weight:700;}
 .booking-main .error{color:#e08a6b;font-weight:700;}
+.booking-main .validation-list{
+  margin:10px 0 0;
+  padding-left:20px;
+}
+.booking-main .validation-list li{margin:6px 0;}
+.booking-main .validation-list a{color:#e08a6b;text-decoration:underline;text-underline-offset:3px;}
+.booking-main .validation-list a:hover{color:var(--gold-l);}
 .booking-main .ok{color:var(--teal-glow);font-weight:700;}
 .booking-main .required-note{font-weight:700;color:rgba(232,223,200,0.92);}
 .booking-main .required-star{color:var(--copper-l);font-weight:700;}
@@ -590,7 +597,7 @@ nav a.active::after{left:15px;right:15px;}
     </section>
 
     <form id="ticketForm" novalidate>
-      <fieldset>
+      <fieldset id="staying-over">
         <legend>Staying over</legend>
 
         <div class="sleep-callout">
@@ -652,7 +659,7 @@ nav a.active::after{left:15px;right:15px;}
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset id="lead-details">
         <legend>Lead booker details</legend>
 
         <label>
@@ -722,7 +729,7 @@ nav a.active::after{left:15px;right:15px;}
         <label><input id="helpOther" type="checkbox"> Other</label>
       </fieldset>
 
-      <fieldset>
+      <fieldset id="lifts">
         <legend>Lifts</legend>
         <label>
           <input id="offerLifts" name="offerLifts" type="checkbox">
@@ -731,7 +738,7 @@ nav a.active::after{left:15px;right:15px;}
         <p class="muted">If that's you, please add yourself on the <a class="inline" href="https://d40-lift-pool.jimmybreeze.workers.dev" target="_blank" rel="noopener">Lift Pool page</a>. Ask Danny for the password if you need it.</p>
       </fieldset>
 
-      <fieldset>
+      <fieldset id="people-counts">
         <legend>How many people are you booking for?</legend>
 
         <label>
@@ -750,12 +757,12 @@ nav a.active::after{left:15px;right:15px;}
         </label>
       </fieldset>
 
-      <fieldset>
+      <fieldset id="attendee-details">
         <legend>Attendee details</legend>
         <div id="attendeesContainer"></div>
       </fieldset>
 
-      <fieldset>
+      <fieldset id="expected-nights">
         <legend>Expected nights</legend>
 
         <p class="muted">
@@ -804,7 +811,7 @@ nav a.active::after{left:15px;right:15px;}
         </label>
       </fieldset>
 
-      <fieldset>
+      <fieldset id="event-fund">
         <legend>Event Fund - Per-person Donation</legend>
 
         <label>
@@ -848,7 +855,7 @@ nav a.active::after{left:15px;right:15px;}
         </div>
       </section>
 
-      <fieldset>
+      <fieldset id="final-check">
         <legend>Final check</legend>
 
         <label>
@@ -869,7 +876,7 @@ nav a.active::after{left:15px;right:15px;}
           <span class="required-star">*</span>
         </label>
 
-        <p id="validationMessage" class="error" aria-live="polite"></p>
+        <div id="validationMessage" class="error" aria-live="polite"></div>
       </fieldset>
 
       <details id="debugDetails" class="debug-panel" hidden>
@@ -1259,46 +1266,62 @@ nav a.active::after{left:15px;right:15px;}
       const maths = getMaths();
       const attendees = collectAttendees();
 
-      if (!els.leadFirstName.value.trim()) errors.push("Add the lead booker's first name.");
-      if (!els.leadLastName.value.trim()) errors.push("Add the lead booker's last name.");
-      if (!els.leadEmail.validity.valid || !els.leadEmail.value.trim()) errors.push("Add a valid lead booker email.");
-      if (!els.leadPhone.value.trim()) errors.push("Add the lead booker phone number.");
-      if (!tallyLookupDone) errors.push("Check whether you've already filled out the RSVP/helper form.");
+      function addError(message, target) {
+        errors.push({ message, target });
+      }
+
+      if (!els.leadFirstName.value.trim()) addError("Add the lead booker's first name.", "leadFirstName");
+      if (!els.leadLastName.value.trim()) addError("Add the lead booker's last name.", "leadLastName");
+      if (!els.leadEmail.validity.valid || !els.leadEmail.value.trim()) addError("Add a valid lead booker email.", "leadEmail");
+      if (!els.leadPhone.value.trim()) addError("Add the lead booker phone number.", "leadPhone");
+      if (!tallyLookupDone) addError("Check whether you've already filled out the RSVP/helper form.", "checkTallyBtn");
 
       // Helper fallback questions are optional at this stage.
 
-      if (maths.adults < 1) errors.push("At least one adult is required.");
+      if (maths.adults < 1) addError("At least one adult is required.", "adultCount");
 
       attendees.forEach((a, idx) => {
         if (a.attendeeType !== "adult") return; // children/under-5s are logged by count only, no names asked
         const label = `${capitalize(a.attendeeType)} ${getTypeIndex(attendees, idx)}`;
-        if (!a.firstName) errors.push(`${label} is missing a first name.`);
-        if (!a.lastName) errors.push(`${label} is missing a last name.`);
+        if (!a.firstName) addError(`${label} is missing a first name.`, `attendeeFirstName_adult_${getTypeIndex(attendees, idx)}`);
+        if (!a.lastName) addError(`${label} is missing a last name.`, `attendeeLastName_adult_${getTypeIndex(attendees, idx)}`);
       });
 
-      if (!els.accommodationType.value) errors.push('Please scroll back to "Staying Over" and select your accommodation preferences.');
+      if (!els.accommodationType.value) addError('Please scroll back to "Staying Over" and select your accommodation preferences.', "staying-over");
 
       if ((els.accommodationType.value === "glamping" || els.accommodationType.value === "van") && !els.venueDirectConfirm.checked) {
-        errors.push("Confirm you understand glamping/van/campervan/motorhome bookings are direct with the venue.");
+        addError("Confirm you understand glamping/van/campervan/motorhome bookings are direct with the venue.", "venueDirectConfirmWrap");
       }
 
-      if (!els.fridayNight.value) errors.push("Answer Friday night.");
-      if (!els.saturdayNight.value) errors.push("Answer Saturday night.");
-      if (!els.sundayNight.value) errors.push("Answer Sunday night.");
+      if (!els.fridayNight.value) addError("Answer Friday night.", "fridayNight");
+      if (!els.saturdayNight.value) addError("Answer Saturday night.", "saturdayNight");
+      if (!els.sundayNight.value) addError("Answer Sunday night.", "sundayNight");
 
       if (isTentCampingRelevant() && !els.tentCampingPaymentRoute.value) {
-        errors.push("Choose how you want to pay for camping.");
+        addError("Choose how you want to pay for camping.", "tentCampingPaymentRoute");
       }
 
-      if (!Number.isFinite(maths.donationPerAdult) || maths.donationPerAdult < 0) errors.push("Ticket/event-fund donation must be £0 or more.");
-      if (!els.trustConfirm.checked) errors.push("Tick the trust/payment confirmation.");
-      if (!els.detailsConfirm.checked) errors.push("Tick the details confirmation.");
-      if (maths.totalPayableToDanny > 0 && !els.manualPaymentConfirm.checked) errors.push("Tick the separate Starling payment confirmation.");
-      if (els.debugMode.checked && !ALLOW_DEBUG_SUBMIT) errors.push("Debug mode is on, so live submission is blocked.");
+      if (!Number.isFinite(maths.donationPerAdult) || maths.donationPerAdult < 0) addError("Ticket/event-fund donation must be £0 or more.", "donationPerAdult");
+      if (!els.trustConfirm.checked) addError("Tick the trust/payment confirmation.", "trustConfirm");
+      if (!els.detailsConfirm.checked) addError("Tick the details confirmation.", "detailsConfirm");
+      if (maths.totalPayableToDanny > 0 && !els.manualPaymentConfirm.checked) addError("Tick the separate Starling payment confirmation.", "manualPaymentConfirm");
+      if (els.debugMode.checked && !ALLOW_DEBUG_SUBMIT) addError("Debug mode is on, so live submission is blocked.", "debugDetails");
 
-      els.validationMessage.textContent = errors[0] || "";
+      renderValidationErrors(errors);
       els.submitBtn.disabled = errors.length > 0;
       return { ok: errors.length === 0, errors };
+    }
+
+    function renderValidationErrors(errors) {
+      if (!errors.length) {
+        els.validationMessage.textContent = "";
+        return;
+      }
+      const items = errors.map((error) => {
+        const target = document.getElementById(error.target) ? error.target : "ticketForm";
+        return `<li><a href="#${escapeHtml(target)}">${escapeHtml(error.message)}</a></li>`;
+      }).join("");
+      els.validationMessage.innerHTML = `<ul class="validation-list">${items}</ul>`;
     }
 
     function capitalize(value) {
