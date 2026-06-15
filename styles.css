@@ -785,7 +785,7 @@ h1{position:relative;z-index:1;font-family:'IM Fell English',serif;font-size:var
   pointer-events:none;
   background:linear-gradient(135deg,rgba(46,123,122,var(--rune-track-after-opacity,0.05)) 0%,transparent 50%,rgba(160,70,42,var(--rune-track-after-opacity,0.05)) 100%);
 }
-.rune-scroll{display:flex;flex-wrap:nowrap;gap:0;align-items:center;opacity:var(--rune-scroll-opacity,0.37);animation:scroll-left 21s linear infinite;flex-shrink:0;will-change:transform;}
+.rune-scroll{display:inline-flex;width:max-content;flex-wrap:nowrap;gap:0;align-items:center;opacity:var(--rune-scroll-opacity,0.37);animation:scroll-left 21s linear infinite;flex-shrink:0;will-change:transform;}
 .rune-scroll--js{animation:none;}
 .rune-scroll > *{margin-right:var(--rune-gap,60px);}
 .rune-scroll svg{flex-shrink:0;display:block;width:var(--rune-size,90px);height:auto;}

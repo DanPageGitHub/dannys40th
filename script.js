@@ -288,8 +288,10 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 33.33
     /* Hexafoil (Seed of Life) */
     `<img src="images/hexafoil2.svg" alt="" class="rune-img">`,
   ];
-  // Repeat the set many times so very wide screens never "run out" of runes
-  const double = [...syms, ...syms, ...syms, ...syms, ...syms, ...syms];
+  // Repeat the set many times so very wide screens never run out of runes.
+  // Movement wraps at one measured set width, so the reset lands on the same glyph sequence.
+  const repeatCount = 6;
+  const double = Array.from({ length: repeatCount }, () => syms).flat();
   scrollContainers.forEach(scroll => {
     double.forEach(s => {
       const tmp = document.createElement('div');
@@ -307,29 +309,48 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 33.33
   const RUNE_MAX_DELTA_MS = 80;
   const _initPeriod = ((window.__runeConfig && window.__runeConfig.periodMs) || 21000);
   const _initTravel = ((window.__runeConfig && window.__runeConfig.travelPct) || 33.33);
-  let runeScrollTime = Math.random() * _initPeriod;
+  let runeOffsetPx = 0;
   let runeLastTime = performance.now();
-  // Apply immediately so no frame ever shows position 0
-  (function(){ const t = (runeScrollTime / _initPeriod) * _initTravel; scrollContainers.forEach(el => { el.style.transform = `translateX(-${t}%)`; }); })();
-  function tickRune(now) {
-    now = typeof now === 'number' ? now : performance.now();
+  function getCycleWidth(scroll) {
+    return Math.max(1, scroll.scrollWidth / repeatCount);
+  }
+  function getTrackWidth(scroll) {
+    const track = scroll.closest('.rune-track');
+    return track ? track.getBoundingClientRect().width : window.innerWidth;
+  }
+  function getRuneMotion() {
     const root = document.documentElement;
     const periodFromCss = getComputedStyle(root).getPropertyValue('--rune-period-ms').trim();
     const travelFromCss = getComputedStyle(root).getPropertyValue('--rune-travel-pct').trim();
     const period = periodFromCss ? parseFloat(periodFromCss) : ((window.__runeConfig && window.__runeConfig.periodMs) || 21000);
     const travel = travelFromCss ? parseFloat(travelFromCss) : ((window.__runeConfig && window.__runeConfig.travelPct) || 33.33);
+    return {
+      period: Number.isFinite(period) && period > 0 ? period : _initPeriod,
+      travel: Number.isFinite(travel) && travel > 0 ? travel : _initTravel
+    };
+  }
+  function applyRuneOffset() {
+    scrollContainers.forEach(el => {
+      const cycleWidth = getCycleWidth(el);
+      el.style.transform = `translateX(-${runeOffsetPx % cycleWidth}px)`;
+    });
+  }
+  function tickRune(now) {
+    now = typeof now === 'number' ? now : performance.now();
     if(!document.hidden){
       const delta = now - runeLastTime;
       // Skip the advance entirely on large gaps (scroll throttle, tab switch, etc.)
       // so the animation pauses briefly rather than jumping forward to catch up
       if(delta <= RUNE_MAX_DELTA_MS){
-        runeScrollTime += delta;
-        runeScrollTime = runeScrollTime % period;
+        const motion = getRuneMotion();
+        const baseTrackWidth = getTrackWidth(scrollContainers[0]);
+        const pxPerMs = (baseTrackWidth * (motion.travel / 100)) / motion.period;
+        const cycleWidth = getCycleWidth(scrollContainers[0]);
+        runeOffsetPx = (runeOffsetPx + delta * pxPerMs) % cycleWidth;
       }
     }
     runeLastTime = now;
-    const t = (runeScrollTime / period) * travel;
-    scrollContainers.forEach(el => { el.style.transform = `translateX(-${t}%)`; });
+    applyRuneOffset();
     requestAnimationFrame(tickRune);
   }
   // Wait for any images (e.g. crop-circle SVG) to decode before starting the tick.
@@ -338,6 +359,9 @@ window.__runeConfig = window.__runeConfig || { periodMs: 21000, travelPct: 33.33
   const decodeAll = runeImgs.map(img => img.decode ? img.decode().catch(() => {}) : Promise.resolve());
   const fallback = new Promise(resolve => setTimeout(resolve, 800));
   Promise.race([Promise.all(decodeAll), fallback]).then(() => {
+    const firstCycleWidth = getCycleWidth(scrollContainers[0]);
+    runeOffsetPx = Math.random() * firstCycleWidth;
+    applyRuneOffset();
     runeLastTime = performance.now();
     requestAnimationFrame(tickRune);
   });
