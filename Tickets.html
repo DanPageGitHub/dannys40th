@@ -12,7 +12,7 @@
 <link href="styles.css" rel="stylesheet" />
 <style>
 /* ============================================================
-   TICKETS PAGE — booking form skinned in the Danny's 40th system
+   TICKETS PAGE  -  booking form skinned in the Danny's 40th system
    ============================================================ */
 
 /* Visualiser2 canvas background */
@@ -232,6 +232,12 @@
   background:rgba(46,123,122,0.06);
   margin:24px 0 0;
 }
+.booking-main .payment-box p{
+  color:var(--parchment);
+}
+.booking-main .payment-box > p:only-child{
+  margin:0;
+}
 .booking-main .payment-box-total strong{
   display:inline-block;
   font-size:clamp(2rem,4.6vw,3.2rem);
@@ -255,7 +261,7 @@
 }
 .booking-main .attendee-card h3{margin-top:0;color:var(--teal-glow);}
 
-/* Money table — schedule-card vocabulary */
+/* Money table  -  schedule-card vocabulary */
 .booking-main table{
   border-collapse:collapse;width:100%;max-width:780px;margin-top:8px;
   font-family:'Libre Baskerville',Georgia,serif;
@@ -484,11 +490,11 @@ nav a.active::after{left:15px;right:15px;}
 }
 .booking-main .weekend-day .day-note strong{color:var(--gold-l);}
 
-/* "What are you sleeping in?" — deliberately loud so nobody scrolls past it */
+/* "What are you sleeping in?" - slightly smaller than the fieldset legend */
 .booking-main .sleep-callout{margin:34px 0;}
 .booking-main .sleep-callout .sleep-q{
   font-family:'IM Fell English',serif;font-weight:400;
-  font-size:clamp(1.8rem,3.8vw,2.6rem);
+  font-size:clamp(1.55rem,3.15vw,2.25rem);
   color:var(--parchment);margin:0 0 10px;line-height:1.12;
   text-shadow:0 0 40px rgba(200,169,110,0.32),0 2px 4px rgba(0,0,0,0.8);
 }
@@ -600,7 +606,6 @@ nav a.active::after{left:15px;right:15px;}
         </div>
 
         <div id="glampingInfo" hidden>
-          <h3>Glamping</h3>
           <p>
             Please <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book glamping directly with the Barge Inn Honey Street</a>,
             as this form doesn’t reserve those spots. Limited spots are available, so book quickly if you wanna live it up in style.
@@ -608,21 +613,14 @@ nav a.active::after{left:15px;right:15px;}
         </div>
 
         <div id="vanInfo" hidden>
-          <h3>Vans</h3>
           <p>
-            For a van, campervan or motorhome — and any electric hookup — please
+            For a van, campervan or motorhome, and any electric hookup, please
             <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book directly with the venue</a>. Those spaces are limited, so book quickly.
           </p>
         </div>
 
         <div id="tentCampingPaymentSection">
-          <h3>How do you want to handle tent camping payment? <span class="required-star">*</span></h3>
-
-          <p class="muted">
-            <strong>£15 per adult per night</strong>,
-            <strong>£7.50 per child aged 5+ per night</strong>,
-            and <strong>free for under-5s</strong>.
-          </p>
+          <h3>How do you want to pay for camping? <span class="required-star">*</span></h3>
 
           <label>
             <select id="tentCampingPaymentRoute">
@@ -636,8 +634,14 @@ nav a.active::after{left:15px;right:15px;}
           </label>
 
           <p class="muted">
+            <strong>£15 per adult per night</strong>,
+            <strong>£7.50 per child aged 5+ per night</strong>,
+            and <strong>free for under-5s</strong>.
+          </p>
+
+          <p class="muted">
             If you choose to pay tent camping through this form, I’ll collect that camping money and send it on to the venue.
-            If you’d rather pay the venue yourself, that’s fine too — I’ll still use your answers here for the group headcount.
+            If you’d rather pay the venue yourself, that’s fine too; I’ll still use your answers here for the group headcount.
           </p>
         </div>
 
@@ -844,13 +848,8 @@ nav a.active::after{left:15px;right:15px;}
         <p>Total to pay Danny now: <strong id="summaryTotal">£20.00</strong></p>
 
         <div class="payment-box">
-          <h3>After you submit</h3>
-          <p class="warning">
-            When you hit submit, the next page is payment.
-          </p>
           <p>
-            You’ll be taken to Starling to pay the total shown above. Please pay that amount so it can be
-            matched against your booking reference.
+            On submission you’ll be taken to Starling to pay the total shown above.
           </p>
         </div>
       </section>
@@ -912,7 +911,7 @@ nav a.active::after{left:15px;right:15px;}
 <a class="tk-backlink" href="index.html">&#10022;&nbsp; Back to the main site &nbsp;&#9789;</a>
 
 <footer>
-<span class="orn">&#10022;</span>Danny's 40th &middot; The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24&ndash;27 July 2026<span class="orn">&#9789;</span>
+<span class="orn">&#10022;</span>Danny's 40th &middot; The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026<span class="orn">&#9789;</span>
 </footer>
 
 <script src="script.js" defer></script>
@@ -1088,7 +1087,7 @@ nav a.active::after{left:15px;right:15px;}
               Nickname
               <input id="attendeeNickname_${safeId}" data-attendee-field="nickname" type="text" value="${escapeHtml(nickValue)}" data-user-edited="${escapeHtml(nickEdited)}">
             </label>`
-          : `<p class="muted">No name needed — just counted for headcount. Add any allergies below if relevant.</p>`;
+          : `<p class="muted">No name needed, just counted for headcount. Add any allergies below if relevant.</p>`;
         html += `
           <div class="attendee-card" data-attendee-type="${type}" data-attendee-index="${i}">
             <h3>${label}</h3>
@@ -1282,7 +1281,7 @@ nav a.active::after{left:15px;right:15px;}
         if (!a.lastName) errors.push(`${label} is missing a last name.`);
       });
 
-      if (!els.accommodationType.value) errors.push("Choose how you are staying.");
+      if (!els.accommodationType.value) errors.push('Please scroll back to "Staying Over" and select your accommodation preferences.');
 
       if ((els.accommodationType.value === "glamping" || els.accommodationType.value === "van") && !els.venueDirectConfirm.checked) {
         errors.push("Confirm you understand glamping/van/campervan/motorhome bookings are direct with the venue.");
@@ -1293,7 +1292,7 @@ nav a.active::after{left:15px;right:15px;}
       if (!els.sundayNight.value) errors.push("Answer Sunday night.");
 
       if (isTentCampingRelevant() && !els.tentCampingPaymentRoute.value) {
-        errors.push("Choose how you want to handle tent camping payment.");
+        errors.push("Choose how you want to pay for camping.");
       }
 
       if (!Number.isFinite(maths.donationPerAdult) || maths.donationPerAdult < 0) errors.push("Ticket/event-fund donation must be £0 or more.");
@@ -1409,6 +1408,7 @@ nav a.active::after{left:15px;right:15px;}
     async function checkTallyByEmail() {
       const email = els.leadEmail.value.trim().toLowerCase();
       if (!email || !els.leadEmail.validity.valid) {
+        els.tallyStatus.style.paddingTop = "";
         els.tallyStatus.textContent = "Enter a valid email first.";
         els.bookingStatus.textContent = "";
         return;
@@ -1419,7 +1419,8 @@ nav a.active::after{left:15px;right:15px;}
         return;
       }
 
-      els.tallyStatus.textContent = "Checking previous RSVP/helper form…";
+      els.tallyStatus.style.paddingTop = "";
+      els.tallyStatus.textContent = "Checking previous RSVP/helper form...";
       els.bookingStatus.textContent = "Checking existing booking…";
       const [response, bookingResponse] = await Promise.all([
         fetch(`${API_URL}?action=checkTally&email=${encodeURIComponent(email)}`),
@@ -1439,10 +1440,12 @@ nav a.active::after{left:15px;right:15px;}
 
       if (tallyFound) {
         els.tallyStatus.className = "ok";
+        els.tallyStatus.style.paddingTop = "";
         els.tallyStatus.textContent = `Found the earlier RSVP/helper form for ${data.name || email}. Continue below.`;
       } else {
         els.tallyStatus.className = "muted";
         els.tallyStatus.textContent = "I cannot find this email on the earlier RSVP/helper form, so a few extra questions have opened below.";
+        els.tallyStatus.style.paddingTop = "0.35rem";
       }
 
       if (bookingAlreadySubmitted) {
@@ -1466,6 +1469,7 @@ nav a.active::after{left:15px;right:15px;}
         bookingAlreadySubmitted = false;
         els.tallyFallbackSection.hidden = true;
         els.tallyStatus.className = "muted";
+        els.tallyStatus.style.paddingTop = "";
         els.tallyStatus.textContent = "Email changed. Check the RSVP/helper form again.";
         els.bookingStatus.className = "muted";
         els.bookingStatus.textContent = "";
@@ -1526,6 +1530,7 @@ nav a.active::after{left:15px;right:15px;}
             <p class="payment-box-total">Total to pay Danny now: <strong>${totalText}</strong>.</p>
             ${warningHtml}
             <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
+            <p><a class="inline" href="${nextUrl}">Take me there now</a></p>
           </div>
         `;
 
@@ -1575,7 +1580,7 @@ nav a.active::after{left:15px;right:15px;}
       els.leadEmail.addEventListener("input", () => {
         resetTallyLookupIfEmailChanges();
         updateAll();
-        // Auto-check once a valid email is typed — no need to click away first.
+        // Auto-check once a valid email is typed  -  no need to click away first.
         clearTimeout(tallyDebounceTimer);
         if (els.leadEmail.value.trim() && els.leadEmail.validity.valid && !tallyAlreadyDoneForCurrentEmail()) {
           tallyDebounceTimer = setTimeout(runTallyCheck, 800);

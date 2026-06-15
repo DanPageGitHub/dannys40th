@@ -27,7 +27,7 @@
       touch-action: none;
     }
 
-    /* Mic activity dot — top-left */
+    /* Mic activity dot  -  top-left */
     #micDot {
       display: none;
       position: fixed;
@@ -42,7 +42,7 @@
       pointer-events: none;
     }
 
-    /* Hint text — fades out after first interaction */
+    /* Hint text  -  fades out after first interaction */
     #hint {
       position: fixed;
       bottom: 80px;
@@ -61,7 +61,7 @@
     #hint.gone { opacity: 0; }
     #hint { color: rgba(255, 255, 255, 0.88); }
 
-    /* HUD panel — slides up from bottom */
+    /* HUD panel  -  slides up from bottom */
     #hud {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -102,7 +102,7 @@
       border-color: rgba(184, 115, 51, 0.6);
     }
 
-    /* Sensitivity row — only shown in sound mode */
+    /* Sensitivity row  -  only shown in sound mode */
     #sensSetting {
       display: none;
       width: 100%;
@@ -126,7 +126,7 @@
       border-color: rgba(184, 115, 51, 0.55);
     }
 
-    /* Info button — fixed top-right corner */
+    /* Info button  -  fixed top-right corner */
     #btnInfo {
       position: fixed;
       top: 16px; right: 16px;
@@ -149,7 +149,7 @@
       border-color: rgba(184, 115, 51, 0.6);
     }
 
-    /* Info overlay — full-screen, scrollable */
+    /* Info overlay  -  full-screen, scrollable */
     #infoOverlay {
       position: fixed;
       inset: 0;
@@ -256,7 +256,7 @@
   <!-- Mic activity indicator -->
   <div id="micDot"></div>
 
-  <!-- Info button — always visible top-right -->
+  <!-- Info button  -  always visible top-right -->
   <button id="btnInfo">?</button>
 
   <!-- Info overlay -->
@@ -264,28 +264,28 @@
     <button id="btnInfoClose">✕ Close</button>
 
     <h2>About</h2>
-    <p>This started as about twenty lines of canvas code tucked behind the party page — a vague shimmer of rotating shapes that you would barely notice while reading about camping prices. Then one late evening became several, the controls multiplied, the gyroscope got involved, and it quietly became its own thing. It runs entirely in your browser; no library, no framework, just maths and a canvas element that got a little out of hand.</p>
+    <p>This started as about twenty lines of canvas code tucked behind the party page  -  a vague shimmer of rotating shapes that you would barely notice while reading about camping prices. Then one late evening became several, the controls multiplied, the gyroscope got involved, and it quietly became its own thing. It runs entirely in your browser; no library, no framework, just maths and a canvas element that got a little out of hand.</p>
 
-    <!-- Touch gesture controls — mobile only -->
+    <!-- Touch gesture controls  -  mobile only -->
     <div class="ctrl-mobile-only">
       <h2>Touch Controls</h2>
       <dl>
         <dt>Double-tap</dt>
         <dd>Open / close the button panel</dd>
         <dt>Swipe left / right</dt>
-        <dd>Line density — how many rings and arms fill each shape</dd>
+        <dd>Line density  -  how many rings and arms fill each shape</dd>
         <dt>Swipe up / down</dt>
-        <dd>Scale — zoom the geodes in or out</dd>
+        <dd>Scale  -  zoom the geodes in or out</dd>
         <dt>Pinch</dt>
-        <dd>Rotation speed — how fast the forms turn</dd>
+        <dd>Rotation speed  -  how fast the forms turn</dd>
         <dt>Hold 2 s near a shape</dt>
-        <dd>Locks onto it — drag it anywhere on screen. A dashed ring shows the active shape. Reset restores all positions.</dd>
+        <dd>Locks onto it  -  drag it anywhere on screen. A dashed ring shows the active shape. Reset restores all positions.</dd>
         <dt>Hold 0.5 s (open space)</dt>
         <dd>Toggle fullscreen</dd>
       </dl>
     </div>
 
-    <!-- Keyboard + mouse controls — desktop only -->
+    <!-- Keyboard + mouse controls  -  desktop only -->
     <div class="ctrl-desktop-only">
       <h2>Keyboard &amp; Mouse</h2>
       <dl class="ctrl-desktop-only">
@@ -316,15 +316,15 @@
       </dl>
     </div>
 
-    <!-- Panel buttons — shared -->
+    <!-- Panel buttons  -  shared -->
     <h2>Panel Buttons</h2>
     <dl>
       <dt>Sound</dt>
-      <dd>Opens the microphone — bass drives speed and sway, treble drives density, beats fire a visual pulse</dd>
+      <dd>Opens the microphone  -  bass drives speed and sway, treble drives density, beats fire a visual pulse</dd>
       <dt>Palette</dt>
       <dd>Cycle through seven colour sets, each cross-fading over 1.5 seconds</dd>
       <dt class="ctrl-mobile-only">Gyro</dt>
-      <dd class="ctrl-mobile-only">Tilt your phone to move through a layered 3D space — each shape sits at a different depth and shifts by a different amount. The angle you're holding the phone when you tap becomes straight ahead.</dd>
+      <dd class="ctrl-mobile-only">Tilt your phone to move through a layered 3D space  -  each shape sits at a different depth and shifts by a different amount. The angle you're holding the phone when you tap becomes straight ahead.</dd>
       <dt>Reset</dt>
       <dd>Returns density, speed, scale and geode positions to defaults (palette is kept)</dd>
       <dt>Slot 1 / 2 / 3</dt>
@@ -332,16 +332,16 @@
     </dl>
 
     <h2>Sacred Geometry</h2>
-    <p>Five mandalas are always present, each built on a different sacred symmetry: <strong>5-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Pentagram" target="_blank" rel="noopener noreferrer">pentagram</a>), <strong>6-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Hexagram" target="_blank" rel="noopener noreferrer">hexagram</a>), <strong>7-fold</strong> (rare — found in <a href="https://en.wikipedia.org/wiki/Islamic_geometric_patterns" target="_blank" rel="noopener noreferrer">Sufi and Islamic geometric art</a> and <a href="https://en.wikipedia.org/wiki/Quasicrystal" target="_blank" rel="noopener noreferrer">quasicrystal geometry</a>), <strong>8-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Octagram" target="_blank" rel="noopener noreferrer">octagram</a> of ancient cosmology), and <strong>12-fold</strong> (the zodiac, the hours, the <a href="https://en.wikipedia.org/wiki/Chromatic_scale" target="_blank" rel="noopener noreferrer">chromatic scale</a>). Each form independently cycles through phases of emergence, full presence and dissolution — never quite in sync, so the composition is never the same twice.</p>
+    <p>Five mandalas are always present, each built on a different sacred symmetry: <strong>5-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Pentagram" target="_blank" rel="noopener noreferrer">pentagram</a>), <strong>6-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Hexagram" target="_blank" rel="noopener noreferrer">hexagram</a>), <strong>7-fold</strong> (rare  -  found in <a href="https://en.wikipedia.org/wiki/Islamic_geometric_patterns" target="_blank" rel="noopener noreferrer">Sufi and Islamic geometric art</a> and <a href="https://en.wikipedia.org/wiki/Quasicrystal" target="_blank" rel="noopener noreferrer">quasicrystal geometry</a>), <strong>8-fold</strong> (the <a href="https://en.wikipedia.org/wiki/Octagram" target="_blank" rel="noopener noreferrer">octagram</a> of ancient cosmology), and <strong>12-fold</strong> (the zodiac, the hours, the <a href="https://en.wikipedia.org/wiki/Chromatic_scale" target="_blank" rel="noopener noreferrer">chromatic scale</a>). Each form independently cycles through phases of emergence, full presence and dissolution  -  never quite in sync, so the composition is never the same twice.</p>
 
-    <p>The concentric rings within each mandala follow the <strong><a href="https://en.wikipedia.org/wiki/Golden_ratio" target="_blank" rel="noopener noreferrer">golden ratio φ ≈ 1.618</a></strong>, spacing at 1, 0.786, 0.618, 0.5, 0.382, 0.236 and 0.146 of the full radius — the same sequence found in nautilus shells, pine cones, the spiral of galaxies, and the proportions of the human body.</p>
+    <p>The concentric rings within each mandala follow the <strong><a href="https://en.wikipedia.org/wiki/Golden_ratio" target="_blank" rel="noopener noreferrer">golden ratio φ ≈ 1.618</a></strong>, spacing at 1, 0.786, 0.618, 0.5, 0.382, 0.236 and 0.146 of the full radius  -  the same sequence found in nautilus shells, pine cones, the spiral of galaxies, and the proportions of the human body.</p>
 
-    <p>Each frame, two counter-rotating layers are drawn per mandala — one at full opacity, one at 45% — creating depth without a 3D engine. Arms spiral outward using parametric arc placement; the apparent complexity comes from a single formula iterated across each symmetry axis. When Gyro is active, each shape sits at a different z-depth (0.06 to 0.85) and shifts by a proportional amount as the phone tilts, giving the illusion of looking through a window into layered space.</p>
+    <p>Each frame, two counter-rotating layers are drawn per mandala  -  one at full opacity, one at 45%  -  creating depth without a 3D engine. Arms spiral outward using parametric arc placement; the apparent complexity comes from a single formula iterated across each symmetry axis. When Gyro is active, each shape sits at a different z-depth (0.06 to 0.85) and shifts by a proportional amount as the phone tilts, giving the illusion of looking through a window into layered space.</p>
 
-    <p>In Sound mode the microphone feeds the <strong>Web Audio FFT</strong>. Bass frequencies drive lateral sway and speed; treble drives line density. A beat fires when any band crosses 1.65× its rolling average, sending a visual spike with a 180 ms cooldown — the equivalent of a kick-drum hit rendered in light.</p>
+    <p>In Sound mode the microphone feeds the <strong>Web Audio FFT</strong>. Bass frequencies drive lateral sway and speed; treble drives line density. A beat fires when any band crosses 1.65× its rolling average, sending a visual spike with a 180 ms cooldown  -  the equivalent of a kick-drum hit rendered in light.</p>
   </div>
 
-  <!-- First-load hint — text overwritten by JS for desktop users -->
+  <!-- First-load hint  -  text overwritten by JS for desktop users -->
   <div id="hint">double-tap for controls &nbsp;·&nbsp; swipe ↔ density &nbsp;·&nbsp; swipe ↕ scale &nbsp;·&nbsp; pinch speed</div>
 
   <!-- HUD panel -->
@@ -352,12 +352,12 @@
     <button id="btnFullscreen">Fullscreen</button>
     <button id="btnReset">Reset</button>
 
-    <!-- Mic sensitivity — only visible in sound mode -->
+    <!-- Mic sensitivity  -  only visible in sound mode -->
     <div id="sensSetting">
       <button id="btnSens">Sens: Med</button>
     </div>
 
-    <!-- Preset slots — tap to load, hold to save -->
+    <!-- Preset slots  -  tap to load, hold to save -->
     <div id="presetRow">
       <button class="btnSlot" data-slot="0">Slot 1</button>
       <button class="btnSlot" data-slot="1">Slot 2</button>
@@ -374,7 +374,7 @@
 
   <script src="visualiser.js"></script>
   <script>
-    // Dismiss hint on first touch (mobile) — desktop version handled in visualiser.js
+    // Dismiss hint on first touch (mobile)  -  desktop version handled in visualiser.js
     document.addEventListener('touchstart', function dismissHint() {
       const hint = document.getElementById('hint');
       if (hint) hint.classList.add('gone');

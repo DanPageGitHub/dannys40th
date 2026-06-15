@@ -545,7 +545,7 @@ function setupDashboardSheet() {
   dashboardSheet.getRange(1, 1, rows.length, 2).setValues(rows);
   dashboardSheet.setFrozenRows(1);
   dashboardSheet.getRange("A11").setValue(
-    "Live — recalculates automatically from the Bookings sheet. Re-run setupDashboardSheet() only if Bookings columns are added or reordered."
+    "Live  -  recalculates automatically from the Bookings sheet. Re-run setupDashboardSheet() only if Bookings columns are added or reordered."
   );
 }
 
@@ -775,22 +775,22 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
   const payBlock = pay > 0
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 6px;"><tr><td style="border-radius:4px;background:#a85a1f;"><a href="${esc(clean.paymentLink)}" style="display:inline-block;padding:14px 32px;font-family:Georgia,serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">Pay ${esc(formatCurrency(pay))} via Starling &rarr;</a></td></tr></table>`
       + `<p style="margin:4px 0 0;font-family:Georgia,serif;font-size:13px;line-height:1.5;color:#6b5d4a;">Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue. If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">${esc(clean.paymentLink)}</a></p>`
-    : `<p style="margin:12px 0 0;font-family:Georgia,serif;font-size:16px;font-weight:bold;color:#2e7b7a;">Nothing to pay right now &mdash; you're all set.</p>`;
+    : `<p style="margin:12px 0 0;font-family:Georgia,serif;font-size:16px;font-weight:bold;color:#2e7b7a;">Nothing to pay right now  -  you're all set.</p>`;
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e7dcc6;padding:24px 12px;">`
     + `<tr><td align="center">`
     + `<table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;background:#fbf7ec;border:1px solid #d8c8a6;border-radius:8px;overflow:hidden;">`
     + `<tr><td style="background:#2b2118;padding:26px 32px;text-align:center;">`
     + `<div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;letter-spacing:1px;color:#e8c98a;">Danny's 40th</div>`
-    + `<div style="font-family:Georgia,serif;font-size:13px;color:#b9a98a;margin-top:4px;">The Barge Inn, Honey Street &middot; 24&ndash;27 July 2026</div>`
+    + `<div style="font-family:Georgia,serif;font-size:13px;color:#b9a98a;margin-top:4px;">The Barge Inn, Honey Street &middot; 24-27 July 2026</div>`
     + `</td></tr>`
     + `<tr><td style="padding:26px 32px 28px;">`
-    + p(`Hi ${esc(clean.name)}, you're booked in. Here are the important bits &mdash; keep this email so you can always find your reference and payment details.`)
+    + p(`Hi ${esc(clean.name)}, you're booked in. Here are the important bits  -  keep this email so you can always find your reference and payment details.`)
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:4px solid #a85a1f;background:#f3ead6;border-radius:0 6px 6px 0;">`
     + `<tr><td style="padding:18px 20px;">`
     + `<p style="margin:0 0 4px;font-family:Georgia,serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#8a6d3b;">Booking reference</p>`
     + `<p style="margin:0 0 14px;font-family:Georgia,serif;font-size:26px;font-weight:bold;color:#2b2118;">${esc(bookingId)}</p>`
-    + `<p style="margin:0 0 4px;font-family:Georgia,serif;font-size:15px;color:#2b2118;"><strong>Who:</strong> ${esc(s.attendeeSummary.join(", ") || "—")}</p>`
+    + `<p style="margin:0 0 4px;font-family:Georgia,serif;font-size:15px;color:#2b2118;"><strong>Who:</strong> ${esc(s.attendeeSummary.join(", ") || " - ")}</p>`
     + `<p style="margin:0 0 4px;font-family:Georgia,serif;font-size:15px;color:#2b2118;"><strong>Sleeping in:</strong> ${esc(s.accommodationSummary.join(", "))}</p>`
     + `<p style="margin:14px 0 2px;font-family:Georgia,serif;font-size:15px;color:#2b2118;"><strong>Total to pay Danny now: ${esc(formatCurrency(pay))}</strong></p>`
     + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;color:#5c4f3c;">${esc(formatCurrency(clean.donationTotal))} ticket / event-fund &middot; ${esc(formatCurrency(clean.campingPayableToDanny))} tent camping</p>`
@@ -798,9 +798,9 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
     + `</td></tr></table>`
     + directBookingNote
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;border:1px solid #d8c8a6;background:#ffffff;border-radius:6px;"><tr><td style="padding:14px 18px;">`
-    + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#2b2118;">&#128206; Two PDFs are attached &mdash; <strong>your ticket</strong> and <strong>the weekend guide</strong> (plan, lineup, costumes and what to bring). Save them to your phone; you can always find this email again by searching <em>Danny's 40th</em>.</p>`
+    + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#2b2118;">&#128206; Two PDFs are attached  -  <strong>your ticket</strong> and <strong>the weekend guide</strong> (plan, lineup, costumes and what to bring). Save them to your phone; you can always find this email again by searching <em>Danny's 40th</em>.</p>`
     + `</td></tr></table>`
-    + `<p style="margin:18px 0 0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#5c4f3c;">See you there &mdash; Danny</p>`
+    + `<p style="margin:18px 0 0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#5c4f3c;">See you there  -  Danny</p>`
     + `</td></tr>`
     + `</table>`
     + `</td></tr>`
@@ -815,24 +815,24 @@ function weekendSectionsHtml() {
   const lineup = ["Open Decks B2B2B", "Algorithmic", "Anorak", "Gizmode &amp; Breakwhore", "Golgot", "Myr", "Salander", "S.Murk", "The Mighty Rick", "The Panger"].map((n) => `<li>${n}</li>`).join("");
   const gazebos = ["Fairy lights / nice lighting", "Rugs / blankets / cushions", "Folding tables", "Camping chairs", "Bunting / fabric / decor", "Battery lights", "Tarps / ground sheets"].map((n) => `<li>${n}</li>`).join("");
   return head("Arrival")
-    + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it) &mdash; but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
+    + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
     + p(`<strong>Lifts:</strong> need one, or offering one? Sort it in the lift pool at d40-lift-pool.jimmybreeze.workers.dev (ask Danny for the password).`)
-    + head("Friday night &mdash; bring a dish")
+    + head("Friday night  -  bring a dish")
     + p(`Bring something to add to a big shared meal at the campsite, 8pm in the Naughty Corner. There's a night on at The Barge too if you fancy dipping in, plus the pub and a campsite firepit to hang around.`)
-    + head("Saturday daytime &mdash; games, installations &amp; jams")
+    + head("Saturday daytime  -  games, installations &amp; jams")
     + p(`Get there nice and early if you're arriving Saturday. Duncan runs his Altogether Games, there'll be interactive installations in the barn and campsite, and an audio-electronics jam anyone can join in the late afternoon / early evening.`)
-    + head("Saturday night &mdash; loadsa music!")
+    + head("Saturday night  -  loadsa music!")
     + p(`DJs in the barn. Current lineup:`)
     + ul(lineup)
     + p(`<strong>Get dressed up!</strong> Go shiny, or work from the what3words costume list at dannys40th.com/Costumes.html.`)
-    + head("Sunday daytime &mdash; roast &amp; Avebury")
-    + p(`A carvery at the pub (lots of dietary allowances &mdash; ring ahead with questions, we may do a big preorder), then a wander round the stones at nearby Avebury for anyone with the energy.`)
-    + head("Sunday evening &mdash; cinema in the barn")
+    + head("Sunday daytime  -  roast &amp; Avebury")
+    + p(`A carvery at the pub (lots of dietary allowances  -  ring ahead with questions, we may do a big preorder), then a wander round the stones at nearby Avebury for anyone with the energy.`)
+    + head("Sunday evening  -  cinema in the barn")
     + p(`We'll watch some stoopid B-movies and BangFace-TV madness. We'll work out closer to the time whether we need a watershed!`)
     + head("Gazebos please! Help build the Naughty Corner")
-    + p(`I want the Naughty Corner to be a really nice place to hang out. Gazebos are the big one &mdash; if you can bring one, please do. Also handy:`)
+    + p(`I want the Naughty Corner to be a really nice place to hang out. Gazebos are the big one  -  if you can bring one, please do. Also handy:`)
     + ul(gazebos)
-    + p(`Vans will probably need to stay in the main field rather than the Naughty Corner, so we can't rely on van awnings for shelter there. Once again &mdash; please bring gazebos!`);
+    + p(`Vans will probably need to stay in the main field rather than the Naughty Corner, so we can't rely on van awnings for shelter there. Once again  -  please bring gazebos!`);
 }
 
 function pdfDocShell(title, innerHtml) {
@@ -840,7 +840,7 @@ function pdfDocShell(title, innerHtml) {
     + `<body style="margin:0;padding:32px 36px;font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
     + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:18px;">`
     + `<div style="font-size:24px;color:#2b2118;">Danny's 40th</div>`
-    + `<div style="font-size:12px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24&ndash;27 July 2026</div>`
+    + `<div style="font-size:12px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026</div>`
     + `</div>`
     + `<h1 style="font-size:22px;color:#a85a1f;margin:0 0 14px;">${title}</h1>`
     + innerHtml
@@ -856,7 +856,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
     + `<div style="font-size:30px;font-weight:bold;margin-bottom:16px;">${esc(bookingId)}</div>`
     + `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;max-width:520px;">`
     + row("Name", esc(clean.name))
-    + row("Who", esc(s.attendeeSummary.join(", ") || "—"))
+    + row("Who", esc(s.attendeeSummary.join(", ") || " - "))
     + row("Sleeping in", esc(s.accommodationSummary.join(", ")))
     + row("Ticket / event-fund", esc(formatCurrency(clean.donationTotal)))
     + row("Tent camping", esc(formatCurrency(clean.campingPayableToDanny)))
@@ -865,7 +865,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
     + (pay > 0
         ? `<p style="font-size:14px;margin:18px 0 4px;">Pay via Starling: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">${esc(clean.paymentLink)}</a></p>`
           + `<p style="font-size:12px;color:#6b5d4a;margin:0;">Danny matches your payment to this reference by hand and forwards any camping money to the venue.</p>`
-        : `<p style="font-size:14px;color:#2e7b7a;margin:18px 0 0;font-weight:bold;">Nothing to pay right now &mdash; you're all set.</p>`)
+        : `<p style="font-size:14px;color:#2e7b7a;margin:18px 0 0;font-weight:bold;">Nothing to pay right now  -  you're all set.</p>`)
     + `<p style="font-size:12px;color:#8a6d3b;margin:18px 0 0;">Glamping, vans, campervans, motorhomes and electric hookups are booked directly with The Barge (thebargeinnhoneystreet.uk/camping).</p>`;
   return pdfDocShell("Your ticket", inner);
 }
