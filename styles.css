@@ -1149,7 +1149,7 @@ footer a:hover{color:var(--teal-l);}
 
 /* DESKTOP HERO BOOST — sizing handled by clamp() above */
 
-/* Stack Camp/van + What's happening? + Getting There into full-width rows below 960px (horizontally focused boxes) */
+/* Stack Camp/van + Lineup + Getting There into full-width rows below 960px (horizontally focused boxes) */
 @media(max-width:960px){
   :root{--text-h2:2.25rem;}
   .costs-grid{grid-template-columns:1fr;}

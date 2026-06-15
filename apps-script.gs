@@ -750,7 +750,9 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     pay > 0 ? ("Pay via Starling: " + clean.paymentLink) : "Nothing to pay right now - you're all set.",
     "Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue.",
     "",
-    "Glamping, vans, campervans, motorhomes and electric hookups must be booked directly with The Barge: https://thebargeinnhoneystreet.uk/camping/",
+    (clean.accommodationType === "glamping" || clean.accommodationType === "van")
+      ? "If you're glamping or bringing a van/campervan/motorhome, book that directly with The Barge: https://thebargeinnhoneystreet.uk/camping/"
+      : "",
     "",
     "Two PDFs are attached: your ticket, and the full weekend guide (plan, lineup, costumes and what to bring). Save them to your phone.",
     "",
@@ -766,6 +768,9 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
   const esc = (v) => String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const pay = clean.totalPayableToDanny;
   const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#2b2118;">${t}</p>`;
+  const directBookingNote = (clean.accommodationType === "glamping" || clean.accommodationType === "van")
+    ? p(`<span style="color:#8a6d3b;">If you're glamping or bringing a van/campervan/motorhome, book that <a href="https://thebargeinnhoneystreet.uk/camping/" style="color:#a85a1f;">directly with The Barge</a>.</span>`)
+    : "";
 
   const payBlock = pay > 0
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 6px;"><tr><td style="border-radius:4px;background:#a85a1f;"><a href="${esc(clean.paymentLink)}" style="display:inline-block;padding:14px 32px;font-family:Georgia,serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">Pay ${esc(formatCurrency(pay))} via Starling &rarr;</a></td></tr></table>`
@@ -791,7 +796,7 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
     + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;color:#5c4f3c;">${esc(formatCurrency(clean.donationTotal))} ticket / event-fund &middot; ${esc(formatCurrency(clean.campingPayableToDanny))} tent camping</p>`
     + payBlock
     + `</td></tr></table>`
-    + p(`<span style="color:#8a6d3b;">Glamping, vans, campervans, motorhomes and electric hookups aren't covered by this booking &mdash; please book those <a href="https://thebargeinnhoneystreet.uk/camping/" style="color:#a85a1f;">directly with The Barge</a>.</span>`)
+    + directBookingNote
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;border:1px solid #d8c8a6;background:#ffffff;border-radius:6px;"><tr><td style="padding:14px 18px;">`
     + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#2b2118;">&#128206; Two PDFs are attached &mdash; <strong>your ticket</strong> and <strong>the weekend guide</strong> (plan, lineup, costumes and what to bring). Save them to your phone; you can always find this email again by searching <em>Danny's 40th</em>.</p>`
     + `</td></tr></table>`
@@ -802,7 +807,7 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
     + `</table>`;
 }
 
-// Shared weekend content (mirrors Tickets.html) used by the Weekend Guide PDF.
+// Shared weekend content (mirrors theplan.html) used by the Weekend Guide PDF.
 function weekendSectionsHtml() {
   const head = (t) => `<h2 style="margin:20px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#a85a1f;">${t}</h2>`;
   const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.55;color:#2b2118;">${t}</p>`;
@@ -819,7 +824,7 @@ function weekendSectionsHtml() {
     + head("Saturday night &mdash; loadsa music!")
     + p(`DJs in the barn. Current lineup:`)
     + ul(lineup)
-    + p(`<strong>Get dressed up!</strong> Go shiny, or work from the what3words costume list at dannys40th.com/Costumes.html. Expect lights, nonsense and a lot of strange machinery.`)
+    + p(`<strong>Get dressed up!</strong> Go shiny, or work from the what3words costume list at dannys40th.com/Costumes.html.`)
     + head("Sunday daytime &mdash; roast &amp; Avebury")
     + p(`A carvery at the pub (lots of dietary allowances &mdash; ring ahead with questions, we may do a big preorder), then a wander round the stones at nearby Avebury for anyone with the energy.`)
     + head("Sunday evening &mdash; cinema in the barn")

@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Danny's 40th - The Plan</title>
+<meta name="description" content="Book your spot for Danny's 40th at The Barge Inn: tickets, tent camping and food. 24-27 July 2026." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&family=Faculty+Glyphic&display=swap" rel="stylesheet" />
+<link href="styles.css" rel="stylesheet" />
+<style>
+/* ============================================================
+   TICKETS PAGE — booking form skinned in the Danny's 40th system
+   ============================================================ */
+
+/* Visualiser2 canvas background */
+#bgCanvas{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Page header */
+.tk-head{
+  display:block !important;visibility:visible !important;opacity:1 !important;
+  position:relative;z-index:15;
+  text-align:center;
+  padding:clamp(16px,2vw,28px) var(--space-sw) clamp(18px,2.4vw,32px);
+  max-width:1000px;margin:0 auto;
+}
+/* Top glyph band clears the fixed nav using its measured height */
+.rune-band--top{margin-top:calc(var(--nav-h,62px) + 14px);}
+/* Soft atmosphere so the header isn't pure black (the main site gets this glow from the hero video) */
+.tk-head::before{
+  content:'';position:absolute;left:50%;top:-6%;transform:translateX(-50%);
+  width:135%;height:150%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 52% 62% at 50% 34%, rgba(46,123,122,0.16) 0%, transparent 68%),
+    radial-gradient(ellipse 70% 80% at 50% 30%, rgba(184,115,51,0.10) 0%, transparent 72%);
+}
+.tk-badge{
+  display:inline-block;
+  font-family:'IM Fell English',serif;
+  font-size:clamp(1.05rem,2.4vw,1.5rem);
+  letter-spacing:0.1em;
+  color:var(--parchment);
+  border:1px solid rgba(232,223,200,0.22);
+  padding:10px 26px;border-radius:2px;
+  margin-bottom:clamp(18px,2.5vw,30px);
+  text-shadow:0 0 30px rgba(232,223,200,0.2);
+  white-space:nowrap;
+}
+.tk-title{
+  display:block !important;visibility:visible !important;opacity:1 !important;
+  font-family:'IM Fell English',serif;font-weight:400;line-height:1.0;
+  font-size:clamp(2.6rem,7vw,5.2rem);
+  color:var(--parchment);
+  text-shadow:0 0 60px rgba(200,169,110,0.3),0 2px 4px rgba(0,0,0,0.8);
+  margin-bottom:0;
+}
+
+.tickets-page-title-wrap{
+  position:relative;z-index:15;
+  text-align:center;
+  padding:clamp(18px,5vw,34px) var(--space-sw) clamp(16px,4vw,28px);
+  max-width:1000px;margin:0 auto;
+  display:block !important;visibility:visible !important;opacity:1 !important;
+  height:auto !important;max-height:none !important;overflow:visible !important;
+  transform:none !important;clip:auto !important;clip-path:none !important;
+}
+.tickets-page-title{
+  font-family:'IM Fell English',serif;font-weight:400;line-height:1.0;
+  font-size:clamp(2.6rem,7vw,5.2rem);
+  color:var(--parchment);
+  text-shadow:0 0 60px rgba(200,169,110,0.3),0 2px 4px rgba(0,0,0,0.8);
+  margin:0;
+  display:block !important;visibility:visible !important;opacity:1 !important;
+}
+
+@media (max-width: 820px){
+  .tickets-page-title-wrap{
+    margin-top:calc(var(--nav-h,62px) + 18px) !important;
+  }
+}
+.tk-sub{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:clamp(1.15rem,2.8vw,1.9rem);
+  color:var(--copper-l);letter-spacing:0.03em;
+  text-shadow:0 0 30px rgba(184,115,51,0.4);
+  margin:0 auto;max-width:32ch;
+  text-wrap:balance;
+}
+
+/* Form shell */
+.booking-main{
+  position:relative;z-index:15;
+  max-width:1000px;margin:0 auto clamp(60px,10vw,110px);
+  padding:0 var(--space-sw);
+}
+.booking-main form{margin:0;}
+
+/* Each fieldset becomes a manuscript-style panel */
+.booking-main fieldset{
+  background:rgba(14,13,11,0.88);
+  border:1px solid rgba(184,115,51,0.2);
+  border-radius:3px;
+  padding:clamp(22px,3.4vw,42px);
+  margin:26px 0;
+  position:relative;overflow:hidden;
+  box-shadow:inset 0 0 60px rgba(0,0,0,0.3),0 0 40px rgba(0,0,0,0.4);
+}
+.booking-main fieldset::after{
+  content:'';position:absolute;inset:0;pointer-events:none;border-radius:3px;
+  background:linear-gradient(135deg,rgba(46,123,122,0.04) 0%,transparent 50%,rgba(160,70,42,0.04) 100%);
+}
+.booking-main legend{
+  float:left;width:100%;
+  font-family:'IM Fell English',serif;font-weight:700;
+  font-size:clamp(1.7rem,3.5vw,2.4rem);
+  color:var(--parchment);
+  padding:0;margin:0 0 22px;letter-spacing:0.04em;
+  text-shadow:0 0 60px rgba(200,169,110,0.24),0 2px 4px rgba(0,0,0,0.8);
+}
+.booking-main legend + *{clear:both;}
+.booking-main h2{
+  font-family:'IM Fell English',serif;font-weight:400;
+  font-size:clamp(1.7rem,3.2vw,2.4rem);
+  color:var(--parchment);margin-bottom:18px;line-height:1.15;
+}
+.booking-main h3{
+  font-family:'IM Fell English',serif;font-weight:400;
+  font-size:clamp(1.25rem,2.2vw,1.6rem);
+  color:var(--gold-l);margin:22px 0 12px;
+}
+.booking-main p{
+  font-family:'Libre Baskerville',Georgia,serif;
+  font-size:1.05rem;line-height:1.8;
+  color:rgba(232,223,200,0.86);margin-bottom:14px;
+  text-wrap:pretty;
+}
+.booking-main p:last-child{margin-bottom:0;}
+
+/* Labels + fields */
+.booking-main label{
+  display:block;margin:18px 0;
+  font-family:'Libre Baskerville',Georgia,serif;
+  font-size:1.02rem;color:rgba(232,223,200,0.92);line-height:1.6;
+}
+.booking-main input[type="text"],
+.booking-main input[type="email"],
+.booking-main input[type="tel"],
+.booking-main input[type="number"],
+.booking-main select,
+.booking-main textarea{
+  display:block;width:100%;max-width:560px;
+  margin-top:9px;padding:12px 14px;box-sizing:border-box;
+  background:rgba(8,7,5,0.6);
+  border:1px solid rgba(184,115,51,0.32);
+  border-radius:2px;
+  color:var(--parchment);
+  font-family:'Libre Baskerville',Georgia,serif;font-size:1rem;
+  transition:border-color .25s,box-shadow .25s,background .25s;
+}
+.booking-main textarea{min-height:92px;resize:vertical;}
+.booking-main select{
+  max-width:100%;
+  background:rgba(214, 161, 90, 0.92);
+  color:#140d07;
+  border-color:rgba(184,115,51,0.78);
+  font-weight:700;
+}
+.booking-main input:focus,
+.booking-main select:focus,
+.booking-main textarea:focus{
+  outline:none;
+  border-color:var(--teal-l);
+  background:rgba(8,7,5,0.78);
+  box-shadow:0 0 0 3px rgba(74,173,171,0.16),0 0 24px rgba(74,173,171,0.12);
+}
+.booking-main input::placeholder,
+.booking-main textarea::placeholder{color:rgba(168,152,128,0.6);}
+.booking-main select option{color:#140d07;background:#d6a15a;}
+.booking-main select:invalid{color:#140d07;}
+.booking-main select:focus{
+  background:rgba(214, 161, 90, 0.96);
+  color:#140d07;
+}
+
+/* Checkboxes inline within their label */
+.booking-main input[type="checkbox"]{
+  appearance:auto;-webkit-appearance:auto;
+  accent-color:var(--copper);
+  width:18px;height:18px;margin-right:11px;
+  vertical-align:-3px;cursor:pointer;
+}
+.booking-main label:has(input[type="checkbox"]){
+  display:flex;gap:2px;align-items:flex-start;
+  background:rgba(8,7,5,0.35);
+  border:1px solid rgba(184,115,51,0.14);
+  border-radius:2px;padding:12px 14px;margin:10px 0;
+  transition:border-color .2s,background .2s;
+}
+.booking-main label:has(input[type="checkbox"]):hover{
+  border-color:rgba(184,115,51,0.3);background:rgba(8,7,5,0.5);
+}
+.booking-main label:has(input[type="checkbox"]) input{flex-shrink:0;margin-top:2px;}
+
+/* Inline helpers / states */
+.booking-main .muted{color:var(--parch-dim);}
+.booking-main .warning{color:var(--gold-l);font-weight:700;}
+.booking-main .error{color:#e08a6b;font-weight:700;}
+.booking-main .ok{color:var(--teal-glow);font-weight:700;}
+.booking-main .required-note{font-weight:700;color:rgba(232,223,200,0.92);}
+.booking-main .required-star{color:var(--copper-l);font-weight:700;}
+
+/* Accent boxes */
+.booking-main .important-note,
+.booking-main .payment-box{
+  background:rgba(18,12,6,0.85);
+  border:1px solid rgba(184,115,51,0.4);
+  border-left:3px solid var(--copper);
+  border-radius:3px;padding:clamp(20px,3vw,34px);margin:26px 0;
+  position:relative;
+}
+.booking-main .payment-box{
+  border-left-color:var(--gold);
+  background:rgba(46,123,122,0.06);
+  margin:24px 0 0;
+}
+.booking-main .payment-box-total strong{
+  display:inline-block;
+  font-size:clamp(2rem,4.6vw,3.2rem);
+  line-height:1;
+  color:var(--parchment);
+  text-shadow:0 0 18px rgba(227,201,138,0.28);
+}
+.booking-main .summary{
+  background:rgba(14,13,11,0.88);
+  border:1px solid rgba(184,115,51,0.24);
+  border-radius:3px;padding:clamp(22px,3.4vw,42px);margin:26px 0;
+  box-shadow:inset 0 0 60px rgba(0,0,0,0.3),0 0 40px rgba(0,0,0,0.4);
+}
+
+/* Attendee cards (generated by JS) */
+.booking-main .attendee-card{
+  background:rgba(8,7,5,0.4);
+  border:1px solid rgba(184,115,51,0.2);
+  border-top:3px solid var(--teal);
+  border-radius:2px;padding:18px 20px;margin:16px 0;
+}
+.booking-main .attendee-card h3{margin-top:0;color:var(--teal-glow);}
+
+/* Money table — schedule-card vocabulary */
+.booking-main table{
+  border-collapse:collapse;width:100%;max-width:780px;margin-top:8px;
+  font-family:'Libre Baskerville',Georgia,serif;
+}
+.booking-main th,.booking-main td{
+  border:1px solid rgba(184,115,51,0.18);
+  padding:12px 16px;text-align:left;vertical-align:top;
+  font-size:1rem;color:rgba(232,223,200,0.88);
+}
+.booking-main th{
+  font-family:'IM Fell English',serif;font-weight:400;
+  color:var(--copper-l);font-size:1.1rem;width:42%;
+  background:rgba(184,115,51,0.05);
+}
+.booking-main .summary p strong{color:var(--gold-l);}
+.booking-main #summaryTotal{
+  display:inline-block;
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  line-height:1;
+  color:var(--parchment);
+  text-shadow:0 0 18px rgba(227,201,138,0.28);
+}
+
+/* Buttons */
+.booking-main button{
+  font-family:'IM Fell English',serif;font-style:italic;
+  letter-spacing:0.05em;
+  color:var(--gold-l);
+  background:rgba(18,12,6,0.85);
+  border:1px solid rgba(184,115,51,0.5);
+  border-radius:2px;
+  padding:14px 30px;font-size:1.1rem;cursor:pointer;
+  box-shadow:0 0 24px rgba(184,115,51,0.16);
+  transition:box-shadow .3s,transform .25s,border-color .3s,color .3s;
+}
+.booking-main button:hover:not(:disabled){
+  transform:translateY(-2px);color:var(--parchment);
+  border-color:rgba(212,149,74,0.78);box-shadow:0 0 36px rgba(184,115,51,0.32);
+}
+.booking-main button:disabled{cursor:not-allowed;opacity:0.45;}
+.booking-main #submitBtn{
+  display:block;width:fit-content;min-width:min(360px,100%);
+  margin:8px auto 0;
+  font-size:clamp(1.4rem,3vw,2rem);
+  padding:22px 56px;
+  color:var(--gold-l);-webkit-text-stroke:0.6px var(--gold);paint-order:stroke fill;
+  box-shadow:0 0 35px rgba(184,115,51,0.3),0 0 70px rgba(184,115,51,0.14),inset 0 1px 0 rgba(212,149,74,0.35),inset 0 -1px 0 rgba(0,0,0,0.6);
+  text-shadow:0 0 22px rgba(227,201,138,0.5),0 1px 3px rgba(0,0,0,0.9);
+}
+.booking-main #submitStatus{text-align:center;margin-top:18px;}
+.booking-main #checkTallyBtn{font-size:1rem;font-style:normal;padding:12px 22px;}
+
+/* Debug panel */
+.booking-main .debug-panel{
+  background:rgba(8,7,5,0.75);
+  border:1px solid rgba(184,115,51,0.2);border-radius:3px;
+  padding:18px 22px;margin:26px 0;
+}
+.booking-main .debug-panel summary{
+  cursor:pointer;font-family:'IM Fell English',serif;color:var(--copper-l);font-size:1.1rem;
+}
+.booking-main pre{
+  white-space:pre-wrap;overflow-wrap:anywhere;
+  background:rgba(0,0,0,0.45);border:1px solid rgba(184,115,51,0.16);
+  padding:14px;border-radius:2px;color:rgba(232,223,200,0.7);font-size:0.82rem;
+}
+.booking-main a.inline{color:var(--copper-l);text-decoration:none;border-bottom:1px solid rgba(212,149,74,0.3);}
+.booking-main a.inline:hover{border-bottom-color:var(--copper-l);}
+
+.booking-main .hidden,.booking-main [hidden]{display:none !important;}
+
+/* ============================================================
+   KICKSTARTER-STYLE EVENT FUND BAR
+   ============================================================ */
+.fund{
+  position:relative;z-index:18;overflow:hidden;
+  max-width:1000px;margin:0 auto 8px; /* pulled up */
+  transform:translateY(-18px);
+  background:rgba(14,13,11,0.72);
+  border:1px solid rgba(184,115,51,0.4);
+  border-radius:6px;
+  padding:clamp(22px,3.2vw,40px);
+  box-shadow:inset 0 0 90px rgba(0,0,0,0.45),0 10px 60px rgba(0,0,0,0.45),0 0 80px rgba(184,115,51,0.10);
+}
+.fund::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(135deg,rgba(46,123,122,0.06) 0%,transparent 50%,rgba(160,70,42,0.06) 100%);
+}
+.fund-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.fund-label{
+  font-family:'Libre Baskerville',Georgia,serif;
+  font-size:0.95rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--parchment);
+}
+.fund-pct{
+  font-family:'IM Fell English',serif;
+  font-size:clamp(1.05rem,2.4vw,1.55rem);
+  color:var(--teal-glow);
+  border:1px solid rgba(94,207,205,0.4);
+  padding:5px 18px;border-radius:999px;letter-spacing:0.04em;white-space:nowrap;
+  text-shadow:0 0 18px rgba(94,207,205,0.45);
+  box-shadow:0 0 22px rgba(94,207,205,0.12);
+}
+.fund-figures{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:18px 0 22px;}
+.fund-loader{display:inline-block;width:1.1rem;height:1.1rem;vertical-align:middle;margin-right:0.6rem}
+.fund-loader svg{width:100%;height:100%;display:block;fill:none;stroke:var(--gold-l);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:fund-spin 1s linear infinite}
+@keyframes fund-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.fund-loading-text{font-family:'Libre Baskerville',Georgia,serif;font-size:0.9rem;color:rgba(232,223,200,0.9);vertical-align:middle;margin-left:0.2rem}
+.fund-raised{
+  font-family:'IM Fell English',serif;line-height:0.95;
+  font-size:clamp(2.8rem,8vw,5rem);
+  color:var(--gold-l);
+  text-shadow:0 0 44px rgba(200,169,110,0.4),0 2px 4px rgba(0,0,0,0.8);
+}
+.fund-of{font-family:'Libre Baskerville',Georgia,serif;font-size:clamp(1rem,2vw,1.3rem);color:var(--parch-dim);}
+.fund-of strong{color:var(--parchment);}
+.fund-track{
+  position:relative;height:clamp(24px,3.2vw,34px);
+  background:rgba(8,7,5,0.72);
+  border:1px solid rgba(184,115,51,0.45);
+  border-radius:999px;overflow:hidden;
+  box-shadow:inset 0 2px 10px rgba(0,0,0,0.65);
+}
+.fund-fill{
+  position:absolute;top:0;bottom:0;left:0;width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--teal) 0%,var(--teal-l) 38%,var(--gold) 78%,var(--gold-l) 100%);
+  box-shadow:0 0 22px rgba(94,207,205,0.5),0 0 34px rgba(200,169,110,0.35);
+  transition:width 1.35s cubic-bezier(0.22,1,0.36,1);
+  overflow:hidden;
+}
+.fund-fill::before{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,0.14) 0 14px,rgba(255,255,255,0) 14px 28px);
+  animation:fund-stripes 1.05s linear infinite;
+}
+.fund-fill::after{
+  content:'';position:absolute;top:0;bottom:0;right:0;width:16px;
+  background:rgba(255,247,225,0.55);filter:blur(7px);opacity:0.8;
+}
+.fund-fill--full{background:linear-gradient(90deg,var(--gold) 0%,var(--gold-l) 100%);}
+@keyframes fund-stripes{from{background-position:0 0;}to{background-position:28px 0;}}
+.fund-tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(232,223,200,0.28);z-index:3;}
+.fund-cap{margin-top:18px;}
+.fund-cap p{
+  font-family:'Libre Baskerville',Georgia,serif;font-size:0.98rem;line-height:1.7;
+  color:var(--parch-dim);margin-bottom:10px;
+}
+.fund-cap p:last-child{margin-bottom:0;}
+
+@media (prefers-reduced-motion: reduce){
+  .fund-fill::before{animation:none;}
+  .fund-fill{transition:none;}
+}
+
+/* Nav active state for this page */
+nav a.active{color:var(--gold-l);}
+nav a.active::after{left:15px;right:15px;}
+
+/* Back-to-site link under the form */
+.tk-backlink{
+  display:block;text-align:center;position:relative;z-index:15;
+  font-family:'IM Fell English',serif;font-style:italic;
+  color:var(--copper-l);text-decoration:none;font-size:1.1rem;
+  padding:0 var(--space-sw) clamp(40px,8vw,80px);
+}
+.tk-backlink:hover{color:var(--gold-l);}
+
+/* what3words costume grid + Naughty Corner kit list.
+   Intrinsic responsive: auto-fill reflows 1->4 columns by available width,
+   no breakpoints, so 20+ entries stay short vertically on any screen. */
+.w3w-grid,.nc-list{
+  list-style:none;margin:18px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,232px),1fr));
+  gap:10px clamp(16px,2.4vw,26px);
+}
+.w3w-grid li,.nc-list li{margin:0;}
+.w3w-grid a{
+  display:inline-block;
+  font-family:'Libre Baskerville',Georgia,serif;font-size:0.98rem;
+  color:var(--copper-l);text-decoration:none;
+  border-bottom:1px solid rgba(212,149,74,0.28);
+  padding:3px 0;transition:color .2s,border-color .2s;
+}
+.w3w-grid a::before{content:'\2726';color:var(--gold-l);opacity:0;margin-right:6px;transition:opacity .2s;}
+.w3w-grid a:hover{color:var(--gold-l);border-bottom-color:var(--gold-l);}
+.w3w-grid a:hover::before{opacity:1;}
+.nc-list li{
+  font-family:'Libre Baskerville',Georgia,serif;font-size:1rem;
+  color:rgba(232,223,200,0.86);padding-left:20px;position:relative;line-height:1.6;
+}
+.nc-list li::before{content:'\2726';position:absolute;left:0;color:var(--gold-l);text-shadow:0 0 6px rgba(227,201,138,0.5);}
+/* Lineup reads small because IM Fell English has a low x-height; bump it to match body copy */
+.booking-main .lineup-item{font-size:1.3rem;}
+/* Arrival map: show the whole image, manuscript-toned */
+.booking-main .weekend-map{display:block;width:100%;height:auto;margin:0 0 16px;border-radius:3px;border:1px solid rgba(184,115,51,0.25);filter:saturate(0.72) sepia(0.18) brightness(0.92);}
+
+/* ============================================================
+   INTRO → TICKETS call-to-action buttons + folded weekend notes
+   ============================================================ */
+.go-tickets-wrap{position:relative;z-index:15;text-align:center;max-width:1000px;margin:0 auto;padding:clamp(18px,3vw,34px) var(--space-sw) clamp(30px,6vw,64px);}
+.go-tickets-wrap--top{padding-top:0;padding-bottom:clamp(20px,4vw,40px);}
+.go-tickets-btn{
+  display:inline-block;text-decoration:none;cursor:pointer;
+  font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.05em;
+  font-size:clamp(1.3rem,3vw,2rem);
+  color:var(--gold-l);
+  background:rgba(18,12,6,0.85);
+  border:1px solid rgba(184,115,51,0.5);border-radius:2px;
+  padding:20px 50px;
+  box-shadow:0 0 35px rgba(184,115,51,0.3),0 0 70px rgba(184,115,51,0.14),inset 0 1px 0 rgba(212,149,74,0.35),inset 0 -1px 0 rgba(0,0,0,0.6);
+  text-shadow:0 0 22px rgba(227,201,138,0.5),0 1px 3px rgba(0,0,0,0.9);
+  -webkit-text-stroke:0.5px var(--gold);paint-order:stroke fill;
+  transition:box-shadow .3s,transform .25s,border-color .3s,color .3s;
+}
+.go-tickets-btn:hover{transform:translateY(-2px);color:var(--parchment);border-color:rgba(212,149,74,0.85);box-shadow:0 0 48px rgba(184,115,51,0.42),0 0 92px rgba(184,115,51,0.2);}
+.go-tickets-btn--secondary{font-size:clamp(1rem,2.2vw,1.3rem);padding:13px 30px;opacity:0.94;}
+.go-tickets-note{font-family:'Libre Baskerville',Georgia,serif;color:var(--parch-dim);font-size:0.96rem;margin-top:16px;text-wrap:pretty;}
+
+/* Costumes / lifts folded into the weekend plan as inset notes */
+.booking-main .weekend-day .day-note{
+  margin-top:14px;padding:12px 16px;
+  border-left:2px solid var(--copper);
+  background:rgba(184,115,51,0.06);
+  border-radius:0 3px 3px 0;
+  font-size:1rem;
+}
+.booking-main .weekend-day .day-note strong{color:var(--gold-l);}
+
+/* "What are you sleeping in?" — deliberately loud so nobody scrolls past it */
+.booking-main .sleep-callout{margin:34px 0;}
+.booking-main .sleep-callout .sleep-q{
+  font-family:'IM Fell English',serif;font-weight:400;
+  font-size:clamp(1.8rem,3.8vw,2.6rem);
+  color:var(--parchment);margin:0 0 10px;line-height:1.12;
+  text-shadow:0 0 40px rgba(200,169,110,0.32),0 2px 4px rgba(0,0,0,0.8);
+}
+.booking-main .sleep-callout label{margin:0;}
+.booking-main .sleep-callout select{margin-top:0;}
+.booking-main .back-to-info{
+  display:inline-block;position:relative;z-index:15;
+  font-family:'IM Fell English',serif;font-style:italic;
+  color:var(--copper-l);text-decoration:none;font-size:1.05rem;margin:6px 0 0;
+}
+.booking-main .back-to-info:hover{color:var(--gold-l);}
+</style>
+</head>
+<body class="fonts-loading">
+<script>
+(function(){
+  function show(){ document.body.classList.remove('fonts-loading'); }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(show);
+    setTimeout(show, 3500);
+  } else { show(); }
+})();
+</script>
+
+<canvas id="bgCanvas"></canvas>
+<div class="pagan-bg" aria-hidden="true">
+<svg class="pagan-svg pagan-svg--3" viewBox="0 0 100 100" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="50" cy="50" r="45"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(0 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="12" ry="45" transform="rotate(120 50 50)"/></svg>
+<svg class="pagan-svg pagan-svg--r1" viewBox="0 0 52 52" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="26" cy="26" r="22"/><circle cx="26" cy="26" r="13"/><circle cx="26" cy="26" r="5"/><line x1="26" y1="4" x2="26" y2="48"/><line x1="4" y1="26" x2="48" y2="26"/><line x1="10" y1="10" x2="42" y2="42"/><line x1="42" y1="10" x2="10" y2="42"/></svg>
+<svg class="pagan-svg pagan-svg--r3" viewBox="0 0 44 44" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="22" cy="22" r="18"/><line x1="22" y1="4" x2="22" y2="40"/><line x1="4" y1="22" x2="40" y2="22"/><circle cx="22" cy="22" r="4"/></svg>
+<svg class="pagan-svg pagan-svg--r4" viewBox="0 0 46 46" fill="none" stroke="#b87333" stroke-width="0.9"><circle cx="23" cy="23" r="19"/><path d="M23 4 C28 4 38 13 38 23 C38 33 28 42 23 42"/><path d="M23 4 C18 4 8 13 8 23 C8 33 18 42 23 42" stroke-dasharray="3 2"/><circle cx="23" cy="23" r="3"/></svg>
+<img class="pagan-wheel pagan-wheel--l" src="images/wheel_exact.svg" alt="">
+<img class="pagan-wheel pagan-wheel--r" src="images/wheel_exact.svg" alt="">
+<img class="pagan-svg pagan-svg--h2" src="images/hexafoil2.svg" alt="">
+</div>
+<img id="boatAnim" src="images/BoatCutOut.png" alt="" aria-hidden="true" decoding="async">
+<div class="vignette"></div>
+
+<nav>
+<div class="nav-inner">
+<a href="index.html">Home</a>
+<a href="index.html#venue">Venue</a>
+<a href="index.html#involve">Pitch In</a>
+<a href="theplan.html" class="active">The Plan</a>
+<a href="Tickets.html">Tickets</a>
+<a href="Costumes.html">Costumes</a>
+<a href="index.html#getting-there">Travel</a>
+<a href="https://d40-lift-pool.jimmybreeze.workers.dev" target="_blank" rel="noopener">Lift Pool</a>
+<a href="index.html#faq">FAQ</a>
+<!-- RSVP removed from nav -->
+</div>
+</nav>
+
+<div class="rune-band rune-band--top">
+<div class="rune-track"><div class="rune-scroll" id="runeScrollBelow"></div></div>
+</div>
+
+<main class="booking-main">
+
+    <header class="tickets-page-title-wrap" data-screen-label="The Plan header">
+      <h1 class="tickets-page-title">The Plan</h1>
+    </header>
+
+
+    <section class="important-note" aria-labelledby="weekend-plan-title">
+      <h2 id="weekend-plan-title">Weekend plan</h2>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Arrival</h3>
+        <img class="weekend-map" loading="lazy" decoding="async" src="images/CampingMap.jpg" alt="Campsite map showing the check-in hut, the Naughty Corner and Family Camping">
+        <p>When you get there, let the staff know you've arrived at the check-in hut and they’ll point you in the right direction.</p>
+        <p>If you don’t mind a load of noise, camp in The Naughty Corner (I promise you I didn't name it that), but don’t complain if we keep you up.</p>
+        <p><strong>Everyone else:</strong> head for Family Camping, or choose your own adventure.</p>
+        <p class="day-note"><strong>Lifts:</strong> need one, or offering one? Sort it in the <a class="inline" href="https://d40-lift-pool.jimmybreeze.workers.dev" target="_blank" rel="noopener">lift pool</a>. Ask Danny for the password if you need it.</p>
+      </article>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Friday night - Bring a Dish</h3>
+         <p>Bring something along with you to contribute to a big meal at the campsite for 8pm in the Naughty Corner.</p>
+        <p>There’s a night on at The Barge on Friday if people fancy it, it should be a fun one to dip into, plus the pub is still open and we have the campsite as a place to hang out with drinks and a firepit.</p>
+      </article>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Saturday Daytime - Games, Interactive Installations and Jams</h3>
+        <p>If you’re arriving on Saturday, get there nice and early.</p>
+        <p>Duncan will be doing his Altogether Games thing: easy-to-play silly games, daft challenges and low-stakes competitive nonsense.</p>
+        <p>There’ll be interactive installations from Danny and others in the barn and the campsite.</p>
+        <p>Aran has built some wicked controller-based multiplayer interactive breakcore machines, and we’re planning an audio electronics jam that anyone can get involved with in the late afternoon/early evening.</p>
+      </article>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Saturday Night - Loadsa Music!</h3>
+        <p>DJs in the barn. Current lineup:</p>
+        <ul class="lineup-list" aria-label="Saturday lineup">
+          <li class="lineup-item">Open Decks B2B2B</li>
+          <li class="lineup-item">Algorithmic</li>
+          <li class="lineup-item">Anorak</li>
+          <li class="lineup-item">Gizmode &amp; Breakwhore</li>
+          <li class="lineup-item">Golgot</li>
+          <li class="lineup-item">Myr</li>
+          <li class="lineup-item">Salander</li>
+          <li class="lineup-item">S.Murk</li>
+          <li class="lineup-item">The Mighty Rick</li>
+          <li class="lineup-item">The Panger</li>
+        </ul>
+        <p>And maybe a few more if we can squeeze them in. If you think you should be on the list, pester Danny.</p>
+        <p class="day-note"><strong>Get dressed up!</strong> Either go shiny, or work from the what3words costume list on the <a class="inline" href="Costumes.html">Costumes page</a>.</p>
+      </article>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Sunday Daytime - Roast at the Barge, Walk Around Avebury</h3>
+        <p>We'll go for a carvery in the pub, where they've lots of allowances for various dietary requirements - do ring ahead if you have any questions - we might be able to do a big preorder too. Then a trip to nearby beautiful Avebury for a wander round the stones for those who can find the energy after Saturday night.</p>
+      </article>
+
+      <article class="weekend-day">
+        <h3 class="weekend-day-title">Sunday Evening - Cinema in The Barge's barn room</h3>
+        <p>We'll get together to watch some stoopid B-movies and BangFace TV-style madness. We can work out closer to the time if we need a watershed!</p>
+      </article>
+    </section>
+
+    <section class="important-note" aria-labelledby="naughty-corner-title">
+      <h2 id="naughty-corner-title">GAZEBOS PLEASE! Help build the Naughty Corner</h2>
+      <p class="warning">I want to make the Naughty Corner a really nice place to hang out.</p>
+      <p>Gazebos are the big one: if you have one you can bring, please do.</p>
+      <p>Also useful:</p>
+      <ul class="nc-list">
+        <li>Fairy lights / nice lighting</li>
+        <li>Rugs / blankets / cushions</li>
+        <li>Folding tables</li>
+        <li>Camping chairs</li>
+        <li>Bunting / fabric / decor</li>
+        <li>Battery lights</li>
+        <li>Tarps / ground sheets</li>
+      </ul>
+      <p>One important thing: vans will probably need to stay in the main field rather than in the Naughty Corner, so we probably won’t be able to rely on van awnings for shelter there. Once again - please bring gazebos!</p>
+    </section>
+
+    <div class="go-tickets-wrap">
+      <a class="go-tickets-btn" href="Tickets.html">Take me to the tickets page&nbsp; &#10142;</a>
+      <p class="go-tickets-note">Tickets, camping, numbers and the event fund — all on the next page.</p>
+    </div>
+
+</main>
+
+<div class="rune-band rune-band--desktop-footer">
+<div class="rune-track"><div class="rune-scroll" id="runeScrollDesktopFooter"></div></div>
+</div>
+<div class="rune-band rune-band--mobile-footer">
+<div class="rune-track"><div class="rune-scroll" id="runeScrollMobileFooter"></div></div>
+</div>
+
+<a class="tk-backlink" href="index.html">&#10022;&nbsp; Back to the main site &nbsp;&#9789;</a>
+
+<footer>
+<span class="orn">&#10022;</span>Danny's 40th &middot; The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24&ndash;27 July 2026<span class="orn">&#9789;</span>
+</footer>
+
+<script src="script.js" defer></script>
+<script>
+(function(){
+  var nav=document.querySelector('nav');
+  function setNavH(){ if(nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px'); }
+  setNavH();
+  window.addEventListener('resize', setNavH);
+  window.addEventListener('load', setNavH);
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(setNavH); }
+})();
+</script>
+<script src="visualiser2.js" defer></script>
+</html>
