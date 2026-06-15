@@ -1319,6 +1319,9 @@ nav a.active::after{left:15px;right:15px;}
       }
       const items = errors.map((error) => {
         const target = document.getElementById(error.target) ? error.target : "ticketForm";
+        if (["trustConfirm", "detailsConfirm", "manualPaymentConfirm"].includes(target)) {
+          return `<li>${escapeHtml(error.message)}</li>`;
+        }
         return `<li><a href="#${escapeHtml(target)}">${escapeHtml(error.message)}</a></li>`;
       }).join("");
       els.validationMessage.innerHTML = `<ul class="validation-list">${items}</ul>`;
