@@ -596,7 +596,7 @@ nav a.active::after{left:15px;right:15px;}
           <label>
             <select id="accommodationType" name="accommodationType" required>
               <option value="">Choose one</option>
-              <option value="tent">Tent camping</option>
+              <option value="tent">I'm bringing a tent</option>
               <option value="glamping">Glamping (I will book direct with the venue)</option>
               <option value="van">Van / campervan / motorhome (I will book direct with the venue)</option>
               <option value="not_staying">Not staying overnight</option>
@@ -639,10 +639,6 @@ nav a.active::after{left:15px;right:15px;}
             and <strong>free for under-5s</strong>.
           </p>
 
-          <p class="muted">
-            If you choose to pay tent camping through this form, I’ll collect that camping money and send it on to the venue.
-            If you’d rather pay the venue yourself, that’s fine too; I’ll still use your answers here for the group headcount.
-          </p>
         </div>
 
         <div id="venueDirectConfirmWrap" hidden>
@@ -1441,7 +1437,7 @@ nav a.active::after{left:15px;right:15px;}
         els.tallyStatus.textContent = `Found the earlier RSVP/helper form for ${data.name || email}. Continue below.`;
       } else {
         els.tallyStatus.className = "muted";
-        els.tallyStatus.textContent = "I cannot find this email on the earlier RSVP/helper form, so a few extra questions have opened below.";
+        els.tallyStatus.textContent = "Email not found, please let me know if you're up for helping out below, or ensure you're using the email address you entered on the RSVP.";
         els.tallyStatus.style.paddingTop = "0.35rem";
       }
 
