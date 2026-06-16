@@ -957,7 +957,7 @@ nav a.active::after{left:15px;right:15px;}
     const ALLOW_DEBUG_SUBMIT = false;
     const FORM_LOAD_TIME = Date.now();
     const REDIRECT_TO_PAYMENT_AFTER_SUBMIT = true;
-    const PAYMENT_REDIRECT_DELAY_MS = 13500;
+    const PAYMENT_REDIRECT_DELAY_MS = 23500;
     const FORM_DRAFT_KEY = "d40_ticket_form_draft_v1";
     const FUND_REFRESH_INTERVAL_MS = 60000;
 
@@ -1574,7 +1574,7 @@ nav a.active::after{left:15px;right:15px;}
             <p>${ticketEmailText}</p>
             <p class="payment-box-total">Total to pay Danny now: <strong>${totalText}</strong>.</p>
             ${warningHtml}
-            <p class="muted">Sending you to the ${nextLabel} in a few seconds.</p>
+            <p class="muted">Sending you to the ${nextLabel} in <span data-redirect-countdown></span>s.</p>
             <p><a class="inline" href="${nextUrl}">Take me there now</a></p>
           </div>
         `;
@@ -1584,7 +1584,15 @@ nav a.active::after{left:15px;right:15px;}
         localStorage.removeItem(FORM_DRAFT_KEY);
 
         if (REDIRECT_TO_PAYMENT_AFTER_SUBMIT) {
+          const countdownEl = els.submitStatus.querySelector("[data-redirect-countdown]");
+          let secondsRemaining = Math.ceil(PAYMENT_REDIRECT_DELAY_MS / 1000);
+          if (countdownEl) countdownEl.textContent = String(secondsRemaining);
+          const countdownTimer = setInterval(() => {
+            secondsRemaining = Math.max(0, secondsRemaining - 1);
+            if (countdownEl) countdownEl.textContent = String(secondsRemaining);
+          }, 1000);
           setTimeout(() => {
+            clearInterval(countdownTimer);
             window.location.href = nextUrl;
           }, PAYMENT_REDIRECT_DELAY_MS);
         }
