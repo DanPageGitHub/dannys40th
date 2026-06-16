@@ -1,6 +1,7 @@
 # Project Copy Rule
 
-- Never write em dashes or en dashes in customer-facing or marketing copy. Use commas, parentheses, colons, semicolons, or plain hyphens instead.
+- Never write em dashes or en dashes in customer-facing or marketing copy, including website copy, emails, PDFs, and other user-visible event text. Use commas, parentheses, colons, semicolons, or plain hyphens instead.
+- Em dashes and en dashes are okay in code, internal comments, developer documentation, or other non-public implementation text when they are useful. Do not churn code just to remove them.
 
 # Repository And Deployment Structure
 
