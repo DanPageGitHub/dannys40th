@@ -737,6 +737,9 @@ function sendBookingEmail(message) {
       replyTo: EMAIL_FROM_ALIAS
     });
   } catch (err) {
+    if (String(err && err.message || err).toLowerCase().includes("service invoked too many times")) {
+      throw err;
+    }
     MailApp.sendEmail(message);
   }
 }
@@ -1141,6 +1144,56 @@ function createTicketPdfPreviewFiles() {
       weekendGuidePdfUrl: guidePdf.getUrl()
     };
   });
+}
+
+function createAllEmailPreviewFiles() {
+  const stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd-HHmmss");
+  const folder = DriveApp.createFolder("Danny40th-email-previews-" + stamp);
+  const results = [];
+
+  getTicketEmailPreviewCases_().forEach(preview => {
+    const clean = buildPreviewClean_(preview);
+    const baseName = previewFileName_(preview.type + "-" + preview.bookingId);
+    const adminMessage = buildAdminBookingEmailMessage_(
+      Session.getEffectiveUser().getEmail(),
+      clean,
+      preview.bookingId,
+      preview.attendeeNumbers,
+      { tallyFound: false, rowNumber: "", name: "Preview only" },
+      "PREVIEW admin - "
+    );
+
+    const ticketText = folder.createFile(baseName + "-customer-email.txt", buildTicketEmailBody(clean, preview.bookingId, preview.attendeeNumbers), MimeType.PLAIN_TEXT);
+    const ticketHtml = folder.createFile(Utilities.newBlob(buildTicketEmailHtml(clean, preview.bookingId, preview.attendeeNumbers), "text/html", baseName + "-customer-email.html"));
+    const adminText = folder.createFile(baseName + "-admin-email.txt", adminMessage.body, MimeType.PLAIN_TEXT);
+    const ticketPdf = folder.createFile(htmlToPdf(buildTicketPdfHtml(clean, preview.bookingId, preview.attendeeNumbers), baseName + "-ticket"));
+    const guidePdf = folder.createFile(htmlToPdf(buildWeekendGuidePdfHtml(), baseName + "-weekend-guide"));
+
+    Logger.log(preview.type + " customer email text: " + ticketText.getUrl());
+    Logger.log(preview.type + " customer email HTML: " + ticketHtml.getUrl());
+    Logger.log(preview.type + " admin email text: " + adminText.getUrl());
+    Logger.log(preview.type + " ticket PDF: " + ticketPdf.getUrl());
+    Logger.log(preview.type + " weekend guide PDF: " + guidePdf.getUrl());
+
+    results.push({
+      type: preview.type,
+      customerEmailTextUrl: ticketText.getUrl(),
+      customerEmailHtmlUrl: ticketHtml.getUrl(),
+      adminEmailTextUrl: adminText.getUrl(),
+      ticketPdfUrl: ticketPdf.getUrl(),
+      weekendGuidePdfUrl: guidePdf.getUrl()
+    });
+  });
+
+  Logger.log("Preview folder: " + folder.getUrl());
+  return {
+    folderUrl: folder.getUrl(),
+    previews: results
+  };
+}
+
+function previewFileName_(value) {
+  return String(value || "preview").replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
 function sendTicketEmailPreviewsToMe() {
