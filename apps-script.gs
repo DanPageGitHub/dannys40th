@@ -1270,17 +1270,18 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
 function weekendSectionsHtml() {
   let sectionCount = 0;
   const head = (t) => {
-    const topMargin = sectionCount === 0 ? 0 : 20;
+    const topMargin = sectionCount === 0 ? 0 : 12;
     sectionCount += 1;
-    return `<h2 style="margin:${topMargin}px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#a85a1f;">${t}</h2>`;
+    return `<h2 style="margin:${topMargin}px 0 4px;font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#a85a1f;">${t}</h2>`;
   };
-  const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.55;color:#2b2118;">${t}</p>`;
-  const ul = (items) => `<ul style="margin:4px 0 12px;padding-left:20px;font-family:Georgia,serif;font-size:14px;line-height:1.5;color:#2b2118;">${items}</ul>`;
+  const p = (t) => `<p style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:13px;line-height:1.42;color:#2b2118;">${t}</p>`;
+  const ul = (items) => `<ul style="margin:2px 0 8px;padding-left:18px;font-family:Georgia,serif;font-size:13px;line-height:1.35;color:#2b2118;">${items}</ul>`;
+  const campingMap = getPdfImageHtml_(CAMPING_MAP_URL, "Campsite map showing the main field and Large Camping Field", "8px 0 10px");
   const lineup = ["Open Decks B2B2B", "Algorithmic", "Anorak", "Gizmode &amp; Breakwhore", "Golgot", "Myr", "Salander", "S.Murk", "The Mighty Rick", "The Panger"].map((n) => `<li>${n}</li>`).join("");
   const gazebos = ["Fairy lights / nice lighting", "Rugs / blankets / cushions", "Folding tables", "Camping chairs", "Bunting / fabric / decor", "Battery lights", "Tarps / ground sheets"].map((n) => `<li>${n}</li>`).join("");
   return head("Arrival")
     + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
-    + `<img src="${CAMPING_MAP_URL}" alt="Campsite map showing the main field and Large Camping Field" style="display:block;width:100%;max-width:560px;height:auto;border:1px solid #d8c8a6;margin:12px 0 16px;">`
+    + campingMap
     + head("Lifts")
     + p(`Need one, or offering one? Sort it in the <a href="${LIFT_POOL_URL}" style="color:#a85a1f;">lift pool</a>. Password: Amens4Life.`)
     + head("Friday night  -  bring a dish")
@@ -1302,15 +1303,16 @@ function weekendSectionsHtml() {
 }
 
 function pdfDocShell(title, innerHtml, options) {
-  const titleBottomMargin = options && options.compactAfterTitle ? 8 : 14;
-  const headerBottomMargin = options && options.compactAfterTitle ? 12 : 18;
+  const titleBottomMargin = options && options.compactAfterTitle ? 6 : 14;
+  const headerBottomMargin = options && options.compactAfterTitle ? 8 : 18;
+  const bodyPadding = options && options.compact ? "24px 32px" : "32px 36px";
   return `<html><head><meta charset="utf-8"></head>`
-    + `<body style="margin:0;padding:32px 36px;font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
-    + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:${headerBottomMargin}px;">`
-    + `<div style="font-size:24px;color:#2b2118;margin-bottom:6px;">Danny's 40th</div>`
-    + `<div style="font-size:12px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026</div>`
+    + `<body style="margin:0;padding:${bodyPadding};font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
+    + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:8px;margin-bottom:${headerBottomMargin}px;">`
+    + `<div style="font-size:23px;color:#2b2118;margin-bottom:5px;">Danny's 40th</div>`
+    + `<div style="font-size:11px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026</div>`
     + `</div>`
-    + `<h1 style="font-size:22px;line-height:1.05;color:#a85a1f;margin:0 0 ${titleBottomMargin}px;padding:0;">${title}</h1>`
+    + `<h1 style="font-size:21px;line-height:1.05;color:#a85a1f;margin:0 0 ${titleBottomMargin}px;padding:0;">${title}</h1>`
     + innerHtml
     + `</body></html>`;
 }
@@ -1343,11 +1345,30 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
 }
 
 function buildWeekendGuidePdfHtml() {
-  return pdfDocShell("Weekend guide", weekendSectionsHtml(), { compactAfterTitle: true });
+  return pdfDocShell("Weekend guide", weekendSectionsHtml(), { compactAfterTitle: true, compact: true });
 }
 
 function htmlToPdf(html, name) {
   return Utilities.newBlob(html, "text/html", name + ".html").getAs("application/pdf").setName(name + ".pdf");
+}
+
+function getPdfImageHtml_(url, alt, margin) {
+  const dataUri = getImageDataUri_(url);
+  if (!dataUri) return "";
+  return `<img src="${dataUri}" alt="${alt}" style="display:block;width:100%;max-width:500px;height:auto;border:1px solid #d8c8a6;margin:${margin};">`;
+}
+
+function getImageDataUri_(url) {
+  try {
+    const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    const status = response.getResponseCode();
+    if (status < 200 || status >= 300) return "";
+    const blob = response.getBlob();
+    const contentType = blob.getContentType() || "image/jpeg";
+    return "data:" + contentType + ";base64," + Utilities.base64Encode(blob.getBytes());
+  } catch (err) {
+    return "";
+  }
 }
 
 function getTicketEmailPreviewCases_() {
