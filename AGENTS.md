@@ -49,9 +49,11 @@
   - `sendTicketEmailPreviewsToMe`
   - `createTicketPdfPreviewFiles`
   - `createAllEmailPreviewFiles`
+  - `testEmailConfig`
   - `testResendEmailToMe`
   - `testCloudflareEmailToMe`
   - `resendMissingBookingEmails`
+- The Web App has a read-only diagnostic endpoint: `?action=emailConfig`. It returns whether the deployed `/exec` URL sees Resend configured, whether the relevant Script Properties are present, and the provider order. It must never return secret values such as API keys.
 
 # Local Generated Or Untracked Files
 

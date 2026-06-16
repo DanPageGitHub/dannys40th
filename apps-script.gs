@@ -46,6 +46,7 @@ const CAMPING_MAP_URL = "https://dannys40th.com/images/CampingMap.jpg";
 const VEHICLE_INSTRUCTIONS_GIF_URL = "https://dannys40th.com/images/TestCamperInstructions.gif";
 const EMAIL_FROM_ALIAS = "hello@danpage.uk";
 const EMAIL_FROM_NAME = "Danny's 40th";
+const EMAIL_PROVIDER_ORDER = "resend,gmail,mailapp,cloudflare-last-resort";
 const RESEND_API_KEY_PROPERTY = "RESEND_API_KEY";
 const RESEND_EMAIL_FROM_PROPERTY = "RESEND_EMAIL_FROM";
 const RESEND_EMAIL_REPLY_TO_PROPERTY = "RESEND_EMAIL_REPLY_TO";
@@ -116,6 +117,10 @@ function doGet(e) {
       eventFundTarget: BREAK_EVEN_TARGET,
       breakEvenTarget: BREAK_EVEN_TARGET
     });
+  }
+
+  if (action === "emailConfig") {
+    return json(getEmailConfigDiagnostic_());
   }
 
   if (action === "checkTally") {
@@ -896,6 +901,28 @@ function isResendEmailConfigured_() {
   );
 }
 
+function getEmailConfigDiagnostic_() {
+  const props = PropertiesService.getScriptProperties();
+  const resendFrom = props.getProperty(RESEND_EMAIL_FROM_PROPERTY) || "";
+  const resendReplyTo = props.getProperty(RESEND_EMAIL_REPLY_TO_PROPERTY) || "";
+  const cloudflareFrom = props.getProperty(CLOUDFLARE_EMAIL_FROM_PROPERTY) || "";
+  return {
+    ok: true,
+    diagnostic: "emailConfig",
+    providerOrder: EMAIL_PROVIDER_ORDER,
+    resendConfigured: isResendEmailConfigured_(),
+    resendApiKeyPresent: Boolean(props.getProperty(RESEND_API_KEY_PROPERTY)),
+    resendFromConfigured: Boolean(resendFrom),
+    resendFrom,
+    resendReplyTo: resendReplyTo || EMAIL_FROM_ALIAS,
+    gmailAlias: EMAIL_FROM_ALIAS,
+    cloudflareConfigured: isCloudflareEmailConfigured_(),
+    cloudflareAccountIdPresent: Boolean(props.getProperty(CLOUDFLARE_EMAIL_ACCOUNT_ID_PROPERTY)),
+    cloudflareApiTokenPresent: Boolean(props.getProperty(CLOUDFLARE_EMAIL_API_TOKEN_PROPERTY)),
+    cloudflareFrom: cloudflareFrom || EMAIL_FROM_ALIAS
+  };
+}
+
 function sendResendEmail_(message) {
   const props = PropertiesService.getScriptProperties();
   const apiKey = props.getProperty(RESEND_API_KEY_PROPERTY);
@@ -1504,6 +1531,12 @@ function testResendEmailToMe() {
     htmlBody: "<p>Resend is configured for Danny's 40th.</p>",
     name: "Danny's 40th"
   });
+}
+
+function testEmailConfig() {
+  const diagnostic = getEmailConfigDiagnostic_();
+  Logger.log(JSON.stringify(diagnostic, null, 2));
+  return diagnostic;
 }
 
 function testCloudflareEmailToMe() {
