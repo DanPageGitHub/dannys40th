@@ -41,9 +41,12 @@
 - Keep the existing Web App `/exec` URL unless intentionally changing `API_URL` in `Tickets.html`.
 - Whenever a change touches `apps-script.gs`, final replies must remind the user that the Google Apps Script project still needs updating and redeploying before backend/email changes go live.
 - Also mention the curl/API update option when relevant: the Apps Script API can update project content with `projects.updateContent`, but it needs an OAuth bearer token, the script ID, and a JSON payload containing every source file in the project. Manual paste or `clasp push` is usually safer unless the API workflow is already set up.
+- Ticket/confirmation emails can use Cloudflare Email Sending when these Apps Script properties are set: `CLOUDFLARE_EMAIL_ACCOUNT_ID`, `CLOUDFLARE_EMAIL_API_TOKEN`, and optionally `CLOUDFLARE_EMAIL_FROM`. Run `testCloudflareEmailToMe` after setting them. This avoids Google Apps Script/Gmail daily email quota exhaustion.
 - Useful Apps Script preview helpers:
   - `sendTicketEmailPreviewsToMe`
   - `createTicketPdfPreviewFiles`
+  - `createAllEmailPreviewFiles`
+  - `testCloudflareEmailToMe`
 
 # Local Generated Or Untracked Files
 

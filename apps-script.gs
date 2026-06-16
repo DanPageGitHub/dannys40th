@@ -45,6 +45,10 @@ const COSTUMES_URL = "https://dannys40th.com/Costumes.html";
 const CAMPING_MAP_URL = "https://dannys40th.com/images/CampingMap.jpg";
 const VEHICLE_INSTRUCTIONS_GIF_URL = "https://dannys40th.com/images/TestCamperInstructions.gif";
 const EMAIL_FROM_ALIAS = "hello@danpage.uk";
+const EMAIL_FROM_NAME = "Danny's 40th";
+const CLOUDFLARE_EMAIL_ACCOUNT_ID_PROPERTY = "CLOUDFLARE_EMAIL_ACCOUNT_ID";
+const CLOUDFLARE_EMAIL_API_TOKEN_PROPERTY = "CLOUDFLARE_EMAIL_API_TOKEN";
+const CLOUDFLARE_EMAIL_FROM_PROPERTY = "CLOUDFLARE_EMAIL_FROM";
 
 const HEADERS = [
   "Submitted At",
@@ -728,6 +732,11 @@ function sendTicketEmail(clean, bookingId, attendeeNumbers) {
 }
 
 function sendBookingEmail(message) {
+  if (isCloudflareEmailConfigured_()) {
+    sendCloudflareEmail_(message);
+    return;
+  }
+
   try {
     GmailApp.sendEmail(message.to, message.subject, message.body, {
       htmlBody: message.htmlBody,
@@ -741,6 +750,71 @@ function sendBookingEmail(message) {
       throw err;
     }
     MailApp.sendEmail(message);
+  }
+}
+
+function isCloudflareEmailConfigured_() {
+  const props = PropertiesService.getScriptProperties();
+  return Boolean(
+    props.getProperty(CLOUDFLARE_EMAIL_ACCOUNT_ID_PROPERTY) &&
+    props.getProperty(CLOUDFLARE_EMAIL_API_TOKEN_PROPERTY)
+  );
+}
+
+function sendCloudflareEmail_(message) {
+  const props = PropertiesService.getScriptProperties();
+  const accountId = props.getProperty(CLOUDFLARE_EMAIL_ACCOUNT_ID_PROPERTY);
+  const apiToken = props.getProperty(CLOUDFLARE_EMAIL_API_TOKEN_PROPERTY);
+  const fromAddress = props.getProperty(CLOUDFLARE_EMAIL_FROM_PROPERTY) || EMAIL_FROM_ALIAS;
+  const payload = {
+    to: message.to,
+    from: {
+      address: fromAddress,
+      name: message.name || EMAIL_FROM_NAME
+    },
+    reply_to: {
+      address: fromAddress,
+      name: message.name || EMAIL_FROM_NAME
+    },
+    subject: message.subject,
+    text: message.body || "",
+    html: message.htmlBody || ""
+  };
+
+  if (message.attachments && message.attachments.length) {
+    payload.attachments = message.attachments.map(blob => ({
+      content: Utilities.base64Encode(blob.getBytes()),
+      filename: blob.getName(),
+      type: blob.getContentType() || "application/octet-stream",
+      disposition: "attachment"
+    }));
+  }
+
+  if (!payload.html) delete payload.html;
+
+  const response = UrlFetchApp.fetch(
+    "https://api.cloudflare.com/client/v4/accounts/" + encodeURIComponent(accountId) + "/email/sending/send",
+    {
+      method: "post",
+      contentType: "application/json",
+      headers: {
+        Authorization: "Bearer " + apiToken
+      },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    }
+  );
+  const status = response.getResponseCode();
+  const text = response.getContentText();
+  let data = null;
+  try {
+    data = JSON.parse(text);
+  } catch (parseErr) {
+    // Keep the raw response below for debugging.
+  }
+
+  if (status < 200 || status >= 300 || (data && data.success === false)) {
+    throw new Error("Cloudflare email failed (" + status + "): " + text);
   }
 }
 
@@ -1229,6 +1303,27 @@ function sendTicketEmailPreviewsToMe() {
 
 function sendAllEmailPreviewsToMe() {
   sendTicketEmailPreviewsToMe();
+}
+
+function testCloudflareEmailToMe() {
+  const recipient = Session.getEffectiveUser().getEmail();
+  if (!recipient) throw new Error("No effective user email found for test recipient.");
+  if (!isCloudflareEmailConfigured_()) {
+    throw new Error(
+      "Cloudflare email is not configured. Set script properties " +
+      CLOUDFLARE_EMAIL_ACCOUNT_ID_PROPERTY + " and " +
+      CLOUDFLARE_EMAIL_API_TOKEN_PROPERTY + ". Optional: " +
+      CLOUDFLARE_EMAIL_FROM_PROPERTY + "."
+    );
+  }
+
+  sendCloudflareEmail_({
+    to: recipient,
+    subject: "PREVIEW Cloudflare email test - Danny's 40th",
+    body: "Cloudflare Email Sending is configured for Danny's 40th.",
+    htmlBody: "<p>Cloudflare Email Sending is configured for Danny's 40th.</p>",
+    name: "Danny's 40th"
+  });
 }
 
 function createBookingId() {
