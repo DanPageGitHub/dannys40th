@@ -745,7 +745,11 @@ function sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult) {
   const adminEmail = Session.getEffectiveUser().getEmail();
   if (!adminEmail) return;
 
-  const subject = "Danny's 40th booking received - " + clean.name + " - " + formatCurrency(clean.totalPayableToDanny);
+  sendBookingEmail(buildAdminBookingEmailMessage_(adminEmail, clean, bookingId, attendeeNumbers, tallyResult, ""));
+}
+
+function buildAdminBookingEmailMessage_(to, clean, bookingId, attendeeNumbers, tallyResult, subjectPrefix) {
+  const subject = (subjectPrefix || "") + "Danny's 40th booking received - " + clean.name + " - " + formatCurrency(clean.totalPayableToDanny);
   const body = [
     "New booking received.",
     "",
@@ -778,12 +782,12 @@ function sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult) {
     clean.paymentLink
   ].join("\n");
 
-  sendBookingEmail({
-    to: adminEmail,
+  return {
+    to,
     subject,
     body,
     name: "Danny's 40th"
-  });
+  };
 }
 
 function getEmailSummaries(clean) {
@@ -1158,7 +1162,20 @@ function sendTicketEmailPreviewsToMe() {
       attachments,
       name: "Danny's 40th"
     });
+
+    sendBookingEmail(buildAdminBookingEmailMessage_(
+      recipient,
+      clean,
+      preview.bookingId,
+      preview.attendeeNumbers,
+      { tallyFound: false, rowNumber: "", name: "Preview only" },
+      "PREVIEW admin - "
+    ));
   });
+}
+
+function sendAllEmailPreviewsToMe() {
+  sendTicketEmailPreviewsToMe();
 }
 
 function createBookingId() {
