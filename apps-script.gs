@@ -929,7 +929,7 @@ function weekendSectionsHtml() {
   const gazebos = ["Fairy lights / nice lighting", "Rugs / blankets / cushions", "Folding tables", "Camping chairs", "Bunting / fabric / decor", "Battery lights", "Tarps / ground sheets"].map((n) => `<li>${n}</li>`).join("");
   return head("Arrival")
     + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
-    + p(`<strong>Lifts:</strong> need one, or offering one? Sort it in the lift pool at d40-lift-pool.jimmybreeze.workers.dev (ask Danny for the password).`)
+    + p(`<strong>Lifts:</strong> need one, or offering one? Sort it in the lift pool at d40-lift-pool.jimmybreeze.workers.dev. Password: Amens4Life.`)
     + head("Friday night  -  bring a dish")
     + p(`Bring something to add to a big shared meal at the campsite, 8pm in the Naughty Corner. There's a night on at The Barge too if you fancy dipping in, plus the pub and a campsite firepit to hang around.`)
     + head("Saturday daytime  -  games, installations &amp; jams")
@@ -950,13 +950,14 @@ function weekendSectionsHtml() {
 
 function pdfDocShell(title, innerHtml, options) {
   const titleBottomMargin = options && options.compactAfterTitle ? 0 : 14;
+  const headerBottomMargin = options && options.compactAfterTitle ? 8 : 18;
   return `<html><head><meta charset="utf-8"></head>`
     + `<body style="margin:0;padding:32px 36px;font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
-    + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:18px;">`
+    + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:${headerBottomMargin}px;">`
     + `<div style="font-size:24px;color:#2b2118;">Danny's 40th</div>`
     + `<div style="font-size:12px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026</div>`
     + `</div>`
-    + `<h1 style="font-size:22px;color:#a85a1f;margin:0 0 ${titleBottomMargin}px;">${title}</h1>`
+    + `<h1 style="font-size:22px;line-height:1.05;color:#a85a1f;margin:0 0 ${titleBottomMargin}px;padding:0;">${title}</h1>`
     + innerHtml
     + `</body></html>`;
 }
