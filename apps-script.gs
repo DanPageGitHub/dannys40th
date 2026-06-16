@@ -929,7 +929,8 @@ function weekendSectionsHtml() {
   const gazebos = ["Fairy lights / nice lighting", "Rugs / blankets / cushions", "Folding tables", "Camping chairs", "Bunting / fabric / decor", "Battery lights", "Tarps / ground sheets"].map((n) => `<li>${n}</li>`).join("");
   return head("Arrival")
     + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
-    + p(`<strong>Lifts:</strong> need one, or offering one? Sort it in the lift pool at d40-lift-pool.jimmybreeze.workers.dev. Password: Amens4Life.`)
+    + head("Lifts")
+    + p(`Need one, or offering one? Sort it in the lift pool at d40-lift-pool.jimmybreeze.workers.dev. Password: Amens4Life.`)
     + head("Friday night  -  bring a dish")
     + p(`Bring something to add to a big shared meal at the campsite, 8pm in the Naughty Corner. There's a night on at The Barge too if you fancy dipping in, plus the pub and a campsite firepit to hang around.`)
     + head("Saturday daytime  -  games, installations &amp; jams")
