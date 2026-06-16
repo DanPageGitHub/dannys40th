@@ -1280,6 +1280,7 @@ function weekendSectionsHtml() {
   const gazebos = ["Fairy lights / nice lighting", "Rugs / blankets / cushions", "Folding tables", "Camping chairs", "Bunting / fabric / decor", "Battery lights", "Tarps / ground sheets"].map((n) => `<li>${n}</li>`).join("");
   return head("Arrival")
     + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
+    + `<img src="${CAMPING_MAP_URL}" alt="Campsite map showing the main field and Large Camping Field" style="display:block;width:100%;max-width:560px;height:auto;border:1px solid #d8c8a6;margin:12px 0 16px;">`
     + head("Lifts")
     + p(`Need one, or offering one? Sort it in the <a href="${LIFT_POOL_URL}" style="color:#a85a1f;">lift pool</a>. Password: Amens4Life.`)
     + head("Friday night  -  bring a dish")
@@ -1306,7 +1307,7 @@ function pdfDocShell(title, innerHtml, options) {
   return `<html><head><meta charset="utf-8"></head>`
     + `<body style="margin:0;padding:32px 36px;font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
     + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:${headerBottomMargin}px;">`
-    + `<div style="font-size:24px;color:#2b2118;">Danny's 40th</div>`
+    + `<div style="font-size:24px;color:#2b2118;margin-bottom:6px;">Danny's 40th</div>`
     + `<div style="font-size:12px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026</div>`
     + `</div>`
     + `<h1 style="font-size:22px;line-height:1.05;color:#a85a1f;margin:0 0 ${titleBottomMargin}px;padding:0;">${title}</h1>`
