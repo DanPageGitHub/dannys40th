@@ -949,8 +949,8 @@ function weekendSectionsHtml() {
 }
 
 function pdfDocShell(title, innerHtml, options) {
-  const titleBottomMargin = options && options.compactAfterTitle ? 0 : 14;
-  const headerBottomMargin = options && options.compactAfterTitle ? 8 : 18;
+  const titleBottomMargin = options && options.compactAfterTitle ? 8 : 14;
+  const headerBottomMargin = options && options.compactAfterTitle ? 12 : 18;
   return `<html><head><meta charset="utf-8"></head>`
     + `<body style="margin:0;padding:32px 36px;font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
     + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:${headerBottomMargin}px;">`
