@@ -911,7 +911,7 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     "",
     venueBookingNote,
     "",
-    "Two PDFs are attached: your ticket, and the full weekend guide (plan, lineup, costumes and what to bring). Save them to your phone.",
+    "Two PDFs are attached: your ticket, and the full weekend guide (plan, lineup, costumes and what to bring).",
     "",
     "See you there,",
     "Danny",
@@ -957,7 +957,7 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
     + `</td></tr></table>`
     + directBookingNote
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;border:1px solid #d8c8a6;background:#ffffff;border-radius:6px;"><tr><td style="padding:14px 18px;">`
-    + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#2b2118;">&#128206; Two PDFs are attached  -  <strong>your ticket</strong> and <strong>the weekend guide</strong> (plan, lineup, costumes and what to bring). Save them to your phone; you can always find this email again by searching <em>Danny's 40th</em>.</p>`
+    + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#2b2118;">&#128206; Two PDFs are attached  -  <strong>your ticket</strong> and <strong>the weekend guide</strong> (plan, lineup, costumes and what to bring).</p>`
     + `</td></tr></table>`
     + `<p style="margin:18px 0 0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#5c4f3c;">See you there,<br><br>Danny</p>`
     + `</td></tr>`
