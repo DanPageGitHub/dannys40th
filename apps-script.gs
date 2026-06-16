@@ -863,11 +863,6 @@ function sendBookingEmail(message) {
     return;
   }
 
-  if (isCloudflareEmailConfigured_()) {
-    sendCloudflareEmail_(message);
-    return;
-  }
-
   try {
     GmailApp.sendEmail(message.to, message.subject, message.body, {
       htmlBody: message.htmlBody,
@@ -880,7 +875,16 @@ function sendBookingEmail(message) {
     if (String(err && err.message || err).toLowerCase().includes("service invoked too many times")) {
       throw err;
     }
-    MailApp.sendEmail(message);
+
+    try {
+      MailApp.sendEmail(message);
+    } catch (mailErr) {
+      if (isCloudflareEmailConfigured_()) {
+        sendCloudflareEmail_(message);
+        return;
+      }
+      throw mailErr;
+    }
   }
 }
 
