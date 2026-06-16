@@ -2,8 +2,48 @@
 
 - Never write em dashes or en dashes in customer-facing or marketing copy. Use commas, parentheses, colons, semicolons, or plain hyphens instead.
 
-# Deployment Notes
+# Repository And Deployment Structure
 
-- Live/dev separation is by GitHub repository, not by Cloudflare Pages branch names.
-- The `live` Git remote points at the tracked public website repository. Do not push there unless explicitly asked to update the public live site.
-- The `origin` Git remote points at the dev repository. It is okay for that dev repository to trigger a Cloudflare Pages deployment named "live"; that deployment is the untracked/dev website at https://f8dbaf70.dannys40th-dev.pages.dev.
+- This project uses separate GitHub repositories for live and dev. Do not infer production safety from Cloudflare environment labels alone.
+- `origin` is the dev repository: `https://github.com/DanPageGitHub/dannys40th-dev`.
+- `live` is the tracked public website repository: `https://github.com/DanPageGitHub/dannys40th`.
+- Push to `origin` for dev work unless the user explicitly asks to update the public live site.
+- Do not push to `live` unless the user explicitly asks to update the public live site.
+
+# Cloudflare Pages
+
+- The dev repository has a Cloudflare Pages project for `dannys40th-dev.pages.dev`.
+- In that Cloudflare project, the Production environment is built from the dev repo `main` branch.
+- Preview deployments are created from non-main branches such as `codex/...`.
+- It is okay for `origin/main` to trigger a Cloudflare deployment labelled "Production" or "live", because this is the dev Pages site, not the public tracked website.
+- Current dev Pages production URL seen in Cloudflare: `https://f8dbaf70.dannys40th-dev.pages.dev`.
+- If the user wants changes to appear on the dev Pages production URL, fast-forward `origin/main` in the dev repository.
+- Preferred safe flow for dev Pages production:
+  - commit changes on the working branch,
+  - push the working branch to `origin`,
+  - switch to local `main`,
+  - `git pull origin main`,
+  - `git merge --ff-only <working-branch>`,
+  - `git push origin main`.
+- A direct `git push origin HEAD:main` also updates the dev Pages production branch, but prefer the explicit fast-forward flow so local `main` matches the deployed dev state.
+
+# Current Working Branch Pattern
+
+- Codex branches should normally use the `codex/` prefix.
+- The active development branch for the current ticket/email/plan work has been `codex/venue-booking-copy-previews`.
+- After pushing a Codex branch to `origin`, Cloudflare will show it as a Preview deployment until it is merged or pushed to `origin/main`.
+
+# Apps Script Backend
+
+- `apps-script.gs` is the Google Apps Script backend source for ticket booking and emails.
+- Editing `apps-script.gs` locally does not update the live Google Apps Script Web App. The user must paste or sync the code into Google Apps Script, save, test preview helpers, and redeploy the existing Web App deployment.
+- Keep the existing Web App `/exec` URL unless intentionally changing `API_URL` in `Tickets.html`.
+- Useful Apps Script preview helpers:
+  - `sendTicketEmailPreviewsToMe`
+  - `createTicketPdfPreviewFiles`
+
+# Local Generated Or Untracked Files
+
+- `previews/` contains local PDF/image previews and should normally stay untracked.
+- `images/NotOnLiveSite/` contains local design or non-live assets and should normally stay untracked.
+- `images/CampingMap - Backup-DoNotPutLive.jpg` is a local backup and should stay untracked unless the user explicitly asks otherwise.
