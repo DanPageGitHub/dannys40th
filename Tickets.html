@@ -484,7 +484,7 @@ nav a.active::after{left:15px;right:15px;}
 /* Lineup reads small because IM Fell English has a low x-height; bump it to match body copy */
 .booking-main .lineup-item{font-size:1.3rem;}
 /* Arrival map: show the whole image, manuscript-toned */
-.booking-main .weekend-map{display:block;width:100%;height:auto;margin:0 0 16px;border-radius:3px;border:1px solid rgba(184,115,51,0.25);filter:saturate(0.72) sepia(0.18) brightness(0.92);}
+.booking-main .weekend-map{display:block;width:100%;height:auto;margin:0 0 16px;border-radius:3px;border:1px solid rgba(184,115,51,0.25);filter:saturate(0.72) brightness(0.92);}
 
 /* ============================================================
    INTRO → TICKETS call-to-action buttons + folded weekend notes
@@ -641,9 +641,13 @@ nav a.active::after{left:15px;right:15px;}
         </div>
 
         <div id="vanInfo" hidden>
+          <img class="weekend-map" loading="lazy" decoding="async" src="images/CampingMap.jpg" alt="Campsite map showing the main field and Large Camping Field">
           <p>
-            For a vans etc., please
-            <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book directly with the venue</a>. Those spaces are limited, especially hard pitches and hookups, so book quickly.
+            Please
+            <a class="inline" href="https://thebargeinnhoneystreet.uk/camping/" target="_blank" rel="noopener">book the vehicle you're staying in directly with The Barge</a>. Spaces are limited, especially hard pitches and hookups, so book quickly.
+          </p>
+          <p>
+            If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where most of us will be camped.
           </p>
         </div>
 

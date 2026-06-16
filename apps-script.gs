@@ -41,6 +41,8 @@ const CHILD_CAMPING_PER_NIGHT = 7.5;
 const PAYMENT_LINK = "https://settleup.starlingbank.com/daniel-page-e74b5b";
 const VENUE_CAMPING_URL = "https://thebargeinnhoneystreet.uk/camping/";
 const LIFT_POOL_URL = "https://dannys40th.com/liftpool/";
+const CAMPING_MAP_URL = "https://dannys40th.com/images/CampingMap.jpg";
+const VEHICLE_INSTRUCTIONS_GIF_URL = "https://dannys40th.com/images/TestCamperInstructions.gif";
 const EMAIL_FROM_ALIAS = "hello@danpage.uk";
 
 const HEADERS = [
@@ -819,10 +821,15 @@ function getVenueBookingPlainText(clean) {
 
   if (clean.accommodationType === "van") {
     return [
-      "As you're staying in a van, campervan or motorhome, please book that directly with The Barge:",
+      "Please book the vehicle you're staying in directly with The Barge:",
       VENUE_CAMPING_URL,
       "",
-      "Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the \"main field\" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be."
+      "Spaces are limited, especially hard pitches and hookups, so book quickly.",
+      "",
+      "If you want an electric hookup, you'll need to stay in the \"main field\" (the smaller one nearest the venue) rather than in the Large Camping Field where most of us will be camped.",
+      "",
+      "Vehicle instructions:",
+      VEHICLE_INSTRUCTIONS_GIF_URL
     ].join("\n");
   }
 
@@ -835,7 +842,10 @@ function getVenueBookingHtml(clean, esc) {
   }
 
   if (clean.accommodationType === "van") {
-    return `As you're staying in a van, campervan or motorhome, please <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">book that directly with The Barge</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be.`;
+    return `<p style="margin:0 0 12px;">Please <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">book the vehicle you're staying in directly with The Barge</a>. Spaces are limited, especially hard pitches and hookups, so book quickly.</p>`
+      + `<p style="margin:0 0 12px;">If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where most of us will be camped.</p>`
+      + `<img src="${esc(CAMPING_MAP_URL)}" alt="Campsite map showing the main field and Large Camping Field" style="display:block;width:100%;max-width:560px;height:auto;border:1px solid #d8c8a6;border-radius:4px;margin:8px 0 12px;">`
+      + `<img src="${esc(VEHICLE_INSTRUCTIONS_GIF_URL)}" alt="How to book a vehicle pitch with The Barge" style="display:block;width:100%;max-width:560px;height:auto;border:1px solid #d8c8a6;border-radius:4px;margin:8px 0 0;">`;
   }
 
   return "";
@@ -847,7 +857,8 @@ function getVenueBookingPdfHtml(clean, esc) {
   }
 
   if (clean.accommodationType === "van") {
-    return `As you're staying in a van, campervan or motorhome, please book that directly with The Barge: <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">${esc(VENUE_CAMPING_URL)}</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be.`;
+    return `<p style="margin:0 0 10px;">Please book the vehicle you're staying in directly with The Barge: <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">${esc(VENUE_CAMPING_URL)}</a>. Spaces are limited, especially hard pitches and hookups, so book quickly.</p>`
+      + `<p style="margin:0;">If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where most of us will be camped.</p>`;
   }
 
   return "";
@@ -927,7 +938,7 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
   const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#2b2118;">${t}</p>`;
   const venueBookingHtml = getVenueBookingHtml(clean, esc);
   const directBookingNote = venueBookingHtml
-    ? `<p style="margin:14px 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#8a6d3b;">${venueBookingHtml}</p>`
+    ? `<div style="margin:14px 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#8a6d3b;">${venueBookingHtml}</div>`
     : "";
   const paymentFollowUpHtml = getPaymentFollowUpHtml(clean, esc);
 
@@ -997,7 +1008,7 @@ function weekendSectionsHtml() {
     + head("Gazebos please! Help build the Naughty Corner")
     + p(`I want the Naughty Corner to be a really nice place to hang out. Gazebos are the big one  -  if you can bring one, please do. Also handy:`)
     + ul(gazebos)
-    + p(`One important thing: If you want an electric hookup for your van you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be. I'm fairly sure we can have vans in the Large Camping Field with us as their site lets you book them in there.`);
+    + p(`One important thing: If you want an electric hookup for your van you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where most of us will be camped. I'm fairly sure we can have vans in the Large Camping Field with us as their site lets you book them in there.`);
 }
 
 function pdfDocShell(title, innerHtml, options) {
@@ -1036,7 +1047,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
           + (paymentFollowUpPdfHtml ? `<p style="font-size:12px;color:#6b5d4a;margin:0;">${paymentFollowUpPdfHtml}</p>` : "")
         : `<p style="font-size:14px;color:#2e7b7a;margin:18px 0 0;font-weight:bold;">Nothing to pay right now  -  you're all set.</p>`)
     + (venueBookingPdfHtml
-        ? `<p style="font-size:12px;color:#8a6d3b;margin:18px 0 0;">${venueBookingPdfHtml}</p>`
+        ? `<div style="font-size:12px;color:#8a6d3b;margin:18px 0 0;">${venueBookingPdfHtml}</div>`
         : "");
   return pdfDocShell("Your ticket", inner);
 }
