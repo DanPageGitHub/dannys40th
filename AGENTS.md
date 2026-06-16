@@ -8,6 +8,8 @@
 - This project uses separate GitHub repositories for live and dev. Do not infer production safety from Cloudflare environment labels alone.
 - `origin` is the dev repository: `https://github.com/DanPageGitHub/dannys40th-dev`.
 - `live` is the tracked public website repository: `https://github.com/DanPageGitHub/dannys40th`.
+- The public `dannys40th.com` site is hosted from GitHub, not Cloudflare Pages.
+- `dannys40th.com` was bought through Fasthosts. Treat Fasthosts as the likely place to manage public domain DNS records unless the user later confirms the nameservers point somewhere else.
 - Push to `origin` for dev work unless the user explicitly asks to update the public live site.
 - Do not push to `live` unless the user explicitly asks to update the public live site.
 
@@ -41,11 +43,13 @@
 - Keep the existing Web App `/exec` URL unless intentionally changing `API_URL` in `Tickets.html`.
 - Whenever a change touches `apps-script.gs`, final replies must remind the user that the Google Apps Script project still needs updating and redeploying before backend/email changes go live.
 - Also mention the curl/API update option when relevant: the Apps Script API can update project content with `projects.updateContent`, but it needs an OAuth bearer token, the script ID, and a JSON payload containing every source file in the project. Manual paste or `clasp push` is usually safer unless the API workflow is already set up.
-- Ticket/confirmation emails can use Cloudflare Email Sending when these Apps Script properties are set: `CLOUDFLARE_EMAIL_ACCOUNT_ID`, `CLOUDFLARE_EMAIL_API_TOKEN`, and optionally `CLOUDFLARE_EMAIL_FROM`. Run `testCloudflareEmailToMe` after setting them. This avoids Google Apps Script/Gmail daily email quota exhaustion.
+- Ticket/confirmation emails can use Resend over HTTPS from Apps Script when these Script Properties are set: `RESEND_API_KEY`, `RESEND_EMAIL_FROM`, and optionally `RESEND_EMAIL_REPLY_TO`. This is the preferred emergency route if Gmail/App Script mail quota is exhausted. The sender domain still needs DNS authentication records added at the active DNS provider, likely Fasthosts.
+- Ticket/confirmation emails can use Cloudflare Email Sending only if the sending domain is onboarded and authenticated in Cloudflare Email Service. The public site being hosted on GitHub does not matter, but DNS ownership and email authentication do. If this is available, set Apps Script properties `CLOUDFLARE_EMAIL_ACCOUNT_ID`, `CLOUDFLARE_EMAIL_API_TOKEN`, and optionally `CLOUDFLARE_EMAIL_FROM`, then run `testCloudflareEmailToMe`. Do not assume `noreply@dannys40th.com` works unless `dannys40th.com` has been configured for sending.
 - Useful Apps Script preview helpers:
   - `sendTicketEmailPreviewsToMe`
   - `createTicketPdfPreviewFiles`
   - `createAllEmailPreviewFiles`
+  - `testResendEmailToMe`
   - `testCloudflareEmailToMe`
 
 # Local Generated Or Untracked Files

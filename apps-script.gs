@@ -46,6 +46,9 @@ const CAMPING_MAP_URL = "https://dannys40th.com/images/CampingMap.jpg";
 const VEHICLE_INSTRUCTIONS_GIF_URL = "https://dannys40th.com/images/TestCamperInstructions.gif";
 const EMAIL_FROM_ALIAS = "hello@danpage.uk";
 const EMAIL_FROM_NAME = "Danny's 40th";
+const RESEND_API_KEY_PROPERTY = "RESEND_API_KEY";
+const RESEND_EMAIL_FROM_PROPERTY = "RESEND_EMAIL_FROM";
+const RESEND_EMAIL_REPLY_TO_PROPERTY = "RESEND_EMAIL_REPLY_TO";
 const CLOUDFLARE_EMAIL_ACCOUNT_ID_PROPERTY = "CLOUDFLARE_EMAIL_ACCOUNT_ID";
 const CLOUDFLARE_EMAIL_API_TOKEN_PROPERTY = "CLOUDFLARE_EMAIL_API_TOKEN";
 const CLOUDFLARE_EMAIL_FROM_PROPERTY = "CLOUDFLARE_EMAIL_FROM";
@@ -732,6 +735,11 @@ function sendTicketEmail(clean, bookingId, attendeeNumbers) {
 }
 
 function sendBookingEmail(message) {
+  if (isResendEmailConfigured_()) {
+    sendResendEmail_(message);
+    return;
+  }
+
   if (isCloudflareEmailConfigured_()) {
     sendCloudflareEmail_(message);
     return;
@@ -750,6 +758,52 @@ function sendBookingEmail(message) {
       throw err;
     }
     MailApp.sendEmail(message);
+  }
+}
+
+function isResendEmailConfigured_() {
+  const props = PropertiesService.getScriptProperties();
+  return Boolean(
+    props.getProperty(RESEND_API_KEY_PROPERTY) &&
+    props.getProperty(RESEND_EMAIL_FROM_PROPERTY)
+  );
+}
+
+function sendResendEmail_(message) {
+  const props = PropertiesService.getScriptProperties();
+  const apiKey = props.getProperty(RESEND_API_KEY_PROPERTY);
+  const from = props.getProperty(RESEND_EMAIL_FROM_PROPERTY);
+  const replyTo = props.getProperty(RESEND_EMAIL_REPLY_TO_PROPERTY) || EMAIL_FROM_ALIAS;
+  const payload = {
+    from,
+    to: [message.to],
+    subject: message.subject,
+    text: message.body || "",
+    html: message.htmlBody || "",
+    reply_to: replyTo
+  };
+
+  if (message.attachments && message.attachments.length) {
+    payload.attachments = message.attachments.map(blob => ({
+      filename: blob.getName(),
+      content: Utilities.base64Encode(blob.getBytes())
+    }));
+  }
+
+  const response = UrlFetchApp.fetch("https://api.resend.com/emails", {
+    method: "post",
+    contentType: "application/json",
+    headers: {
+      Authorization: "Bearer " + apiKey
+    },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+
+  const status = response.getResponseCode();
+  const text = response.getContentText();
+  if (status < 200 || status >= 300) {
+    throw new Error("Resend email failed (" + status + "): " + text);
   }
 }
 
@@ -971,12 +1025,11 @@ function getPaymentFollowUpHtml(clean, esc) {
 function getPaymentFollowUpPdfHtml(clean, esc) {
   if (clean.totalPayableToDanny <= 0) return "";
 
-  const fallback = `If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">click here</a>.`;
   if (clean.campingPayableToDanny > 0) {
-    return `Danny will forward your camping money to the venue. ${fallback}`;
+    return "Danny will forward your camping money to the venue.";
   }
 
-  return fallback;
+  return "";
 }
 
 
@@ -1303,6 +1356,27 @@ function sendTicketEmailPreviewsToMe() {
 
 function sendAllEmailPreviewsToMe() {
   sendTicketEmailPreviewsToMe();
+}
+
+function testResendEmailToMe() {
+  const recipient = Session.getEffectiveUser().getEmail();
+  if (!recipient) throw new Error("No effective user email found for test recipient.");
+  if (!isResendEmailConfigured_()) {
+    throw new Error(
+      "Resend email is not configured. Set script properties " +
+      RESEND_API_KEY_PROPERTY + " and " +
+      RESEND_EMAIL_FROM_PROPERTY + ". Optional: " +
+      RESEND_EMAIL_REPLY_TO_PROPERTY + "."
+    );
+  }
+
+  sendResendEmail_({
+    to: recipient,
+    subject: "PREVIEW Resend email test - Danny's 40th",
+    body: "Resend is configured for Danny's 40th.",
+    htmlBody: "<p>Resend is configured for Danny's 40th.</p>",
+    name: "Danny's 40th"
+  });
 }
 
 function testCloudflareEmailToMe() {
