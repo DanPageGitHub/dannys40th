@@ -497,6 +497,129 @@ function getSheetHeaders(sheet) {
   return sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(v => String(v || "").trim());
 }
 
+function resendMissingBookingEmails(limit) {
+  const maxRows = Math.max(1, parseInt(limit, 10) || 20);
+  const sheet = getBookingsSheet();
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return { checked: 0, sentTickets: 0, sentAdmin: 0, errors: [] };
+
+  const headers = values[0].map(v => String(v || "").trim());
+  const ticketEmailedIndex = headers.indexOf("Ticket Emailed At");
+  const dannyEmailedIndex = headers.indexOf("Danny Emailed At");
+  const results = { checked: 0, sentTickets: 0, sentAdmin: 0, errors: [] };
+
+  for (let i = 1; i < values.length && results.checked < maxRows; i++) {
+    const rowNumber = i + 1;
+    const row = rowArrayToObject_(headers, values[i]);
+    if (!row["Booking ID"] || !row.Email) continue;
+    if (row["Ticket Emailed At"] && row["Danny Emailed At"]) continue;
+
+    results.checked++;
+    const clean = cleanFromBookingRow_(row);
+    const bookingId = String(row["Booking ID"]);
+    const attendeeNumbers = parseAttendeeNumbers_(row["Attendee Numbers"]);
+    const tallyResult = {
+      tallyFound: String(row["Tally Email Found"]).toLowerCase() === "true",
+      rowNumber: row["Tally Row Number"] || "",
+      name: row["Previous Tally Name"] || ""
+    };
+
+    if (!row["Ticket Emailed At"]) {
+      try {
+        sendTicketEmail(clean, bookingId, attendeeNumbers);
+        setCellByHeader(sheet, rowNumber, "Ticket Emailed At", new Date().toISOString());
+        results.sentTickets++;
+      } catch (err) {
+        const message = "Ticket resend failed: " + err.message;
+        appendCellByHeader(sheet, rowNumber, "Notes", message);
+        results.errors.push(bookingId + " ticket: " + err.message);
+      }
+    }
+
+    if (!row["Danny Emailed At"]) {
+      try {
+        sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult);
+        setCellByHeader(sheet, rowNumber, "Danny Emailed At", new Date().toISOString());
+        results.sentAdmin++;
+      } catch (err) {
+        const message = "Admin resend failed: " + err.message;
+        appendCellByHeader(sheet, rowNumber, "Notes", message);
+        results.errors.push(bookingId + " admin: " + err.message);
+      }
+    }
+  }
+
+  return results;
+}
+
+function rowArrayToObject_(headers, row) {
+  return headers.reduce((obj, header, index) => {
+    obj[header] = row[index];
+    return obj;
+  }, {});
+}
+
+function cleanFromBookingRow_(row) {
+  return {
+    submittedAt: String(row["Submitted At"] || ""),
+    leadFirstName: String(row["Lead First Name"] || ""),
+    leadLastName: String(row["Lead Last Name"] || ""),
+    leadNickname: String(row["Lead Nickname"] || ""),
+    name: String(row.Name || ""),
+    email: normalizeEmail(row.Email || ""),
+    phone: String(row.Phone || ""),
+    adultCount: Number(row["Adult Count"] || 0),
+    childCount: Number(row["Child Count"] || 0),
+    under5Count: Number(row["Under 5 Count"] || 0),
+    totalPeople: Number(row["Total People"] || 0),
+    donationPerAdult: Number(row["Donation Per Adult"] || 0),
+    donationTotal: Number(row["Donation Total"] || 0),
+    accommodationType: String(row["Accommodation Type"] || ""),
+    fridayNight: String(row["Friday Night"] || ""),
+    saturdayNight: String(row["Saturday Night"] || ""),
+    sundayNight: String(row["Sunday Night"] || ""),
+    campingNights: Number(row["Camping Nights Charged"] || 0),
+    adultCampingTotal: Number(row["Adult Camping Total"] || 0),
+    childCampingTotal: Number(row["Child Camping Total"] || 0),
+    campingTotal: Number(row["Camping Total"] || 0),
+    tentCampingPaymentRoute: String(row["Tent Camping Payment Route"] || ""),
+    campingPayableToDanny: Number(row["Camping Payable To Danny"] || 0),
+    totalPayableToDanny: Number(row["Total Payable To Danny"] || 0),
+    paymentStatus: String(row["Payment Status"] || ""),
+    paymentReference: String(row["Payment Reference"] || ""),
+    donationPaid: Number(row["Donation Paid"] || 0),
+    campingPaid: Number(row["Camping Paid"] || 0),
+    amountPaidTotal: Number(row["Amount Paid Total"] || 0),
+    balanceRemaining: Number(row["Balance Remaining"] || 0),
+    tallyLookupDone: String(row["Tally Lookup Done"]).toLowerCase() === "true",
+    offerLifts: String(row["Offering Lifts"]).toLowerCase() === "true",
+    trustConfirm: String(row["Trust Confirm"]).toLowerCase() === "true",
+    detailsConfirm: String(row["Details Confirm"]).toLowerCase() === "true",
+    manualPaymentConfirm: String(row["Manual Payment Confirm"]).toLowerCase() === "true",
+    paymentLink: String(row["Payment Link"] || PAYMENT_LINK),
+    pageUrl: String(row["Page URL"] || ""),
+    userAgent: String(row["User Agent"] || ""),
+    attendees: parseJsonCell_(row["Attendees JSON"], []),
+    tallyFallback: parseJsonCell_(row["Tally Fallback JSON"], {}),
+    extraNightsNote: String(row["Extra Nights Note"] || "")
+  };
+}
+
+function parseAttendeeNumbers_(value) {
+  return String(value || "")
+    .split(",")
+    .map(v => Number(String(v).trim()))
+    .filter(n => Number.isFinite(n) && n > 0);
+}
+
+function parseJsonCell_(value, fallback) {
+  try {
+    return value ? JSON.parse(String(value)) : fallback;
+  } catch (err) {
+    return fallback;
+  }
+}
+
 function getDonationRaised() {
   const sheet = getBookingsSheet();
   const values = sheet.getDataRange().getValues();

@@ -51,6 +51,7 @@
   - `createAllEmailPreviewFiles`
   - `testResendEmailToMe`
   - `testCloudflareEmailToMe`
+  - `resendMissingBookingEmails`
 
 # Local Generated Or Untracked Files
 
