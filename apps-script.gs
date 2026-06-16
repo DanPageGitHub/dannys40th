@@ -40,6 +40,8 @@ const ADULT_CAMPING_PER_NIGHT = 15;
 const CHILD_CAMPING_PER_NIGHT = 7.5;
 const PAYMENT_LINK = "https://settleup.starlingbank.com/daniel-page-e74b5b";
 const VENUE_CAMPING_URL = "https://thebargeinnhoneystreet.uk/camping/";
+const LIFT_POOL_URL = "https://dannys40th.com/liftpool/";
+const EMAIL_FROM_ALIAS = "hello@danpage.uk";
 
 const HEADERS = [
   "Submitted At",
@@ -712,7 +714,7 @@ function sendTicketEmail(clean, bookingId, attendeeNumbers) {
     htmlToPdf(buildWeekendGuidePdfHtml(), "Danny40th-Weekend-Guide")
   ];
 
-  MailApp.sendEmail({
+  sendBookingEmail({
     to: clean.email,
     subject,
     body: buildTicketEmailBody(clean, bookingId, attendeeNumbers),
@@ -720,6 +722,20 @@ function sendTicketEmail(clean, bookingId, attendeeNumbers) {
     attachments,
     name: "Danny's 40th"
   });
+}
+
+function sendBookingEmail(message) {
+  try {
+    GmailApp.sendEmail(message.to, message.subject, message.body, {
+      htmlBody: message.htmlBody,
+      attachments: message.attachments,
+      name: message.name,
+      from: EMAIL_FROM_ALIAS,
+      replyTo: EMAIL_FROM_ALIAS
+    });
+  } catch (err) {
+    MailApp.sendEmail(message);
+  }
 }
 
 function sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult) {
@@ -759,7 +775,7 @@ function sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult) {
     clean.paymentLink
   ].join("\n");
 
-  MailApp.sendEmail({
+  sendBookingEmail({
     to: adminEmail,
     subject,
     body,
@@ -806,7 +822,7 @@ function getVenueBookingPlainText(clean) {
       "As you're staying in a van, campervan or motorhome, please book that directly with The Barge:",
       VENUE_CAMPING_URL,
       "",
-      "Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the \"main field\" (the smaller one nearest the venue) rather than in the Naughty Corner."
+      "Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the \"main field\" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be."
     ].join("\n");
   }
 
@@ -819,7 +835,7 @@ function getVenueBookingHtml(clean, esc) {
   }
 
   if (clean.accommodationType === "van") {
-    return `As you're staying in a van, campervan or motorhome, please <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">book that directly with The Barge</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Naughty Corner.`;
+    return `As you're staying in a van, campervan or motorhome, please <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">book that directly with The Barge</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be.`;
   }
 
   return "";
@@ -831,7 +847,7 @@ function getVenueBookingPdfHtml(clean, esc) {
   }
 
   if (clean.accommodationType === "van") {
-    return `As you're staying in a van, campervan or motorhome, please book that directly with The Barge: <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">${esc(VENUE_CAMPING_URL)}</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Naughty Corner.`;
+    return `As you're staying in a van, campervan or motorhome, please book that directly with The Barge: <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">${esc(VENUE_CAMPING_URL)}</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be.`;
   }
 
   return "";
@@ -856,7 +872,7 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     "  - " + formatCurrency(clean.donationTotal) + " ticket / event-fund contribution",
     "  - " + formatCurrency(clean.campingPayableToDanny) + " tent camping",
     "",
-    pay > 0 ? ("Pay via Starling: " + clean.paymentLink) : "Nothing to pay right now - you're all set.",
+    pay > 0 ? ("Pay by Starling: " + clean.paymentLink) : "Nothing to pay right now - you're all set.",
     "Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue.",
     "",
     venueBookingNote,
@@ -877,20 +893,20 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
   const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#2b2118;">${t}</p>`;
   const venueBookingHtml = getVenueBookingHtml(clean, esc);
   const directBookingNote = venueBookingHtml
-    ? p(`<span style="color:#8a6d3b;">${venueBookingHtml}</span>`)
+    ? `<p style="margin:14px 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#8a6d3b;">${venueBookingHtml}</p>`
     : "";
 
   const payBlock = pay > 0
-    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 6px;"><tr><td style="border-radius:4px;background:#a85a1f;"><a href="${esc(clean.paymentLink)}" style="display:inline-block;padding:14px 32px;font-family:Georgia,serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">Pay ${esc(formatCurrency(pay))} via Starling &rarr;</a></td></tr></table>`
-      + `<p style="margin:4px 0 0;font-family:Georgia,serif;font-size:13px;line-height:1.5;color:#6b5d4a;">Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue. If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">${esc(clean.paymentLink)}</a></p>`
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 6px;"><tr><td style="border-radius:4px;background:#a85a1f;"><a href="${esc(clean.paymentLink)}" style="display:inline-block;padding:14px 32px;font-family:Georgia,serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">Pay ${esc(formatCurrency(pay))} by Starling</a></td></tr></table>`
+      + `<p style="margin:4px 0 0;font-family:Georgia,serif;font-size:13px;line-height:1.5;color:#6b5d4a;">Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue. If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">click here</a>.</p>`
     : `<p style="margin:12px 0 0;font-family:Georgia,serif;font-size:16px;font-weight:bold;color:#2e7b7a;">Nothing to pay right now  -  you're all set.</p>`;
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e7dcc6;padding:24px 12px;">`
     + `<tr><td align="center">`
     + `<table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;background:#fbf7ec;border:1px solid #d8c8a6;border-radius:8px;overflow:hidden;">`
     + `<tr><td style="background:#2b2118;padding:26px 32px;text-align:center;">`
-    + `<div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;letter-spacing:1px;color:#e8c98a;">Danny's 40th</div>`
-    + `<div style="font-family:Georgia,serif;font-size:13px;color:#b9a98a;margin-top:4px;">The Barge Inn, Honey Street &middot; 24-27 July 2026</div>`
+    + `<div style="font-family:Georgia,'Times New Roman',serif;font-size:34px;letter-spacing:1px;color:#e8c98a;">Danny's 40th</div>`
+    + `<div style="font-family:Georgia,serif;font-size:17px;color:#b9a98a;margin-top:6px;">The Barge Inn, Honey Street &middot; 24-27 July 2026</div>`
     + `</td></tr>`
     + `<tr><td style="padding:26px 32px 28px;">`
     + p(`Hi ${esc(clean.name)}, you're booked in. Here are the important bits  -  keep this email so you can always find your reference and payment details.`)
@@ -908,7 +924,7 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
     + `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;border:1px solid #d8c8a6;background:#ffffff;border-radius:6px;"><tr><td style="padding:14px 18px;">`
     + `<p style="margin:0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#2b2118;">&#128206; Two PDFs are attached  -  <strong>your ticket</strong> and <strong>the weekend guide</strong> (plan, lineup, costumes and what to bring). Save them to your phone; you can always find this email again by searching <em>Danny's 40th</em>.</p>`
     + `</td></tr></table>`
-    + `<p style="margin:18px 0 0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#5c4f3c;">See you there  -  Danny</p>`
+    + `<p style="margin:18px 0 0;font-family:Georgia,serif;font-size:14px;line-height:1.6;color:#5c4f3c;">See you there,<br><br>Danny</p>`
     + `</td></tr>`
     + `</table>`
     + `</td></tr>`
@@ -930,7 +946,7 @@ function weekendSectionsHtml() {
   return head("Arrival")
     + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)
     + head("Lifts")
-    + p(`Need one, or offering one? Sort it in the lift pool at d40-lift-pool.jimmybreeze.workers.dev. Password: Amens4Life.`)
+    + p(`Need one, or offering one? Sort it in the <a href="${LIFT_POOL_URL}" style="color:#a85a1f;">lift pool</a>. Password: Amens4Life.`)
     + head("Friday night  -  bring a dish")
     + p(`Bring something to add to a big shared meal at the campsite, 8pm in the Naughty Corner. There's a night on at The Barge too if you fancy dipping in, plus the pub and a campsite firepit to hang around.`)
     + head("Saturday daytime  -  games, installations &amp; jams")
@@ -946,7 +962,7 @@ function weekendSectionsHtml() {
     + head("Gazebos please! Help build the Naughty Corner")
     + p(`I want the Naughty Corner to be a really nice place to hang out. Gazebos are the big one  -  if you can bring one, please do. Also handy:`)
     + ul(gazebos)
-    + p(`One important thing: If you want an electric hookup for your van you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Naughty Corner. I'm fairly sure we can have vans in the naughty corner with us as their site lets you book them in there.`);
+    + p(`One important thing: If you want an electric hookup for your van you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Large Camping Field where the Naughty Corner and our Family Camping will be. I'm fairly sure we can have vans in the Large Camping Field with us as their site lets you book them in there.`);
 }
 
 function pdfDocShell(title, innerHtml, options) {
@@ -970,7 +986,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
   const venueBookingPdfHtml = getVenueBookingPdfHtml(clean, esc);
   const row = (label, value) => `<tr><td style="padding:6px 10px;border:1px solid #d8c8a6;font-size:13px;color:#8a6d3b;width:38%;">${label}</td><td style="padding:6px 10px;border:1px solid #d8c8a6;font-size:14px;color:#2b2118;">${value}</td></tr>`;
   const inner = `<div style="font-size:13px;color:#8a6d3b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Booking reference</div>`
-    + `<div style="font-size:30px;font-weight:bold;margin-bottom:16px;">${esc(bookingId)}</div>`
+    + `<div style="font-size:30px;font-weight:bold;margin-bottom:24px;">${esc(bookingId)}</div>`
     + `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;max-width:520px;">`
     + row("Name", esc(clean.name))
     + row("Who", esc(s.attendeeSummary.join(", ") || " - "))
@@ -980,7 +996,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
     + row("<strong>Total to pay Danny now</strong>", `<strong>${esc(formatCurrency(pay))}</strong>`)
     + `</table>`
     + (pay > 0
-        ? `<p style="font-size:14px;margin:18px 0 4px;">Pay via Starling: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">${esc(clean.paymentLink)}</a></p>`
+        ? `<p style="font-size:14px;margin:24px 0 8px;">Pay by Starling - <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">Click here</a></p>`
           + `<p style="font-size:12px;color:#6b5d4a;margin:0;">Danny matches your payment to this reference by hand and forwards any camping money to the venue.</p>`
         : `<p style="font-size:14px;color:#2e7b7a;margin:18px 0 0;font-weight:bold;">Nothing to pay right now  -  you're all set.</p>`)
     + (venueBookingPdfHtml
@@ -1055,7 +1071,7 @@ function sendTicketEmailPreviewsToMe() {
       htmlToPdf(buildWeekendGuidePdfHtml(), "Preview-" + preview.bookingId + "-Weekend-Guide")
     ];
 
-    MailApp.sendEmail({
+    sendBookingEmail({
       to: recipient,
       subject: "PREVIEW Danny's 40th ticket - " + preview.bookingId,
       body: buildTicketEmailBody(clean, preview.bookingId, preview.attendeeNumbers),
