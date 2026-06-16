@@ -853,12 +853,46 @@ function getVenueBookingPdfHtml(clean, esc) {
   return "";
 }
 
+function getPaymentFollowUpPlainText(clean) {
+  if (clean.totalPayableToDanny <= 0) return "";
+
+  const fallback = "If the button doesn't work: " + clean.paymentLink;
+  if (clean.campingPayableToDanny > 0) {
+    return "Danny will forward your camping money to the venue. " + fallback;
+  }
+
+  return fallback;
+}
+
+function getPaymentFollowUpHtml(clean, esc) {
+  if (clean.totalPayableToDanny <= 0) return "";
+
+  const fallback = `If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">click here</a>.`;
+  if (clean.campingPayableToDanny > 0) {
+    return `Danny will forward your camping money to the venue. ${fallback}`;
+  }
+
+  return fallback;
+}
+
+function getPaymentFollowUpPdfHtml(clean, esc) {
+  if (clean.totalPayableToDanny <= 0) return "";
+
+  const fallback = `If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">click here</a>.`;
+  if (clean.campingPayableToDanny > 0) {
+    return `Danny will forward your camping money to the venue. ${fallback}`;
+  }
+
+  return fallback;
+}
+
 
 // Plain-text fallback for mail clients that won't render HTML.
 function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
   const s = getEmailSummaries(clean);
   const pay = clean.totalPayableToDanny;
   const venueBookingNote = getVenueBookingPlainText(clean);
+  const paymentFollowUp = getPaymentFollowUpPlainText(clean);
   return [
     "Hi " + clean.name + ",",
     "",
@@ -873,7 +907,7 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     "  - " + formatCurrency(clean.campingPayableToDanny) + " tent camping",
     "",
     pay > 0 ? ("Pay by Starling: " + clean.paymentLink) : "Nothing to pay right now - you're all set.",
-    "Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue.",
+    paymentFollowUp,
     "",
     venueBookingNote,
     "",
@@ -895,10 +929,11 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
   const directBookingNote = venueBookingHtml
     ? `<p style="margin:14px 0 16px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#8a6d3b;">${venueBookingHtml}</p>`
     : "";
+  const paymentFollowUpHtml = getPaymentFollowUpHtml(clean, esc);
 
   const payBlock = pay > 0
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 6px;"><tr><td style="border-radius:4px;background:#a85a1f;"><a href="${esc(clean.paymentLink)}" style="display:inline-block;padding:14px 32px;font-family:Georgia,serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;">Pay ${esc(formatCurrency(pay))} by Starling</a></td></tr></table>`
-      + `<p style="margin:4px 0 0;font-family:Georgia,serif;font-size:13px;line-height:1.5;color:#6b5d4a;">Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue. If the button doesn't work: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">click here</a>.</p>`
+      + (paymentFollowUpHtml ? `<p style="margin:4px 0 0;font-family:Georgia,serif;font-size:13px;line-height:1.5;color:#6b5d4a;">${paymentFollowUpHtml}</p>` : "")
     : `<p style="margin:12px 0 0;font-family:Georgia,serif;font-size:16px;font-weight:bold;color:#2e7b7a;">Nothing to pay right now  -  you're all set.</p>`;
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e7dcc6;padding:24px 12px;">`
@@ -984,6 +1019,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
   const esc = (v) => String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const pay = clean.totalPayableToDanny;
   const venueBookingPdfHtml = getVenueBookingPdfHtml(clean, esc);
+  const paymentFollowUpPdfHtml = getPaymentFollowUpPdfHtml(clean, esc);
   const row = (label, value) => `<tr><td style="padding:6px 10px;border:1px solid #d8c8a6;font-size:13px;color:#8a6d3b;width:38%;">${label}</td><td style="padding:6px 10px;border:1px solid #d8c8a6;font-size:14px;color:#2b2118;">${value}</td></tr>`;
   const inner = `<div style="font-size:13px;color:#8a6d3b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Booking reference</div>`
     + `<div style="font-size:30px;font-weight:bold;margin-bottom:24px;">${esc(bookingId)}</div>`
@@ -997,7 +1033,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
     + `</table>`
     + (pay > 0
         ? `<p style="font-size:14px;margin:24px 0 8px;">Pay by Starling - <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">Click here</a></p>`
-          + `<p style="font-size:12px;color:#6b5d4a;margin:0;">Danny matches your payment to this reference by hand and forwards any camping money to the venue.</p>`
+          + (paymentFollowUpPdfHtml ? `<p style="font-size:12px;color:#6b5d4a;margin:0;">${paymentFollowUpPdfHtml}</p>` : "")
         : `<p style="font-size:14px;color:#2e7b7a;margin:18px 0 0;font-weight:bold;">Nothing to pay right now  -  you're all set.</p>`)
     + (venueBookingPdfHtml
         ? `<p style="font-size:12px;color:#8a6d3b;margin:18px 0 0;">${venueBookingPdfHtml}</p>`
@@ -1013,23 +1049,60 @@ function htmlToPdf(html, name) {
   return Utilities.newBlob(html, "text/html", name + ".html").getAs("application/pdf").setName(name + ".pdf");
 }
 
-function buildPreviewClean_(accommodationType) {
+function getTicketEmailPreviewCases_() {
+  return [
+    {
+      type: "van",
+      bookingId: "D40-PREVIEW-VAN",
+      attendeeNumbers: [1, 2],
+      name: "Preview Van",
+      accommodationType: "van",
+      tentCampingPaymentRoute: "not_applicable"
+    },
+    {
+      type: "glamping",
+      bookingId: "D40-PREVIEW-GLAMP",
+      attendeeNumbers: [3, 4],
+      name: "Preview Glamping",
+      accommodationType: "glamping",
+      tentCampingPaymentRoute: "not_applicable"
+    },
+    {
+      type: "tent-pay-through-danny",
+      bookingId: "D40-PREVIEW-TENT-DANNY",
+      attendeeNumbers: [5, 6],
+      name: "Preview Tent Danny",
+      accommodationType: "tent",
+      tentCampingPaymentRoute: "pay_through_danny"
+    },
+    {
+      type: "tent-pay-venue",
+      bookingId: "D40-PREVIEW-TENT-VENUE",
+      attendeeNumbers: [7, 8],
+      name: "Preview Tent Venue",
+      accommodationType: "tent",
+      tentCampingPaymentRoute: "pay_venue_arrival"
+    }
+  ];
+}
+
+function buildPreviewClean_(preview) {
   return validateAndCleanPayload({
     submittedAt: new Date().toISOString(),
     leadFirstName: "Preview",
-    leadLastName: accommodationType === "glamping" ? "Glamping" : "Van",
-    name: accommodationType === "glamping" ? "Preview Glamping" : "Preview Van",
+    leadLastName: preview.type,
+    name: preview.name,
     email: Session.getEffectiveUser().getEmail(),
     phone: "00000000000",
     adultCount: 2,
     childCount: 0,
     under5Count: 0,
     donationPerAdult: 25,
-    accommodationType,
+    accommodationType: preview.accommodationType,
     fridayNight: "yes",
     saturdayNight: "yes",
     sundayNight: "no",
-    tentCampingPaymentRoute: "not_applicable",
+    tentCampingPaymentRoute: preview.tentCampingPaymentRoute,
     trustConfirm: true,
     detailsConfirm: true,
     manualPaymentConfirm: true,
@@ -1038,13 +1111,10 @@ function buildPreviewClean_(accommodationType) {
 }
 
 function createTicketPdfPreviewFiles() {
-  const previews = [
-    { type: "van", bookingId: "D40-PREVIEW-VAN", attendeeNumbers: [1, 2] },
-    { type: "glamping", bookingId: "D40-PREVIEW-GLAMP", attendeeNumbers: [3, 4] }
-  ];
+  const previews = getTicketEmailPreviewCases_();
 
   return previews.map(preview => {
-    const clean = buildPreviewClean_(preview.type);
+    const clean = buildPreviewClean_(preview);
     const ticketPdf = DriveApp.createFile(htmlToPdf(buildTicketPdfHtml(clean, preview.bookingId, preview.attendeeNumbers), "Preview-" + preview.bookingId + "-Ticket"));
     const guidePdf = DriveApp.createFile(htmlToPdf(buildWeekendGuidePdfHtml(), "Preview-" + preview.bookingId + "-Weekend-Guide"));
     Logger.log(preview.type + " ticket PDF: " + ticketPdf.getUrl());
@@ -1061,11 +1131,8 @@ function sendTicketEmailPreviewsToMe() {
   const recipient = Session.getEffectiveUser().getEmail();
   if (!recipient) throw new Error("No effective user email found for preview recipient.");
 
-  [
-    { type: "van", bookingId: "D40-PREVIEW-VAN", attendeeNumbers: [1, 2] },
-    { type: "glamping", bookingId: "D40-PREVIEW-GLAMP", attendeeNumbers: [3, 4] }
-  ].forEach(preview => {
-    const clean = buildPreviewClean_(preview.type);
+  getTicketEmailPreviewCases_().forEach(preview => {
+    const clean = buildPreviewClean_(preview);
     const attachments = [
       htmlToPdf(buildTicketPdfHtml(clean, preview.bookingId, preview.attendeeNumbers), "Preview-" + preview.bookingId + "-Ticket"),
       htmlToPdf(buildWeekendGuidePdfHtml(), "Preview-" + preview.bookingId + "-Weekend-Guide")
