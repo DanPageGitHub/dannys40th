@@ -39,6 +39,7 @@ const BREAK_EVEN_TARGET = 1500;
 const ADULT_CAMPING_PER_NIGHT = 15;
 const CHILD_CAMPING_PER_NIGHT = 7.5;
 const PAYMENT_LINK = "https://settleup.starlingbank.com/daniel-page-e74b5b";
+const VENUE_CAMPING_URL = "https://thebargeinnhoneystreet.uk/camping/";
 
 const HEADERS = [
   "Submitted At",
@@ -790,11 +791,58 @@ function getEmailSummaries(clean) {
   return { nights, attendeeSummary, accommodationSummary };
 }
 
+function getVenueBookingPlainText(clean) {
+  if (clean.accommodationType === "glamping") {
+    return [
+      "As you're planning on glamping, please book that directly with The Barge:",
+      VENUE_CAMPING_URL,
+      "",
+      "Spaces are limited, so book quickly."
+    ].join("\n");
+  }
+
+  if (clean.accommodationType === "van") {
+    return [
+      "As you're staying in a van, campervan or motorhome, please book that directly with The Barge:",
+      VENUE_CAMPING_URL,
+      "",
+      "Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the \"main field\" (the smaller one nearest the venue) rather than in the Naughty Corner."
+    ].join("\n");
+  }
+
+  return "";
+}
+
+function getVenueBookingHtml(clean, esc) {
+  if (clean.accommodationType === "glamping") {
+    return `As you're planning on glamping, please <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">book that directly with The Barge</a>. Spaces are limited, so book quickly.`;
+  }
+
+  if (clean.accommodationType === "van") {
+    return `As you're staying in a van, campervan or motorhome, please <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">book that directly with The Barge</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Naughty Corner.`;
+  }
+
+  return "";
+}
+
+function getVenueBookingPdfHtml(clean, esc) {
+  if (clean.accommodationType === "glamping") {
+    return `As you're planning on glamping, please book that directly with The Barge: <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">${esc(VENUE_CAMPING_URL)}</a>. Spaces are limited, so book quickly.`;
+  }
+
+  if (clean.accommodationType === "van") {
+    return `As you're staying in a van, campervan or motorhome, please book that directly with The Barge: <a href="${esc(VENUE_CAMPING_URL)}" style="color:#a85a1f;">${esc(VENUE_CAMPING_URL)}</a>. Spaces are limited, especially hard pitches and hookups, so book quickly. If you want an electric hookup, you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Naughty Corner.`;
+  }
+
+  return "";
+}
+
 
 // Plain-text fallback for mail clients that won't render HTML.
 function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
   const s = getEmailSummaries(clean);
   const pay = clean.totalPayableToDanny;
+  const venueBookingNote = getVenueBookingPlainText(clean);
   return [
     "Hi " + clean.name + ",",
     "",
@@ -811,9 +859,7 @@ function buildTicketEmailBody(clean, bookingId, attendeeNumbers) {
     pay > 0 ? ("Pay via Starling: " + clean.paymentLink) : "Nothing to pay right now - you're all set.",
     "Danny matches your payment to your booking reference by hand, and forwards any camping money to the venue.",
     "",
-    (clean.accommodationType === "glamping" || clean.accommodationType === "van")
-      ? "If you're glamping or bringing a van/campervan/motorhome, book that directly with The Barge: https://thebargeinnhoneystreet.uk/camping/"
-      : "",
+    venueBookingNote,
     "",
     "Two PDFs are attached: your ticket, and the full weekend guide (plan, lineup, costumes and what to bring). Save them to your phone.",
     "",
@@ -829,8 +875,9 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
   const esc = (v) => String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const pay = clean.totalPayableToDanny;
   const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#2b2118;">${t}</p>`;
-  const directBookingNote = (clean.accommodationType === "glamping" || clean.accommodationType === "van")
-    ? p(`<span style="color:#8a6d3b;">If you're glamping or bringing a van/campervan/motorhome, book that <a href="https://thebargeinnhoneystreet.uk/camping/" style="color:#a85a1f;">directly with The Barge</a>.</span>`)
+  const venueBookingHtml = getVenueBookingHtml(clean, esc);
+  const directBookingNote = venueBookingHtml
+    ? p(`<span style="color:#8a6d3b;">${venueBookingHtml}</span>`)
     : "";
 
   const payBlock = pay > 0
@@ -870,7 +917,12 @@ function buildTicketEmailHtml(clean, bookingId, attendeeNumbers) {
 
 // Shared weekend content (mirrors theplan.html) used by the Weekend Guide PDF.
 function weekendSectionsHtml() {
-  const head = (t) => `<h2 style="margin:20px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#a85a1f;">${t}</h2>`;
+  let sectionCount = 0;
+  const head = (t) => {
+    const topMargin = sectionCount === 0 ? 0 : 20;
+    sectionCount += 1;
+    return `<h2 style="margin:${topMargin}px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#a85a1f;">${t}</h2>`;
+  };
   const p = (t) => `<p style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.55;color:#2b2118;">${t}</p>`;
   const ul = (items) => `<ul style="margin:4px 0 12px;padding-left:20px;font-family:Georgia,serif;font-size:14px;line-height:1.5;color:#2b2118;">${items}</ul>`;
   const lineup = ["Open Decks B2B2B", "Algorithmic", "Anorak", "Gizmode &amp; Breakwhore", "Golgot", "Myr", "Salander", "S.Murk", "The Mighty Rick", "The Panger"].map((n) => `<li>${n}</li>`).join("");
@@ -893,17 +945,18 @@ function weekendSectionsHtml() {
     + head("Gazebos please! Help build the Naughty Corner")
     + p(`I want the Naughty Corner to be a really nice place to hang out. Gazebos are the big one  -  if you can bring one, please do. Also handy:`)
     + ul(gazebos)
-    + p(`Vans will probably need to stay in the main field rather than the Naughty Corner, so we can't rely on van awnings for shelter there. Once again  -  please bring gazebos!`);
+    + p(`One important thing: If you want an electric hookup for your van you'll need to stay in the "main field" (the smaller one nearest the venue) rather than in the Naughty Corner. I'm fairly sure we can have vans in the naughty corner with us as their site lets you book them in there.`);
 }
 
-function pdfDocShell(title, innerHtml) {
+function pdfDocShell(title, innerHtml, options) {
+  const titleBottomMargin = options && options.compactAfterTitle ? 0 : 14;
   return `<html><head><meta charset="utf-8"></head>`
     + `<body style="margin:0;padding:32px 36px;font-family:Georgia,'Times New Roman',serif;color:#2b2118;">`
     + `<div style="border-bottom:2px solid #a85a1f;padding-bottom:10px;margin-bottom:18px;">`
     + `<div style="font-size:24px;color:#2b2118;">Danny's 40th</div>`
     + `<div style="font-size:12px;color:#8a6d3b;">The Barge Inn, Honey Street, Pewsey SN9 5PS &middot; 24-27 July 2026</div>`
     + `</div>`
-    + `<h1 style="font-size:22px;color:#a85a1f;margin:0 0 14px;">${title}</h1>`
+    + `<h1 style="font-size:22px;color:#a85a1f;margin:0 0 ${titleBottomMargin}px;">${title}</h1>`
     + innerHtml
     + `</body></html>`;
 }
@@ -912,6 +965,7 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
   const s = getEmailSummaries(clean);
   const esc = (v) => String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const pay = clean.totalPayableToDanny;
+  const venueBookingPdfHtml = getVenueBookingPdfHtml(clean, esc);
   const row = (label, value) => `<tr><td style="padding:6px 10px;border:1px solid #d8c8a6;font-size:13px;color:#8a6d3b;width:38%;">${label}</td><td style="padding:6px 10px;border:1px solid #d8c8a6;font-size:14px;color:#2b2118;">${value}</td></tr>`;
   const inner = `<div style="font-size:13px;color:#8a6d3b;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Booking reference</div>`
     + `<div style="font-size:30px;font-weight:bold;margin-bottom:16px;">${esc(bookingId)}</div>`
@@ -927,16 +981,87 @@ function buildTicketPdfHtml(clean, bookingId, attendeeNumbers) {
         ? `<p style="font-size:14px;margin:18px 0 4px;">Pay via Starling: <a href="${esc(clean.paymentLink)}" style="color:#a85a1f;">${esc(clean.paymentLink)}</a></p>`
           + `<p style="font-size:12px;color:#6b5d4a;margin:0;">Danny matches your payment to this reference by hand and forwards any camping money to the venue.</p>`
         : `<p style="font-size:14px;color:#2e7b7a;margin:18px 0 0;font-weight:bold;">Nothing to pay right now  -  you're all set.</p>`)
-    + `<p style="font-size:12px;color:#8a6d3b;margin:18px 0 0;">Glamping, vans, campervans, motorhomes and electric hookups are booked directly with The Barge (thebargeinnhoneystreet.uk/camping).</p>`;
+    + (venueBookingPdfHtml
+        ? `<p style="font-size:12px;color:#8a6d3b;margin:18px 0 0;">${venueBookingPdfHtml}</p>`
+        : "");
   return pdfDocShell("Your ticket", inner);
 }
 
 function buildWeekendGuidePdfHtml() {
-  return pdfDocShell("Weekend guide", weekendSectionsHtml());
+  return pdfDocShell("Weekend guide", weekendSectionsHtml(), { compactAfterTitle: true });
 }
 
 function htmlToPdf(html, name) {
   return Utilities.newBlob(html, "text/html", name + ".html").getAs("application/pdf").setName(name + ".pdf");
+}
+
+function buildPreviewClean_(accommodationType) {
+  return validateAndCleanPayload({
+    submittedAt: new Date().toISOString(),
+    leadFirstName: "Preview",
+    leadLastName: accommodationType === "glamping" ? "Glamping" : "Van",
+    name: accommodationType === "glamping" ? "Preview Glamping" : "Preview Van",
+    email: Session.getEffectiveUser().getEmail(),
+    phone: "00000000000",
+    adultCount: 2,
+    childCount: 0,
+    under5Count: 0,
+    donationPerAdult: 25,
+    accommodationType,
+    fridayNight: "yes",
+    saturdayNight: "yes",
+    sundayNight: "no",
+    tentCampingPaymentRoute: "not_applicable",
+    trustConfirm: true,
+    detailsConfirm: true,
+    manualPaymentConfirm: true,
+    paymentLink: PAYMENT_LINK
+  });
+}
+
+function createTicketPdfPreviewFiles() {
+  const previews = [
+    { type: "van", bookingId: "D40-PREVIEW-VAN", attendeeNumbers: [1, 2] },
+    { type: "glamping", bookingId: "D40-PREVIEW-GLAMP", attendeeNumbers: [3, 4] }
+  ];
+
+  return previews.map(preview => {
+    const clean = buildPreviewClean_(preview.type);
+    const ticketPdf = DriveApp.createFile(htmlToPdf(buildTicketPdfHtml(clean, preview.bookingId, preview.attendeeNumbers), "Preview-" + preview.bookingId + "-Ticket"));
+    const guidePdf = DriveApp.createFile(htmlToPdf(buildWeekendGuidePdfHtml(), "Preview-" + preview.bookingId + "-Weekend-Guide"));
+    Logger.log(preview.type + " ticket PDF: " + ticketPdf.getUrl());
+    Logger.log(preview.type + " weekend guide PDF: " + guidePdf.getUrl());
+    return {
+      type: preview.type,
+      ticketPdfUrl: ticketPdf.getUrl(),
+      weekendGuidePdfUrl: guidePdf.getUrl()
+    };
+  });
+}
+
+function sendTicketEmailPreviewsToMe() {
+  const recipient = Session.getEffectiveUser().getEmail();
+  if (!recipient) throw new Error("No effective user email found for preview recipient.");
+
+  [
+    { type: "van", bookingId: "D40-PREVIEW-VAN", attendeeNumbers: [1, 2] },
+    { type: "glamping", bookingId: "D40-PREVIEW-GLAMP", attendeeNumbers: [3, 4] }
+  ].forEach(preview => {
+    const clean = buildPreviewClean_(preview.type);
+    const attachments = [
+      htmlToPdf(buildTicketPdfHtml(clean, preview.bookingId, preview.attendeeNumbers), "Preview-" + preview.bookingId + "-Ticket"),
+      htmlToPdf(buildWeekendGuidePdfHtml(), "Preview-" + preview.bookingId + "-Weekend-Guide")
+    ];
+
+    MailApp.sendEmail({
+      to: recipient,
+      subject: "PREVIEW Danny's 40th ticket - " + preview.bookingId,
+      body: buildTicketEmailBody(clean, preview.bookingId, preview.attendeeNumbers),
+      htmlBody: buildTicketEmailHtml(clean, preview.bookingId, preview.attendeeNumbers),
+      attachments,
+      name: "Danny's 40th"
+    });
+  });
 }
 
 function createBookingId() {
