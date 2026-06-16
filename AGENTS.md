@@ -38,6 +38,8 @@
 - `apps-script.gs` is the Google Apps Script backend source for ticket booking and emails.
 - Editing `apps-script.gs` locally does not update the live Google Apps Script Web App. The user must paste or sync the code into Google Apps Script, save, test preview helpers, and redeploy the existing Web App deployment.
 - Keep the existing Web App `/exec` URL unless intentionally changing `API_URL` in `Tickets.html`.
+- Whenever a change touches `apps-script.gs`, final replies must remind the user that the Google Apps Script project still needs updating and redeploying before backend/email changes go live.
+- Also mention the curl/API update option when relevant: the Apps Script API can update project content with `projects.updateContent`, but it needs an OAuth bearer token, the script ID, and a JSON payload containing every source file in the project. Manual paste or `clasp push` is usually safer unless the API workflow is already set up.
 - Useful Apps Script preview helpers:
   - `sendTicketEmailPreviewsToMe`
   - `createTicketPdfPreviewFiles`

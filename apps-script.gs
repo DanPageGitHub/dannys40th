@@ -41,6 +41,7 @@ const CHILD_CAMPING_PER_NIGHT = 7.5;
 const PAYMENT_LINK = "https://settleup.starlingbank.com/daniel-page-e74b5b";
 const VENUE_CAMPING_URL = "https://thebargeinnhoneystreet.uk/camping/";
 const LIFT_POOL_URL = "https://dannys40th.com/liftpool/";
+const COSTUMES_URL = "https://dannys40th.com/Costumes.html";
 const CAMPING_MAP_URL = "https://dannys40th.com/images/CampingMap.jpg";
 const VEHICLE_INSTRUCTIONS_GIF_URL = "https://dannys40th.com/images/TestCamperInstructions.gif";
 const EMAIL_FROM_ALIAS = "hello@danpage.uk";
@@ -1000,7 +1001,7 @@ function weekendSectionsHtml() {
     + head("Saturday night  -  loadsa music!")
     + p(`DJs in the barn. Current lineup:`)
     + ul(lineup)
-    + p(`<strong>Get dressed up!</strong> Go shiny, or work from the what3words costume list at dannys40th.com/Costumes.html.`)
+    + p(`<strong>Get dressed up!</strong> Go shiny, or work from the what3words costume list on the <a href="${COSTUMES_URL}" style="color:#a85a1f;">Costumes page</a>.`)
     + head("Sunday daytime  -  roast &amp; Avebury")
     + p(`A carvery at the pub (lots of dietary allowances  -  ring ahead with questions, we may do a big preorder), then a wander round the stones at nearby Avebury for anyone with the energy.`)
     + head("Sunday evening  -  cinema in the barn")
