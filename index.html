@@ -338,11 +338,13 @@
 .poster-heading{font-family:'IM Fell English',serif;font-size:clamp(2.6rem,6vw,5rem);font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);line-height:1;margin:0 0 36px;position:relative;z-index:1;padding-right:0.18em;}
 .poster-names{list-style:none;padding:0;margin:0;position:relative;z-index:1;}
 .poster-name-item{padding:10px 0;cursor:default;position:relative;}
-.poster-name-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent,rgba(184,115,51,0.04) 30%,rgba(46,123,122,0.05) 50%,rgba(184,115,51,0.04) 70%,transparent);opacity:0;transition:opacity 0.4s;}
-.poster-name-item:hover::after{opacity:1;}
 .poster-name-text{font-family:'IM Fell English',serif;font-size:clamp(1.45rem,3.9vw,3.3rem);font-weight:400;color:var(--parchment);letter-spacing:0.1em;line-height:1;display:block;position:relative;z-index:1;transition:color 0.32s,letter-spacing 0.45s cubic-bezier(0.22,1,0.36,1),text-shadow 0.32s;}
 .poster-name-item:hover .poster-name-text{color:var(--gold-l);letter-spacing:0.18em;text-shadow:0 0 55px rgba(212,149,74,0.28);}
 .poster-note{font-family:'Libre Baskerville',serif;font-size:0.9rem;font-style:italic;color:var(--parch-dim);margin-top:28px;padding-top:22px;border-top:1px solid rgba(184,115,51,0.15);position:relative;z-index:1;}
+.poster-name-item--logo{display:flex;flex-direction:column;align-items:center;gap:1px;padding:14px 0;}
+.poster-logo{display:block;max-width:360px;width:75%;height:auto;filter:saturate(0.65) brightness(0.88);transition:filter 0.32s;}
+.poster-name-item--logo:hover .poster-logo{filter:saturate(0.85) brightness(1.05);}
+.poster-logo-sub{font-family:'Libre Baskerville',Georgia,serif;font-size:clamp(0.7rem,1.3vw,0.88rem);font-style:italic;color:var(--copper-l);letter-spacing:0.07em;opacity:0.82;position:relative;z-index:1;}
 .poster-name-item{opacity:0;transform:translateY(7px);transition:opacity 0.48s,transform 0.48s;}
 .poster-name-item.p-in{opacity:1;transform:none;}
 @media(max-width:640px){
@@ -360,6 +362,10 @@
 <div class="poster-wrap">
   <h2 class="poster-heading">Saturday Lineup</h2>
   <ul class="poster-names">
+    <li class="poster-name-item poster-name-item--logo">
+      <img class="poster-logo" src="images/Goodhound_Blang_Logo.png" alt="Goodhound Blang">
+      <span class="poster-logo-sub">Bloodhound Gang Cover band</span>
+    </li>
     <li class="poster-name-item"><span class="poster-name-text">ALGORITHMIC</span></li>
     <li class="poster-name-item"><span class="poster-name-text">ANORAK</span></li>
     <li class="poster-name-item"><span class="poster-name-text">GIZMODE &amp; BREAKWHORE</span></li>
@@ -454,6 +460,7 @@
     <li class="lineup-item">ANORAK</li>
     <li class="lineup-item">GIZMODE &amp; BREAKWHORE</li>
     <li class="lineup-item">GOLGOT</li>
+    <li class="lineup-item">GOODHOUND BLANG</li>
     <li class="lineup-item">MITZY</li>
     <li class="lineup-item">MYR</li>
     <li class="lineup-item">OPEN DECKS B2B2B</li>

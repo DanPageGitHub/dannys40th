@@ -178,33 +178,17 @@ function doPost(e) {
     lock.releaseLock();
     lock = null;
 
-    const emailWarnings = [];
-
-    if (clean.isNewAddition) {
-      try {
-        writeFallbackToTallySheet(clean, clean.tallyFallback);
-      } catch (tallyWriteErr) {
-        emailWarnings.push("Tally sheet write failed: " + tallyWriteErr.message);
-      }
-    }
-
-    try {
-      sendTicketEmail(clean, bookingId, attendeeNumbers);
-      setCellByHeader(sheet, rowNumber, "Ticket Emailed At", new Date().toISOString());
-    } catch (ticketErr) {
-      emailWarnings.push("Ticket email failed: " + ticketErr.message);
-    }
-
-    try {
-      sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult);
-      setCellByHeader(sheet, rowNumber, "Danny Emailed At", new Date().toISOString());
-    } catch (adminErr) {
-      emailWarnings.push("Admin email failed: " + adminErr.message);
-    }
-
-    if (emailWarnings.length) {
-      appendCellByHeader(sheet, rowNumber, "Notes", emailWarnings.join(" | "));
-    }
+    // Store email job in properties and fire a trigger — emails are sent async
+    // so the booking response returns immediately rather than waiting for PDF generation.
+    const emailJobKey = "EMAIL_JOB_" + bookingId;
+    PropertiesService.getScriptProperties().setProperty(emailJobKey, JSON.stringify({
+      clean,
+      bookingId,
+      attendeeNumbers,
+      tallyResult,
+      rowNumber
+    }));
+    ScriptApp.newTrigger("processEmailJobs_").timeBased().after(1).create();
 
     return json({
       ok: true,
@@ -222,7 +206,7 @@ function doPost(e) {
       tallyFound: Boolean(tallyResult.tallyFound),
       isNewAddition: clean.isNewAddition,
       tallyCreatedByBookingForm: clean.isNewAddition,
-      warnings: emailWarnings
+      warnings: []
     });
   } catch (err) {
     return json({ ok: false, error: err.message });
@@ -940,6 +924,56 @@ function sendTicketEmail(clean, bookingId, attendeeNumbers) {
   });
 }
 
+function processEmailJobs_() {
+  // Delete all triggers for this function first to prevent pile-up.
+  ScriptApp.getProjectTriggers().forEach(function(t) {
+    if (t.getHandlerFunction() === "processEmailJobs_") ScriptApp.deleteTrigger(t);
+  });
+
+  const props = PropertiesService.getScriptProperties();
+  const all = props.getProperties();
+  const sheet = getBookingsSheet();
+
+  Object.keys(all).forEach(function(key) {
+    if (!key.startsWith("EMAIL_JOB_")) return;
+    try {
+      const job = JSON.parse(all[key]);
+      const { clean, bookingId, attendeeNumbers, tallyResult, rowNumber } = job;
+      const warnings = [];
+
+      if (clean.isNewAddition) {
+        try {
+          writeFallbackToTallySheet(clean, clean.tallyFallback);
+        } catch (err) {
+          warnings.push("Tally sheet write failed: " + err.message);
+        }
+      }
+
+      try {
+        sendTicketEmail(clean, bookingId, attendeeNumbers);
+        setCellByHeader(sheet, rowNumber, "Ticket Emailed At", new Date().toISOString());
+      } catch (err) {
+        warnings.push("Ticket email failed: " + err.message);
+      }
+
+      try {
+        sendAdminBookingEmail(clean, bookingId, attendeeNumbers, tallyResult);
+        setCellByHeader(sheet, rowNumber, "Danny Emailed At", new Date().toISOString());
+      } catch (err) {
+        warnings.push("Admin email failed: " + err.message);
+      }
+
+      if (warnings.length) {
+        appendCellByHeader(sheet, rowNumber, "Notes", warnings.join(" | "));
+      }
+
+      props.deleteProperty(key);
+    } catch (jobErr) {
+      console.error("processEmailJobs_ failed for " + key + ":", jobErr);
+    }
+  });
+}
+
 function sendBookingEmail(message) {
   if (isResendEmailConfigured_()) {
     sendResendEmail_(message);
@@ -1352,7 +1386,7 @@ function weekendSectionsHtml() {
   const p = (t) => `<p style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:13px;line-height:1.42;color:#2b2118;">${t}</p>`;
   const ul = (items) => `<ul style="margin:2px 0 8px;padding-left:18px;font-family:Georgia,serif;font-size:13px;line-height:1.35;color:#2b2118;">${items}</ul>`;
   const campingMap = getPdfImageHtml_(CAMPING_MAP_URL, "Campsite map showing the main field and Large Camping Field", "8px 0 10px");
-  const lineup = ["Algorithmic", "Anorak", "Gizmode &amp; Breakwhore", "Golgot", "Mitzy", "Myr", "Open Decks B2B2B", "Salander", "S.Murk", "The Mighty Rick", "The Panger"].map((n) => `<li>${n}</li>`).join("");
+  const lineup = ["Algorithmic", "Anorak", "Gizmode &amp; Breakwhore", "Golgot", "Goodhound Blang", "Mitzy", "Myr", "Open Decks B2B2B", "Salander", "S.Murk", "The Mighty Rick", "The Panger"].map((n) => `<li>${n}</li>`).join("");
   const gazebos = ["Fairy lights / nice lighting", "Rugs / blankets / cushions", "Folding tables", "Camping chairs", "Bunting / fabric / decor", "Battery lights", "Tarps / ground sheets"].map((n) => `<li>${n}</li>`).join("");
   return head("Arrival")
     + p(`When you get there, tell the staff at the check-in hut you've arrived and they'll point you in the right direction. If you don't mind a load of noise, camp in The Naughty Corner (I promise I didn't name it)  -  but don't complain if we keep you up. Everyone else: head for Family Camping, or choose your own adventure.`)

@@ -951,7 +951,7 @@ nav a.active::after{left:15px;right:15px;}
 </script>
 <script>
 (function(){
-    const API_URL = "https://script.google.com/macros/s/AKfycbxbxa1baky2-EqlYMztmsQGA4Hg3F3UXC1PY7Ms9XYFO-d6C3bdTuk9_OuV47byg0OjeA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzCaO6jnM8WKjNaMJJX0GZkd8k-DvMGzfXQ6SWqAuFG_WK3FgxbtPxowvV1DG7gN5XhCA/exec";
     const PAYMENT_URL = "https://settleup.starlingbank.com/daniel-page-e74b5b";
     const RETURN_URL = "https://dannys40th.com";
     const ALLOW_DEBUG_SUBMIT = false;
@@ -1532,13 +1532,17 @@ nav a.active::after{left:15px;right:15px;}
       }
 
         els.submitBtn.disabled = true;
-        els.submitStatus.textContent = "Submitting…";
+        els.submitStatus.innerHTML = '<span class="fund-loader"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-dasharray="28 14"/></svg></span><span class="fund-loading-text">Submitting — this can take up to 30 seconds…</span>';
 
         try {
+          const abortController = new AbortController();
+          const abortTimeout = setTimeout(() => abortController.abort(), 60000);
           const response = await fetch(API_URL, {
             method: "POST",
-            body: JSON.stringify(collectPayload())
+            body: JSON.stringify(collectPayload()),
+            signal: abortController.signal
           });
+          clearTimeout(abortTimeout);
 
           if (!response.ok) {
             const responseText = await response.text().catch(() => "");
@@ -1559,26 +1563,20 @@ nav a.active::after{left:15px;right:15px;}
         const nextUrl = totalDue > 0 ? PAYMENT_URL : RETURN_URL;
         const nextLabel = totalDue > 0 ? "Starling payment page" : "Danny’s 40th site";
 
-        const warnings = Array.isArray(data.warnings) ? data.warnings.filter(Boolean) : [];
-        const ticketEmailFailed = warnings.some((warning) => String(warning).toLowerCase().includes("ticket email failed"));
-        const warningHtml = warnings.length
-          ? `<p class="warning">Booking saved, but there was a follow-up issue: ${warnings.join(" ")}</p>`
-          : "";
-        const ticketEmailText = ticketEmailFailed
-          ? "Your booking is saved, but the ticket email did not send automatically."
-          : "A ticket email has been sent.";
+        const warningHtml = "";
 
         els.submitStatus.innerHTML = `
           <div class="payment-box">
-            <p><strong>Booking received.</strong></p>
+            <p><strong>Submitted successfully!</strong></p>
             <p>Your booking reference is <strong>${data.bookingId}</strong>.</p>
-            <p>${ticketEmailText}</p>
+            <p>Your ticket email will arrive shortly.</p>
             <p class="payment-box-total">Total to pay Danny now: <strong>${totalText}</strong>.</p>
             ${warningHtml}
             <p class="muted">Sending you to the ${nextLabel} in <span data-redirect-countdown></span>s.</p>
             <p><a class="inline" href="${nextUrl}">Take me there now</a></p>
           </div>
         `;
+        els.submitStatus.scrollIntoView({ behavior: "smooth", block: "center" });
 
         await loadSummary().catch(() => {});
 
@@ -1599,7 +1597,9 @@ nav a.active::after{left:15px;right:15px;}
         }
       } catch (err) {
         console.error('submitBooking failed', err);
-        const message = err && err.message ? err.message : "Please try again.";
+        const message = err && err.name === "AbortError"
+          ? "The request timed out — please try again. If it keeps happening, drop Danny a message."
+          : (err && err.message ? err.message : "Please try again.");
         els.submitStatus.textContent = `Submission failed - ${message}`;
         els.submitBtn.disabled = false;
       }
