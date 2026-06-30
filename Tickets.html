@@ -873,7 +873,7 @@ nav a.active::after{left:15px;right:15px;}
 
         <div class="payment-box">
           <p>
-            On submission you’ll be taken to Starling to pay the total shown above.
+            On submission you’ll be taken to Starling to pay the total shown above. Amount payable will likely default to £25 for everyone, please amend to the amount you need to pay.
           </p>
         </div>
       </section>
@@ -951,7 +951,7 @@ nav a.active::after{left:15px;right:15px;}
 </script>
 <script>
 (function(){
-    const API_URL = "https://script.google.com/macros/s/AKfycbzgalDgzFQgzzQtkUMi9-WJXeT0mZIWxVpY6aBthQZxDlcbvmAPe5Eb-rzjvxyRD__TtA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwhewgijvtrGt_0dff4VbiSyBlbIoOMQ-kfCjtkrmA4W5OinnKIgi8iM3J8cEaHf5KvmA/exec";
     const PAYMENT_URL = "https://settleup.starlingbank.com/daniel-page-e74b5b";
     const RETURN_URL = "https://dannys40th.com";
     const ALLOW_DEBUG_SUBMIT = false;
@@ -1266,6 +1266,7 @@ nav a.active::after{left:15px;right:15px;}
         manualPaymentConfirm: els.manualPaymentConfirm.checked,
         tallyLookupDone,
         tallyFound,
+        isNewAddition: !tallyFound,
         tallyRowNumber,
         previousTallyName,
         offerLifts: els.offerLifts.checked,
