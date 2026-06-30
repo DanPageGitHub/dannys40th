@@ -330,24 +330,65 @@
 </div>
 </section>
 </div>
-<!-- LINEUP (Celebrating something) -->
+<!-- POSTER LINEUP SECTION -->
+<style>
+.poster-wrap{position:relative;border:1px solid rgba(184,115,51,0.38);border-radius:2px;overflow:hidden;padding:48px 52px 44px;text-align:center;}
+.poster-wrap::before{content:'';position:absolute;inset:6px;border:1px solid rgba(184,115,51,0.14);border-radius:1px;pointer-events:none;z-index:0;}
+#lineup-og .sec-aura{background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(46,123,122,0.16) 0%,transparent 70%);}
+.poster-heading{font-family:'IM Fell English',serif;font-size:clamp(2.6rem,6vw,5rem);font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:var(--copper);line-height:1;margin:0 0 36px;position:relative;z-index:1;padding-right:0.18em;}
+.poster-names{list-style:none;padding:0;margin:0;position:relative;z-index:1;}
+.poster-name-item{padding:10px 0;cursor:default;position:relative;}
+.poster-name-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent,rgba(184,115,51,0.04) 30%,rgba(46,123,122,0.05) 50%,rgba(184,115,51,0.04) 70%,transparent);opacity:0;transition:opacity 0.4s;}
+.poster-name-item:hover::after{opacity:1;}
+.poster-name-text{font-family:'IM Fell English',serif;font-size:clamp(1.45rem,3.9vw,3.3rem);font-weight:400;color:var(--parchment);letter-spacing:0.1em;line-height:1;display:block;position:relative;z-index:1;transition:color 0.32s,letter-spacing 0.45s cubic-bezier(0.22,1,0.36,1),text-shadow 0.32s;}
+.poster-name-item:hover .poster-name-text{color:var(--gold-l);letter-spacing:0.18em;text-shadow:0 0 55px rgba(212,149,74,0.28);}
+.poster-note{font-family:'Libre Baskerville',serif;font-size:0.9rem;font-style:italic;color:var(--parch-dim);margin-top:28px;padding-top:22px;border-top:1px solid rgba(184,115,51,0.15);position:relative;z-index:1;}
+.poster-name-item{opacity:0;transform:translateY(7px);transition:opacity 0.48s,transform 0.48s;}
+.poster-name-item.p-in{opacity:1;transform:none;}
+@media(max-width:640px){
+  .poster-wrap{padding:32px 18px 28px;}
+  .poster-wrap::before{inset:4px;}
+  .poster-heading{margin-bottom:24px;}
+  .poster-name-text{letter-spacing:0.06em;}
+  .poster-name-item:hover .poster-name-text{letter-spacing:0.1em;}
+  .poster-name-item{padding:9px 0;}
+}
+</style>
 <div class="sw">
-<section class="sec" id="lineup">
+<section class="sec" id="lineup-og">
 <div class="sec-aura sec-aura--lineup"></div>
-<div class="lineup-milestone reveal">
-<div class="lineup-milestone-head">Celebrating something? Birthday in July?</div>
-<div class="two-col">
-  <div class="two-col__text">
-    <div class="sec-inner">
-      <p>If you'd like to make this a joint do, let me know! I'm well up for joining forces. Let's have an awkward chat about changing the URL.</p>
-      <a class="involve-cta" href="Tickets.html">Buddy up!</a>
-    </div>
-  </div>
-  <div class="two-col__media">
-    <img src="images/Kaleidoscake2.jpg" alt="" loading="lazy" decoding="async" class="col-photo col-photo--square col-photo--no-sepia grain-overlay reveal">
-  </div>
+<div class="poster-wrap">
+  <h2 class="poster-heading">Lineup</h2>
+  <ul class="poster-names">
+    <li class="poster-name-item"><span class="poster-name-text">ALGORITHMIC</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">ANORAK</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">GIZMODE &amp; BREAKWHORE</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">GOLGOT</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">MITZY</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">MYR</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">OPEN DECKS B2B2B</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">SALANDER</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">S.MURK</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">THE MIGHTY RICK</span></li>
+    <li class="poster-name-item"><span class="poster-name-text">THE PANGER</span></li>
+  </ul>
+  <p class="poster-note">& maybe a few more — pester Danny if you think you should be on this</p>
 </div>
-</div>
+<script>
+(function(){
+  var items=document.querySelectorAll('.poster-name-item');
+  if(!items.length)return;
+  var section=items[0].closest('section');
+  var fired=false;
+  var obs=new IntersectionObserver(function(entries){
+    if(fired||!entries[0].isIntersecting)return;
+    fired=true;
+    items.forEach(function(el,i){setTimeout(function(){el.classList.add('p-in');},i*55);});
+    obs.disconnect();
+  },{threshold:0.15});
+  obs.observe(section);
+})();
+</script>
 </section>
 </div>
 <!-- GET INVOLVED -->
